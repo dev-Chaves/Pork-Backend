@@ -1,0 +1,16 @@
+spring:
+  application:
+      name: pork
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pork
+    username: myuser
+    password: secret
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+        properties:
+            hibernate:
+            dialect: org.hibernate.dialect.PostgreSQLDialect
+

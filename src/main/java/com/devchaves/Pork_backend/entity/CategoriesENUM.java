@@ -1,4 +1,4 @@
-package com.devchaves.Pork_backend.entities;
+package com.devchaves.Pork_backend.entity;
 
 public enum CategoriesENUM {
     ALIMENTACAO,

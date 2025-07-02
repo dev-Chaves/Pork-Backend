@@ -2,30 +2,29 @@ services:
 
   api:
     build: .
-    ports:
-      - "8080"
+    network_mode: host
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRESQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRESQL_PASSWORD}
 
-
-  postgres:
+  db:
     image: 'postgres:latest'
-    ports:
-      - '5432'
+    network_mode: host
     environment:
-        POSTGRES_USER: ${POSTGRES_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-        POSTGRES_DB: ${POSTGRES_DB}
+        POSTGRES_USER: ${POSTGRESQL_USER}
+        POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
+        POSTGRES_DB: ${POSTGRESQL_DATABASE}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRESQL_USER} -d ${POSTGRESQL_DATABASE}" ]
       interval: 10s
       timeout: 5s
       retries: 5
-    network_mode: host
+
+volumes:
+    pgdata:

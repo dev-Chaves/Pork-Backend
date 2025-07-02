@@ -1,5 +1,8 @@
 package com.devchaves.Pork_backend.entity;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -10,21 +13,33 @@ public class ExpenseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false )
     private UserEntity user;
 
-    @Column(name = "receita", nullable = false)
-    private Double receita;
+    @Column(name = "receita", nullable = false, precision = 15, scale = 2)
+    private BigDecimal receita;
 
-    @Column(name = "valor", nullable = false)
-    private Double valor;
+    @Column(name = "valor", nullable = false, precision = 15, scale = 2)
+    private BigDecimal valor;
 
     @Column(name = "descricao", nullable = false)
     private String descricao;
 
+    @Column(name = "criado_em")
+    private LocalDateTime criadoEm;
+
+    @Column(name = "atualizado_em")
+    private LocalDateTime atualizadoEm;
+
     @Enumerated(EnumType.STRING)
     private CategoriesENUM categoria;
+
+    @PrePersist
+    protected void onCreate() {
+        this.criadoEm = LocalDateTime.now();
+        this.atualizadoEm = LocalDateTime.now();
+    }
 
     public ExpenseEntity() {
     }
@@ -45,19 +60,19 @@ public class ExpenseEntity {
         this.user = user;
     }
 
-    public Double getReceita() {
+    public BigDecimal getReceita() {
         return receita;
     }
 
-    public void setReceita(Double receita) {
+    public void setReceita(BigDecimal receita) {
         this.receita = receita;
     }
 
-    public Double getValor() {
+    public BigDecimal getValor() {
         return valor;
     }
 
-    public void setValor(Double valor) {
+    public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
 

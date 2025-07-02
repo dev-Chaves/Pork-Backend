@@ -1,5 +1,4 @@
 services:
-
   api:
     build: .
     network_mode: host
@@ -15,16 +14,16 @@ services:
     image: 'postgres:latest'
     network_mode: host
     environment:
-        POSTGRES_USER: ${POSTGRESQL_USER}
-        POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
-        POSTGRES_DB: ${POSTGRESQL_DATABASE}
+      POSTGRES_USER: ${POSTGRESQL_USER}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
+      POSTGRES_DB: ${POSTGRESQL_DATABASE}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRESQL_USER} -d ${POSTGRESQL_DATABASE}" ]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRESQL_USER} -d ${POSTGRESQL_DATABASE}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
-    pgdata:
+  pgdata:

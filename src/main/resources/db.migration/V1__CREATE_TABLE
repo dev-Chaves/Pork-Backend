@@ -1,9 +1,23 @@
 CREATE TABLE tb_usuarios(
-    id BIGSERIAL PRIMARY KEY
-    name VARCHAR(255) NOT NULL
-    email VARCHAR(255) NOT NULL
-    senha VARCHAR(255) NOT NULL
+    id BIGSERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    senha VARCHAR(255) NOT NULL,
     verificado BOOLEAN DEFAULT FALSE
-    
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-)
+CREATE TABLE tb_despesas(
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    receita DECIMAL(15,2) NOT NULL,
+    valor DECIMAL(15,2) NOT NULL,
+    descricao VARCHAR(500) NOT NULL,
+    categoria VARCHAR(50),
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    FOREiGN KEY (user_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_despesas_user_id ON tb_despesas(user_id);
+CREATE INDEX idx_despesas_categoria ON tb_despesas(categoria);

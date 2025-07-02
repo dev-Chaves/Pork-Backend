@@ -19,5 +19,9 @@ CREATE TABLE tb_despesas(
     FOREiGN KEY (user_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
 );
 
+CONSTRAINT chk_receita_positive CHECK (receita > 0);
+CONSTRAINT chk_valor_positive CHECK( valor > 0);
+CONSTRAINT fk_despesas_user FOREIGN KEY (user_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
+
 CREATE INDEX idx_despesas_user_id ON tb_despesas(user_id);
 CREATE INDEX idx_despesas_categoria ON tb_despesas(categoria);

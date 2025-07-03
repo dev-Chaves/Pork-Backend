@@ -1,9 +1,9 @@
 package com.devchaves.Pork_backend.DTO;
 
 public record RegisterRequestDTO(
-    String username,
+    String nome,
     String email,
-    String password
+    String senha
 ) {
 
 }

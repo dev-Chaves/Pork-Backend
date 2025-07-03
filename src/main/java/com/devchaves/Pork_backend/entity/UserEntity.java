@@ -34,6 +34,7 @@ public class UserEntity {
     @PrePersist
     protected void onCreate() {
         this.criadoEm = LocalDateTime.now();
+        this.verificado = false;
     }
 
     public UserEntity() {

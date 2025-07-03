@@ -19,8 +19,8 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll() // Endpoints de autenticação públicos
-                .requestMatchers("/api/verify/**").permitAll() // Endpoints de verificação públicos
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/verify/**").permitAll()
                 .anyRequest().authenticated()
             );
         
@@ -29,7 +29,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(8);
     }
 
 

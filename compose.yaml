@@ -1,7 +1,8 @@
 services:
   api:
     build: .
-    network_mode: host
+    ports:
+      - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
@@ -12,7 +13,8 @@ services:
 
   db:
     image: 'postgres:latest'
-    network_mode: host
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: ${POSTGRESQL_USER}
       POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}

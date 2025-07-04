@@ -1,5 +1,5 @@
 package com.devchaves.Pork_backend.DTO;
 
-public record RegisterResponseDTO(String nome, String email) {
+public record RegisterResponseDTO(String nome, String email, String token) {
 
 }

@@ -1,6 +1,7 @@
 package com.devchaves.Pork_backend.entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,7 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
@@ -24,7 +25,7 @@ public class VerificationTokenEntity {
     @Column(name = "token", nullable = false)
     private String token;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
@@ -37,8 +38,9 @@ public class VerificationTokenEntity {
 
     @PrePersist
     public void prePersist() {
+        this.token = UUID.randomUUID().toString();
         this.criado_em = LocalDateTime.now();
-        this.expira_em = this.criado_em.plusDays(1); // Example: token expires in 1 day
+        this.expira_em = this.criado_em.plusMinutes(10); 
     }
 
     public VerificationTokenEntity() {

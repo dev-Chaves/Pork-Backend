@@ -3,6 +3,8 @@ package com.devchaves.Pork_backend.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.devchaves.Pork_backend.ENUM.CategoriesENUM;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -82,6 +84,22 @@ public class ExpenseEntity {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public LocalDateTime getCriadoEm() {
+        return criadoEm;
+    }
+
+    public void setCriadoEm(LocalDateTime criadoEm) {
+        this.criadoEm = criadoEm;
+    }
+
+    public LocalDateTime getAtualizadoEm() {
+        return atualizadoEm;
+    }
+
+    public void setAtualizadoEm(LocalDateTime atualizadoEm) {
+        this.atualizadoEm = atualizadoEm;
     }
 
     public CategoriesENUM getCategoria() {

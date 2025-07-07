@@ -70,7 +70,7 @@ public class UserService {
 
         mailService.sendEmailToRegister(email);
 
-        return new RegisterResponseDTO(user.getNome(), user.getEmail(), token.getToken());
+        return new RegisterResponseDTO(user.getNome(), user.getEmail(), token.getToken(), user.getReceita());
     }
 
     public LoginResponseDTO login (LoginRequestDTO dto){
@@ -92,12 +92,12 @@ public class UserService {
         if(!passwordEncoder.matches(dto.senha(), user.getSenha())){
             throw new IllegalArgumentException("Senha inválida");
         }
-    
+
          String token = tokenService.generateToken(user);
-    
-        LoginResponseDTO response = new LoginResponseDTO(token, user.getEmail());
-    
-        return response;  
+
+        LoginResponseDTO response = new LoginResponseDTO(token, user.getEmail(), user.getNome(), user.getReceita());
+
+        return response;
 
     }
 

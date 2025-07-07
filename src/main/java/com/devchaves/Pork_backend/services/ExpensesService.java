@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.devchaves.Pork_backend.DTO.ExpenseRequestDTO;
 import com.devchaves.Pork_backend.entity.ExpenseEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.ExpenseRepository;
@@ -24,7 +25,7 @@ public class ExpensesService {
         this.userRepository = userRepository;
     }
 
-    public List<ExpenseEntity> cadastrarDespesas( ){
+    public List<ExpenseEntity> cadastrarDespesas(ExpenseRequestDTO dto){
 
        UserEntity user = getCurrentUser();
 
@@ -32,14 +33,16 @@ public class ExpensesService {
         throw new IllegalStateException("Usuário não verificado!");
        }
 
-       ExpenseEntity despesas = new ExpenseEntity();
+       ExpenseEntity despesas = new ExpenseEntity(); 
 
-       des
-        
+    //    despesas.setUser(user);
+    //    despesas.setReceita(dto.receita());
+    //    despesas.
 
         return null;
 
     }
+
 
     private UserEntity getCurrentUser (){
         try{

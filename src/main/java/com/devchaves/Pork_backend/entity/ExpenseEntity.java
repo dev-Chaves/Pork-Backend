@@ -19,9 +19,6 @@ public class ExpenseEntity {
     @JoinColumn(name = "user_id", nullable = false )
     private UserEntity user;
 
-    @Column(name = "receita", nullable = false, precision = 15, scale = 2)
-    private BigDecimal receita;
-
     @Column(name = "valor", nullable = false, precision = 15, scale = 2)
     private BigDecimal valor;
 
@@ -60,14 +57,6 @@ public class ExpenseEntity {
 
     public void setUser(UserEntity user) {
         this.user = user;
-    }
-
-    public BigDecimal getReceita() {
-        return receita;
-    }
-
-    public void setReceita(BigDecimal receita) {
-        this.receita = receita;
     }
 
     public BigDecimal getValor() {

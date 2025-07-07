@@ -8,7 +8,6 @@ public record ExpenseResponseDTO(
     Long id,
     Long userId,
     String userName,
-    BigDecimal receita,
     BigDecimal valor,
     String descricao,
     CategoriesENUM categoria,

@@ -2,6 +2,7 @@ package com.devchaves.Pork_backend.entity;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,6 +28,9 @@ public class UserEntity implements UserDetails {
 
     @Column(name = "senha", nullable = false)
     private String senha;
+
+    @Column(name = "receita", nullable = false, precision = 15, scale = 2)
+    private BigDecimal receita;
 
     @Column(name = "verificado", nullable = false)
     private Boolean verificado;
@@ -79,6 +83,14 @@ public class UserEntity implements UserDetails {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public BigDecimal getReceita() {
+        return receita;
+    }
+
+    public void setReceita(BigDecimal receita) {
+        this.receita = receita;
     }
 
     public Boolean getVerificado() {

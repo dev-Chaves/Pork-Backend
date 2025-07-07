@@ -2,10 +2,13 @@ package com.devchaves.Pork_backend.services;
 
 import java.util.regex.Pattern;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.devchaves.Pork_backend.DTO.EmailDTO;
+import com.devchaves.Pork_backend.DTO.LoginRequestDTO;
+import com.devchaves.Pork_backend.DTO.LoginResponseDTO;
 import com.devchaves.Pork_backend.DTO.RegisterRequestDTO;
 import com.devchaves.Pork_backend.DTO.RegisterResponseDTO;
 import com.devchaves.Pork_backend.entity.UserEntity;
@@ -24,16 +27,20 @@ public class UserService {
 
     private final MailService mailService;
 
+    private final TokenService tokenService;
+
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,TokenRepository tokenRepository, MailService mailService){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,TokenRepository tokenRepository, MailService mailService, TokenService tokenService){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenRepository = tokenRepository;
         this.mailService = mailService;
+        this.tokenService = tokenService;
     }
 
     public RegisterResponseDTO register (RegisterRequestDTO dto){
+        
 
         if(!isValidEmail(dto.email())){
             throw new IllegalArgumentException("Email com formato inválido");
@@ -64,6 +71,28 @@ public class UserService {
         mailService.sendEmailToRegister(email);
 
         return new RegisterResponseDTO(user.getNome(), user.getEmail(), token.getToken());
+    }
+
+    public LoginResponseDTO login (LoginRequestDTO dto){
+
+        if(dto.email() == null || dto.email().trim().isEmpty() || dto.senha().trim().isEmpty() || dto.senha() == null){
+            throw new IllegalArgumentException("Email ou senha não podem conter valores nulos");
+        }
+
+        if(!isValidEmail(dto.email())){
+            throw new IllegalArgumentException("Email inválido");
+        }
+
+        UserEntity user =userRepository.findByEmail(dto.email()).orElseThrow(() -> new UsernameNotFoundException("Email inválido"));
+
+        if(passwordEncoder.matches(dto.senha(), user.getSenha())){
+            
+        }
+
+
+        
+
+        return null;
     }
 
     private boolean isValidEmail(String email){

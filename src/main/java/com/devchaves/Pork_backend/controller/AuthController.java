@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.devchaves.Pork_backend.DTO.LoginRequestDTO;
+import com.devchaves.Pork_backend.DTO.LoginResponseDTO;
 import com.devchaves.Pork_backend.DTO.RegisterRequestDTO;
 import com.devchaves.Pork_backend.DTO.RegisterResponseDTO;
 import com.devchaves.Pork_backend.services.TokenService;
@@ -29,6 +31,12 @@ public class AuthController {
         this.userService = userService;
         this.tokenService = tokenService;
     }
+
+    @GetMapping("login")
+    public ResponseEntity<LoginResponseDTO> getMethodName(@Valid @RequestBody LoginRequestDTO dto) {
+        return ResponseEntity.ok(userService.login(dto));
+    }
+    
 
     @PostMapping("register")
     @Transactional

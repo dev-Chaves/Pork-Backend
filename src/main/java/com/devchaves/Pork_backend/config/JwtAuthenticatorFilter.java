@@ -27,8 +27,6 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -53,6 +51,8 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
                 throw new RuntimeException("JWT Token inválido", e);
             }
         }
+
+        filterChain.doFilter(request, response);
             
     }
 

@@ -75,35 +75,30 @@ public class UserService {
 
     public LoginResponseDTO login (LoginRequestDTO dto){
 
-        try{
-            
-            if(dto.email() == null || dto.email().trim().isEmpty() || dto.senha().trim().isEmpty() || dto.senha() == null){
-                throw new IllegalArgumentException("Email ou senha não podem conter valores nulos");
-            }
-    
-            if(!isValidEmail(dto.email())){
-                throw new IllegalArgumentException("Email inválido");
-            }
-    
-            UserEntity user =userRepository.findByEmail(dto.email()).orElseThrow(() -> new UsernameNotFoundException("Email inválido"));
-            
-            if (user.getVerificado() == false) {
-                throw new IllegalArgumentException("Usuário não verificado, por favor verifique seu usuário");
-            }
-
-            if(!passwordEncoder.matches(dto.senha(), user.getSenha())){
-                throw new IllegalArgumentException("Senha inválida");
-            }
-    
-            String token = tokenService.generateToken(user);
-    
-            LoginResponseDTO response = new LoginResponseDTO(token, user.getEmail());
-    
-            return response;  
-
-        }catch(Exception e){
-            throw new RuntimeException("Ocorreu um erro durante o login: " + e.getMessage());
+        if(dto.email() == null || dto.email().trim().isEmpty() || dto.senha().trim().isEmpty() || dto.senha() == null){
+            throw new IllegalArgumentException("Email ou senha não podem conter valores nulos");
         }
+    
+        if(!isValidEmail(dto.email())){
+            throw new IllegalArgumentException("Email inválido");
+        }
+    
+        UserEntity user =userRepository.findByEmail(dto.email()).orElseThrow(() -> new UsernameNotFoundException("Email inválido"));
+            
+         if (user.getVerificado() == false) {
+            throw new IllegalArgumentException("Usuário não verificado, por favor verifique seu usuário");
+         }
+
+        if(!passwordEncoder.matches(dto.senha(), user.getSenha())){
+            throw new IllegalArgumentException("Senha inválida");
+        }
+    
+         String token = tokenService.generateToken(user);
+    
+        LoginResponseDTO response = new LoginResponseDTO(token, user.getEmail());
+    
+        return response;  
+
     }
 
     private boolean isValidEmail(String email){

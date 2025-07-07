@@ -42,6 +42,9 @@ spring:
           ssl:
             trust: smtp.gmail.com
 
+  jwt:
+    secret: ${SECRET}
+
 
 server:
   port: 8080

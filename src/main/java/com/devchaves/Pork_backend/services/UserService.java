@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.devchaves.Pork_backend.DTO.EmailDTO;
 import com.devchaves.Pork_backend.DTO.RegisterRequestDTO;
 import com.devchaves.Pork_backend.DTO.RegisterResponseDTO;
 import com.devchaves.Pork_backend.entity.UserEntity;
@@ -21,12 +22,15 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final MailService mailService;
+
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,TokenRepository tokenRepository){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,TokenRepository tokenRepository, MailService mailService){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenRepository = tokenRepository;
+        this.mailService = mailService;
     }
 
     public RegisterResponseDTO register (RegisterRequestDTO dto){
@@ -52,6 +56,10 @@ public class UserService {
         token.setUser(user);
 
         tokenRepository.save(token);
+
+        EmailDTO email = new EmailDTO(user.getEmail(), "Welcome to our service", "Thank you for registering!");
+
+        mailService.sendEmailToRegister(email);
 
         return new RegisterResponseDTO(user.getNome(), user.getEmail(), token.getToken());
     }

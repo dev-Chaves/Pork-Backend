@@ -37,6 +37,9 @@ public class UserEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExpenseEntity> expenses;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VerificationTokenEntity> tokens;
+
     @PrePersist
     protected void onCreate() {
         this.criadoEm = LocalDateTime.now();
@@ -135,6 +138,14 @@ public class UserEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.verificado;
+    }
+
+    public List<VerificationTokenEntity> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(List<VerificationTokenEntity> tokens) {
+        this.tokens = tokens;
     }
 
     

@@ -36,11 +36,15 @@ public class VerificationTokenEntity {
     @Column(name = "criado_em", nullable = false)
     private LocalDateTime criado_em;
 
+    @Column(name = "expirado", nullable = false)
+    private boolean expirado;
+
     @PrePersist
     public void prePersist() {
         this.token = UUID.randomUUID().toString();
         this.criado_em = LocalDateTime.now();
         this.expira_em = this.criado_em.plusMinutes(10); 
+        this.expirado = false;
     }
 
     public VerificationTokenEntity() {

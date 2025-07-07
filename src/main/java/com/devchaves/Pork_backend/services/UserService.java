@@ -57,7 +57,9 @@ public class UserService {
 
         tokenRepository.save(token);
 
-        EmailDTO email = new EmailDTO(user.getEmail(), "Welcome to our service", "Thank you for registering!");
+        String url = "http://localhost:8080/api/auth/verify?param=" + token.getToken();
+
+        EmailDTO email = new EmailDTO(user.getEmail(), "Bem vindo ao Pork ! Verifique sua Conta", "Obrigado por se registrar, agora verifica sua conta no link abaixo: !" + url);
 
         mailService.sendEmailToRegister(email);
 

@@ -86,7 +86,11 @@ public class UserService {
             }
     
             UserEntity user =userRepository.findByEmail(dto.email()).orElseThrow(() -> new UsernameNotFoundException("Email inválido"));
-    
+            
+            if (user.getVerificado() == false) {
+                throw new IllegalArgumentException("Usuário não verificado, por favor verifique seu usuário");
+            }
+
             if(!passwordEncoder.matches(dto.senha(), user.getSenha())){
                 throw new IllegalArgumentException("Senha inválida");
             }

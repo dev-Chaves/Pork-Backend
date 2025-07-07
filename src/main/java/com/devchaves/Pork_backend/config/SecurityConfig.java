@@ -9,6 +9,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.devchaves.Pork_backend.services.TokenService;
 
 @Configuration
 @EnableWebSecurity
@@ -16,6 +19,13 @@ public class SecurityConfig {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
+
+    private final TokenService tokenService;
+
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, TokenService tokenService) {
+        this.customUserDetailsService = customUserDetailsService;
+        this.tokenService = tokenService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -26,6 +36,11 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/verify/**").permitAll()
                 .anyRequest().authenticated()
+            )
+
+            .addFilterBefore(
+                new JwtAuthenticatorFilter(tokenService, customUserDetailsService),
+                UsernamePasswordAuthenticationFilter.class
             );
         
         return http.build();

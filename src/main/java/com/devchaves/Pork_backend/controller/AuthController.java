@@ -32,7 +32,7 @@ public class AuthController {
         this.tokenService = tokenService;
     }
 
-    @GetMapping("login")
+    @PostMapping("login")
     public ResponseEntity<LoginResponseDTO> getMethodName(@Valid @RequestBody LoginRequestDTO dto) {
         return ResponseEntity.ok(userService.login(dto));
     }

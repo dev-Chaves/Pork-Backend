@@ -8,9 +8,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.devchaves.Pork_backend.DTO.RegisterRequestDTO;
 import com.devchaves.Pork_backend.DTO.RegisterResponseDTO;
+import com.devchaves.Pork_backend.services.TokenService;
 import com.devchaves.Pork_backend.services.UserService;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -18,17 +23,42 @@ public class AuthController {
 
     private final UserService userService;
 
-    public AuthController(UserService userService){
+    private final TokenService tokenService;
+
+    public AuthController(UserService userService, TokenService tokenService){
         this.userService = userService;
+        this.tokenService = tokenService;
     }
 
     @PostMapping("register")
+    @Transactional
     public ResponseEntity<RegisterResponseDTO> register(@Valid @RequestBody RegisterRequestDTO dto) {
         
         RegisterResponseDTO response = userService.register(dto);
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("verify")
+    public ResponseEntity<String> verificarUsuario(@RequestParam String param) {
+
+        try{
+            tokenService.verificarToken(param);
+
+            return ResponseEntity.ok("Verificado!");
+
+        }catch (IllegalArgumentException e){
+
+            return ResponseEntity.badRequest().body("Token inválido!");
+
+        }catch(Exception e){
+            
+            return ResponseEntity.badRequest().body("Token inválido ou expirado!");
+
+        }
+        
+    }
+    
     
 
 }

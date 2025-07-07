@@ -42,8 +42,8 @@ spring:
           ssl:
             trust: smtp.gmail.com
 
-  jwt:
-    secret: ${SECRET}
+jwt:
+  secret: ${SPRING_SECRET}
 
 
 server:

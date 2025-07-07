@@ -18,5 +18,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query(value = "SELECT COUNT(*) > 0 FROM tb_usuarios WHERE email = :email", nativeQuery = true)
     boolean existsByEmail(@Param("email")String email);
 
+    @Query(value = "SELECT * FROM tb_usuarios WHERE token = :token", nativeQuery = true)
+    Optional<UserEntity> findByToken(@Param("token") String token);
 
 }

@@ -1,13 +1,20 @@
 package com.devchaves.Pork_backend.services;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.devchaves.Pork_backend.DTO.ExpenseRequestDTO;
+import com.devchaves.Pork_backend.DTO.ExpenseResponseDTO;
+import com.devchaves.Pork_backend.DTO.ReceitaResponseDTO;
+import com.devchaves.Pork_backend.DTO.UserUpdateDTO;
 import com.devchaves.Pork_backend.entity.ExpenseEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.ExpenseRepository;
@@ -25,7 +32,7 @@ public class ExpensesService {
         this.userRepository = userRepository;
     }
 
-    public List<ExpenseEntity> cadastrarDespesas(ExpenseRequestDTO dto){
+    public List<ExpenseResponseDTO> cadastrarDespesas(List<ExpenseRequestDTO> dtos){
 
        UserEntity user = getCurrentUser();
 
@@ -33,13 +40,41 @@ public class ExpensesService {
         throw new IllegalStateException("Usuário não verificado!");
        }
 
-       ExpenseEntity despesas = new ExpenseEntity(); 
+       List<ExpenseEntity> despesas = new ArrayList<>();
 
-    //    despesas.setUser(user);
-    //    despesas.setReceita(dto.receita());
-    //    despesas.
+       for(ExpenseRequestDTO dto : dtos){
+        ExpenseEntity despesa = new ExpenseEntity();
+        despesa.setUser(user);
+        despesa.setValor(dto.valor());
+        despesa.setDescricao(dto.descricao());
+        despesa.setCategoria(dto.categoria());
+        despesas.add(despesa);
+       }
 
-        return null;
+       List<ExpenseResponseDTO> response = despesas.stream().map((despesa -> new ExpenseResponseDTO(
+        despesa.getId(), 
+        despesa.getUser().getId(), 
+        despesa.getUser().getUsername(), 
+        despesa.getValor(),
+        despesa.getDescricao(),
+        despesa.getCategoria())))
+        .collect(Collectors.toList());
+
+       return response;
+
+    }
+
+    public ReceitaResponseDTO adicionarReceita(UserUpdateDTO dto){
+
+        UserEntity user = getCurrentUser();
+
+        user.setReceita(dto.receita());
+
+        userRepository.save(user);
+
+        ReceitaResponseDTO response = new ReceitaResponseDTO(user.getReceita());
+
+        return response;
 
     }
 

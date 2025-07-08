@@ -10,9 +10,7 @@ public record ExpenseResponseDTO(
     String userName,
     BigDecimal valor,
     String descricao,
-    CategoriesENUM categoria,
-    LocalDateTime criadoEm,
-    LocalDateTime atualizadoEm
+    CategoriesENUM categoria
 ) {
 
 }

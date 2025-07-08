@@ -15,6 +15,4 @@ public interface VerificationTokenRepository extends JpaRepository<VerificationT
     @Query(value = "SELECT * FROM tb_verification_tokens WHERE token = :token", nativeQuery = true)
     Optional<VerificationTokenEntity> findToken(@Param("token")String token);
 
-    
-
 }

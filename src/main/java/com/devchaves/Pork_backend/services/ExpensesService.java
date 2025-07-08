@@ -1,11 +1,9 @@
 package com.devchaves.Pork_backend.services;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -67,6 +65,10 @@ public class ExpensesService {
     public ReceitaResponseDTO adicionarReceita(UserUpdateDTO dto){
 
         UserEntity user = getCurrentUser();
+
+        System.out.println(user.getUsername());
+
+        System.out.println(dto.receita());
 
         user.setReceita(dto.receita());
 

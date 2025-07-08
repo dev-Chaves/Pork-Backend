@@ -1,3 +1,0 @@
-ALTER TABLE tb_despesas DROP COLUMN receita;
-
-ALTER TABLE tb_usuarios ADD receita DECIMAL(15,2) NOT NULL DEFAULT 0.00;

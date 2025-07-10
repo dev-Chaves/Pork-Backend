@@ -1,5 +1,6 @@
 package com.devchaves.Pork_backend.services;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +39,16 @@ public class ExpensesService {
         throw new IllegalStateException("Usuário não verificado!");
        }
 
+       for (ExpenseRequestDTO dto : dtos) {
+           if (dto == null) {
+                throw new IllegalArgumentException("Não deve conter valores nulos!");
+           }
+
+            if(dto.valor().compareTo(BigDecimal.ZERO) <= 0){
+                throw new IllegalArgumentException("O valor da despesa deve ser maior que zero!");
+            }
+       }
+
        List<ExpenseEntity> despesas = new ArrayList<>();
 
        for(ExpenseRequestDTO dto : dtos){
@@ -51,8 +62,6 @@ public class ExpensesService {
 
        List<ExpenseResponseDTO> response = despesas.stream().map((despesa -> new ExpenseResponseDTO(
         despesa.getId(), 
-        despesa.getUser().getId(), 
-        despesa.getUser().getUsername(), 
         despesa.getValor(),
         despesa.getDescricao(),
         despesa.getCategoria())))

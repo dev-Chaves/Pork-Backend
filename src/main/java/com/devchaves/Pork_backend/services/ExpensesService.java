@@ -35,6 +35,8 @@ public class ExpensesService {
 
        UserEntity user = getCurrentUser();
 
+       System.out.println(user.getEmail());
+
        if (user.getVerificado() == false) {
         throw new IllegalStateException("Usuário não verificado!");
        }
@@ -60,7 +62,9 @@ public class ExpensesService {
         despesas.add(despesa);
        }
 
-       List<ExpenseResponseDTO> response = despesas.stream().map((despesa -> new ExpenseResponseDTO(
+        expenseRepository.saveAll(despesas);
+
+        List<ExpenseResponseDTO> response = despesas.stream().map((despesa -> new ExpenseResponseDTO(
         despesa.getId(), 
         despesa.getValor(),
         despesa.getDescricao(),
@@ -74,6 +78,10 @@ public class ExpensesService {
     public ReceitaResponseDTO adicionarReceita(UserUpdateDTO dto){
 
         UserEntity user = getCurrentUser();
+
+        if (user.getVerificado() == false) {
+            throw new IllegalStateException("Usuário não verificado!");
+        }
 
         System.out.println(user.getUsername());
 

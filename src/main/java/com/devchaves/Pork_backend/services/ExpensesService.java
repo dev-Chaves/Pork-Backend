@@ -3,7 +3,6 @@ package com.devchaves.Pork_backend.services;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale.Category;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
@@ -29,14 +28,17 @@ public class ExpensesService {
 
     private final UserRepository userRepository;
 
-    public ExpensesService(ExpenseRepository expenseRepository, UserRepository userRepository) {
+    private final UtilServices utilServices;
+
+    public ExpensesService(ExpenseRepository expenseRepository, UserRepository userRepository, UtilServices utilServices) {
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;
+        this.utilServices = utilServices;
     }
 
     public List<ExpenseResponseDTO> cadastrarDespesas(List<ExpenseRequestDTO> dtos){
 
-       UserEntity user = getCurrentUser();
+       UserEntity user = utilServices.getCurrentUser();
 
        System.out.println(user.getEmail());
 
@@ -80,7 +82,7 @@ public class ExpensesService {
 
     public ReceitaResponseDTO adicionarReceita(UserUpdateDTO dto){
 
-        UserEntity user = getCurrentUser();
+        UserEntity user = utilServices.getCurrentUser();
 
         if (user.getVerificado() == false) {
             throw new IllegalStateException("Usuário não verificado!");
@@ -102,7 +104,7 @@ public class ExpensesService {
 
     public DashboardDTO consultarDespesas(){
     
-        UserEntity user = getCurrentUser();
+        UserEntity user = utilServices.getCurrentUser();
 
         List<ExpenseEntity> despesas = expenseRepository.findByUser(user.getId());
 
@@ -121,21 +123,6 @@ public class ExpensesService {
         DashboardDTO resposta = new DashboardDTO(despesaTotal, despesaCategoriaFixo, despesaCategoriaVariavel, totalDespesas);
 
         return resposta;
-    }
-    
-
-    private UserEntity getCurrentUser (){
-        try{
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-            if(authentication != null && authentication.getPrincipal() instanceof UserEntity){
-                return (UserEntity) authentication.getPrincipal();
-            }
-        }catch(Exception e){
-            throw new UsernameNotFoundException("Usuário não encontrado!");
-        }
-        
-        return null;
     }
 
 }   

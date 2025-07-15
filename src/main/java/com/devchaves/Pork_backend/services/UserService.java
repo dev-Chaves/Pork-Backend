@@ -11,6 +11,7 @@ import com.devchaves.Pork_backend.DTO.LoginRequestDTO;
 import com.devchaves.Pork_backend.DTO.LoginResponseDTO;
 import com.devchaves.Pork_backend.DTO.RegisterRequestDTO;
 import com.devchaves.Pork_backend.DTO.RegisterResponseDTO;
+import com.devchaves.Pork_backend.DTO.ResendEmail;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.entity.VerificationTokenEntity;
 import com.devchaves.Pork_backend.repository.TokenRepository;
@@ -29,19 +30,23 @@ public class UserService {
 
     private final TokenService tokenService;
 
+    private final UtilServices utilServices;    
+
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+
+    private static final String url = "http://localhost:8080/api/auth/verificar?param=";
     
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,TokenRepository tokenRepository, MailService mailService, TokenService tokenService){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,TokenRepository tokenRepository, MailService mailService, TokenService tokenService, UtilServices utilServices){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenRepository = tokenRepository;
         this.mailService = mailService;
         this.tokenService = tokenService;
+        this.utilServices = utilServices;
     }
 
     public RegisterResponseDTO register (RegisterRequestDTO dto){
         
-
         if(!isValidEmail(dto.email())){
             throw new IllegalArgumentException("Email com formato inválido");
         }
@@ -64,9 +69,9 @@ public class UserService {
 
         tokenRepository.save(token);
 
-        String url = "http://localhost:8080/api/auth/verify?param=" + token.getToken();
+        String verificar = url + token.getToken();
 
-        EmailDTO email = new EmailDTO(user.getEmail(), "Bem vindo ao Pork ! Verifique sua Conta", "Obrigado por se registrar, agora verifica sua conta no link abaixo: !" + url);
+        EmailDTO email = new EmailDTO(user.getEmail(), "Bem vindo ao Pork ! Verifique sua Conta", "Obrigado por se registrar, agora verifica sua conta no link abaixo: !" + verificar);
 
         mailService.sendEmailToRegister(email);
 
@@ -98,6 +103,36 @@ public class UserService {
         LoginResponseDTO response = new LoginResponseDTO(token, user.getEmail(), user.getNome(), user.getReceita());
 
         return response;
+
+    }
+
+    public void reenviarVerificacao(ResendEmail dto){
+
+        UserEntity user = userRepository.findByEmail(dto.email()).orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado com o email fornecido."));
+
+        if(user.getVerificado() == true){
+            throw new IllegalStateException("Usuário já verificado.");
+        }
+
+        VerificationTokenEntity token = new VerificationTokenEntity();
+
+        token.setUser(user);
+        
+        tokenRepository.save(token);
+
+        String verificar = url + token.getToken();
+
+        EmailDTO email = new EmailDTO(
+            dto.email(),
+            "Verificação de Conta - Novo Link Pork",
+            "Olá, " + user.getNome() + "!\n\n" +
+            "Você solicitou um novo link para verificar sua conta no Pork, pois o anterior expirou ou não foi utilizado a tempo.\n\n" +
+            "Para ativar sua comta, basta clicar no link abaixo:" +
+            verificar + "\n\n" +
+            "Se você não solicitou este email, por favor ignore-o."
+        );
+
+        mailService.sendEmailToRegister(email);
 
     }
 

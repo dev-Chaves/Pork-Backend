@@ -10,6 +10,7 @@ import com.devchaves.Pork_backend.DTO.LoginRequestDTO;
 import com.devchaves.Pork_backend.DTO.LoginResponseDTO;
 import com.devchaves.Pork_backend.DTO.RegisterRequestDTO;
 import com.devchaves.Pork_backend.DTO.RegisterResponseDTO;
+import com.devchaves.Pork_backend.DTO.ResendEmail;
 import com.devchaves.Pork_backend.services.TokenService;
 import com.devchaves.Pork_backend.services.UserService;
 
@@ -47,7 +48,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("verify")
+    @GetMapping("verificar")
     public ResponseEntity<String> verificarUsuario(@RequestParam String param) {
 
         try{
@@ -67,6 +68,10 @@ public class AuthController {
         
     }
     
+    @PostMapping("reenviar-email")
+    public ResponseEntity<String> reenviarEmail(@Valid @RequestBody ResendEmail dto) {
+        userService.reenviarVerificacao(dto);
+        return ResponseEntity.ok("Verificando...");
+    }
     
-
 }

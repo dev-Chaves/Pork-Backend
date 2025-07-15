@@ -3,6 +3,7 @@ package com.devchaves.Pork_backend.services;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale.Category;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
@@ -10,10 +11,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.devchaves.Pork_backend.DTO.DashboardDTO;
 import com.devchaves.Pork_backend.DTO.ExpenseRequestDTO;
 import com.devchaves.Pork_backend.DTO.ExpenseResponseDTO;
 import com.devchaves.Pork_backend.DTO.ReceitaResponseDTO;
 import com.devchaves.Pork_backend.DTO.UserUpdateDTO;
+import com.devchaves.Pork_backend.ENUM.CategoriesENUM;
 import com.devchaves.Pork_backend.entity.ExpenseEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.ExpenseRepository;
@@ -97,6 +100,29 @@ public class ExpensesService {
 
     }
 
+    public DashboardDTO mostrarDados(){
+    
+        UserEntity user = getCurrentUser();
+
+        List<ExpenseEntity> despesas = expenseRepository.findByUser(user);
+
+        List<ExpenseResponseDTO> despesaTotal = despesas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
+
+        List<ExpenseResponseDTO> despesaCategoriaFixo = despesas.stream()
+                .filter(n -> n.getCategoria().equals(CategoriesENUM.FIXA))
+                .map(s -> new ExpenseResponseDTO(s.getId(),s.getValor(),s.getDescricao(),s.getCategoria())).toList();
+
+        List<ExpenseResponseDTO> despesaCategoriaVariavel = despesas.stream()
+                .filter(n -> n.getCategoria().equals(CategoriesENUM.VARIAVEL))
+                .map(s -> new ExpenseResponseDTO(s.getId(),s.getValor(),s.getDescricao(),s.getCategoria())).toList();
+
+        BigDecimal totalDespesas = despesas.stream().map(ExpenseEntity::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        DashboardDTO resposta = new DashboardDTO(despesaTotal, despesaCategoriaFixo, despesaCategoriaVariavel, totalDespesas);
+
+        return resposta;
+    }
+    
 
     private UserEntity getCurrentUser (){
         try{

@@ -100,11 +100,11 @@ public class ExpensesService {
 
     }
 
-    public DashboardDTO mostrarDados(){
+    public DashboardDTO consultarDespesas(){
     
         UserEntity user = getCurrentUser();
 
-        List<ExpenseEntity> despesas = expenseRepository.findByUser(user);
+        List<ExpenseEntity> despesas = expenseRepository.findByUser(user.getId());
 
         List<ExpenseResponseDTO> despesaTotal = despesas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
 

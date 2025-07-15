@@ -3,11 +3,13 @@ package com.devchaves.Pork_backend.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.devchaves.Pork_backend.DTO.DashboardDTO;
 import com.devchaves.Pork_backend.DTO.ExpenseRequestDTO;
 import com.devchaves.Pork_backend.DTO.ExpenseResponseDTO;
 import com.devchaves.Pork_backend.DTO.ReceitaResponseDTO;
@@ -17,8 +19,9 @@ import com.devchaves.Pork_backend.services.ExpensesService;
 import jakarta.validation.Valid;
 
 
+
 @RestController
-@RequestMapping("expenses")
+@RequestMapping("despesas")
 public class ExpenseController {
 
     private final ExpensesService expensesService;
@@ -27,7 +30,7 @@ public class ExpenseController {
         this.expensesService = expensesService;
     }
 
-    @PostMapping("receita")
+    @PostMapping("anotar-receita")
     public ResponseEntity<ReceitaResponseDTO> registrarReceita(@Valid @RequestBody UserUpdateDTO dto) {
         
         ReceitaResponseDTO receita = expensesService.adicionarReceita(dto);
@@ -35,13 +38,20 @@ public class ExpenseController {
         return ResponseEntity.ok(receita);
     }
 
-    @PostMapping("despesas")
+    @PostMapping("anotar-despesas")
     public ResponseEntity<List<ExpenseResponseDTO>> registrarDespesas(@Valid @RequestBody List<ExpenseRequestDTO> dto) {
     
         List<ExpenseResponseDTO> responses = expensesService.cadastrarDespesas(dto);
         
         return ResponseEntity.ok(responses);
     }
+
+    @GetMapping("consultar-despesas")
+    public ResponseEntity<DashboardDTO> consultarDespesas() {
+        DashboardDTO response = expensesService.consultarDespesas();
+        return ResponseEntity.ok(response);
+    }
+    
     
     
 

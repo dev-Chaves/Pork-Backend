@@ -1,6 +1,7 @@
 package com.devchaves.Pork_backend.services;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,9 +97,7 @@ public class ExpensesService {
 
         userRepository.save(user);
 
-        ReceitaResponseDTO response = new ReceitaResponseDTO(user.getReceita());
-
-        return response;
+        return new ReceitaResponseDTO(user.getReceita());
 
     }
 
@@ -120,7 +119,7 @@ public class ExpensesService {
 
         BigDecimal totalDespesas = despesas.stream().map(ExpenseEntity::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        DashboardDTO resposta = new DashboardDTO(despesaTotal, despesaCategoriaFixo, despesaCategoriaVariavel, totalDespesas);
+        DashboardDTO resposta = new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, totalDespesas);
 
         return resposta;
     }
@@ -138,10 +137,22 @@ public class ExpensesService {
         despesa.setValor(dto.valor());
         despesa.setDescricao(dto.descricao());
         despesa.setCategoria(dto.categoria());
+        despesa.setAtualizadoEm(LocalDateTime.now());
 
         expenseRepository.save(despesa);
 
-        return new ExpenseResponseDTO( despesa.getId(),despesa.getValor(), despesa.getCategoria().toString(), despesa.getCategoria());
+        return new ExpenseResponseDTO( despesa.getId(),despesa.getValor(), despesa.getDescricao(), despesa.getCategoria());
 
     }
+
+    public void apagarDespesa(Long id){
+
+        UserEntity user = utilServices.getCurrentUser();
+
+        ExpenseEntity despesa = expenseRepository.findByIdAndUserId(id, user.getId());
+
+        expenseRepository.delete(despesa);
+
+    }
+
 }   

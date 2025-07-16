@@ -2,12 +2,9 @@ package com.devchaves.Pork_backend.controller;
 
 import java.util.List;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.devchaves.Pork_backend.DTO.DashboardDTO;
 import com.devchaves.Pork_backend.DTO.ExpenseRequestDTO;
@@ -51,8 +48,20 @@ public class ExpenseController {
         DashboardDTO response = expensesService.consultarDespesas();
         return ResponseEntity.ok(response);
     }
-    
-    
-    
+
+    @DeleteMapping("apagar-despesa/{id}")
+    public ResponseEntity<String> apagarDespesa(@PathVariable Long id){
+
+        expensesService.apagarDespesa(id);
+
+        return ResponseEntity.ok().body("Apagado com sucesso!");
+
+    }
+
+    @PutMapping("atualizar-despesa/{id}")
+    public ResponseEntity<ExpenseResponseDTO> atualizarDespesa(@PathVariable Long id, @Valid @RequestBody ExpenseRequestDTO dto){
+        ExpenseResponseDTO response = expensesService.atualizarDespesa(id, dto);
+        return ResponseEntity.ok(response);
+    } 
 
 }

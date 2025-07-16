@@ -42,7 +42,7 @@ public class ExpensesService {
 
        System.out.println(user.getEmail());
 
-       if (user.getVerificado() == false) {
+       if (!user.getVerificado()) {
         throw new IllegalStateException("Usuário não verificado!");
        }
 
@@ -125,4 +125,23 @@ public class ExpensesService {
         return resposta;
     }
 
+    public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto ){
+
+        UserEntity user = utilServices.getCurrentUser();
+
+        ExpenseEntity despesa = expenseRepository.findByIdAndUserId(id, user.getId());
+        
+        if(despesa == null){
+            throw new IllegalArgumentException("Despesa não encontrada para o usuário fornecido.");
+        }
+
+        despesa.setValor(dto.valor());
+        despesa.setDescricao(dto.descricao());
+        despesa.setCategoria(dto.categoria());
+
+        expenseRepository.save(despesa);
+
+        return new ExpenseResponseDTO( despesa.getId(),despesa.getValor(), despesa.getCategoria().toString(), despesa.getCategoria());
+
+    }
 }   

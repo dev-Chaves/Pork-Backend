@@ -11,17 +11,15 @@ import com.devchaves.Pork_backend.entity.UserEntity;
 public class UtilServices {
 
     public UserEntity getCurrentUser(){
-        try{
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            if(authentication != null && authentication.getPrincipal() instanceof UserEntity){
-                return (UserEntity) authentication.getPrincipal();
-            }
-        }catch(Exception e){
-            throw new UsernameNotFoundException("Usuário não encontrado!");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication != null && authentication.getPrincipal() instanceof UserEntity){
+            return (UserEntity) authentication.getPrincipal();
         }
         
-        return null;
+        throw new UsernameNotFoundException("Usuário não encontrado!");
+    
     }
 
 }

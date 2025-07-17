@@ -1,0 +1,21 @@
+meta {
+  name: registrar-receita
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8080/api/despesas/anotar-receita
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJldWNoYXZleEBnbWFpbC5jb20iLCJpc3MiOiJBUEkgUE9SSyIsImV4cCI6MTc1MjgwMjY2MH0.7AKOJc7sQC_6fKmwVwSIcgSJpT7YtHEKDlNF3U8fLR4
+}
+
+body:json {
+  {
+    "receita":1500
+  }
+}

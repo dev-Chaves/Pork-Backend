@@ -1,0 +1,23 @@
+meta {
+  name: atualizar-despesa
+  type: http
+  seq: 8
+}
+
+put {
+  url: http://localhost:8080/api/despesas/atualizar-despesa/3
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJldWNoYXZleEBnbWFpbC5jb20iLCJpc3MiOiJBUEkgUE9SSyIsImV4cCI6MTc1Mjc5OTc0N30.y6FeWyNqMXslvzFdT_szNAEVVGbQ7W63BNLLRmr6nOg
+}
+
+body:json {
+  {
+    "valor":10000,
+    "descricao":"Parcela do curso",
+    "categoria":"FIXA"
+  }
+}

@@ -1,0 +1,15 @@
+meta {
+  name: deletar-despesa
+  type: http
+  seq: 7
+}
+
+delete {
+  url: http://localhost:8080/api/despesas/apagar-despesa/1
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJldWNoYXZleEBnbWFpbC5jb20iLCJpc3MiOiJBUEkgUE9SSyIsImV4cCI6MTc1Mjc5OTc0N30.y6FeWyNqMXslvzFdT_szNAEVVGbQ7W63BNLLRmr6nOg
+}

@@ -18,7 +18,7 @@ import jakarta.validation.Valid;
 
 
 @RestController
-@RequestMapping("despesas")
+@RequestMapping("/despesas")
 public class ExpenseController {
 
     private final ExpensesService expensesService;

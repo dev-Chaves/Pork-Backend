@@ -1,5 +1,6 @@
 package com.devchaves.Pork_backend.entity;
 
+import com.devchaves.Pork_backend.ENUM.InvestimentoENUM;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -43,6 +44,12 @@ public class UserEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VerificationTokenEntity> tokens;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MetasEntity> metas;
+
+    @Enumerated(EnumType.STRING)
+    private InvestimentoENUM investimento;
 
     @PrePersist
     protected void onCreate() {

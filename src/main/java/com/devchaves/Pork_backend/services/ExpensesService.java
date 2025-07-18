@@ -67,14 +67,12 @@ public class ExpensesService {
 
         expenseRepository.saveAll(despesas);
 
-        List<ExpenseResponseDTO> response = despesas.stream().map((despesa -> new ExpenseResponseDTO(
-        despesa.getId(), 
+        return despesas.stream().map((despesa -> new ExpenseResponseDTO(
+        despesa.getId(),
         despesa.getValor(),
         despesa.getDescricao(),
         despesa.getCategoria())))
         .collect(Collectors.toList());
-
-       return response;
 
     }
 
@@ -82,7 +80,7 @@ public class ExpensesService {
 
         UserEntity user = utilServices.getCurrentUser();
 
-        if (user.getVerificado() == false) {
+        if (!user.getVerificado()) {
             throw new IllegalStateException("Usuário não verificado!");
         }
 
@@ -116,9 +114,7 @@ public class ExpensesService {
 
         BigDecimal totalDespesas = despesas.stream().map(ExpenseEntity::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        DashboardDTO resposta = new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, totalDespesas);
-
-        return resposta;
+        return new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, totalDespesas);
     }
 
     public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto ){

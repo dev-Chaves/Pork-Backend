@@ -17,6 +17,8 @@ import com.devchaves.Pork_backend.entity.VerificationTokenEntity;
 import com.devchaves.Pork_backend.repository.TokenRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class UserService {
 
@@ -45,6 +47,7 @@ public class UserService {
         this.utilServices = utilServices;
     }
 
+    @Transactional
     public RegisterResponseDTO register (RegisterRequestDTO dto){
         
         if(!isValidEmail(dto.email())){
@@ -80,7 +83,7 @@ public class UserService {
 
     public LoginResponseDTO login (LoginRequestDTO dto){
 
-        if(dto.email() == null || dto.email().trim().isEmpty() || dto.senha().trim().isEmpty() || dto.senha() == null){
+        if(dto.email() == null || dto.email().trim().isEmpty() || dto.senha().trim().isEmpty()){
             throw new IllegalArgumentException("Email ou senha não podem conter valores nulos");
         }
     
@@ -90,7 +93,7 @@ public class UserService {
     
         UserEntity user =userRepository.findByEmail(dto.email()).orElseThrow(() -> new UsernameNotFoundException("Email inválido"));
             
-         if (user.getVerificado() == false) {
+         if (!user.getVerificado()) {
             throw new IllegalArgumentException("Usuário não verificado, por favor verifique seu usuário");
          }
 
@@ -100,9 +103,7 @@ public class UserService {
 
          String token = tokenService.generateToken(user);
 
-        LoginResponseDTO response = new LoginResponseDTO(token, user.getEmail(), user.getNome(), user.getReceita());
-
-        return response;
+        return new LoginResponseDTO(token, user.getEmail(), user.getNome(), user.getReceita());
 
     }
 
@@ -110,7 +111,7 @@ public class UserService {
 
         UserEntity user = userRepository.findByEmail(dto.email()).orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado com o email fornecido."));
 
-        if(user.getVerificado() == true){
+        if(user.getVerificado()){
             throw new IllegalStateException("Usuário já verificado.");
         }
 

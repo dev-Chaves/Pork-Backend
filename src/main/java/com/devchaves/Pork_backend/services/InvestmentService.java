@@ -1,10 +1,20 @@
 package com.devchaves.Pork_backend.services;
 
+import com.devchaves.Pork_backend.DTO.InvestmentMethodsResponse;
 import com.devchaves.Pork_backend.DTO.InvestmentRequestDTO;
 import com.devchaves.Pork_backend.DTO.InvestmentResponseDTO;
+import com.devchaves.Pork_backend.ENUM.InvestimentoENUM;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class InvestmentService {
@@ -18,6 +28,8 @@ public class InvestmentService {
         this.utilServices = utilServices;
     }
 
+    private static final List<BigDecimal> porcentagem = Stream.of(10,30,50).map(BigDecimal::new).toList();
+
     public InvestmentResponseDTO selecionarInvestimento(InvestmentRequestDTO dto){
 
         UserEntity user = utilServices.getCurrentUser();
@@ -27,6 +39,35 @@ public class InvestmentService {
         userRepository.save(user);
 
         return new InvestmentResponseDTO(user.getInvestimento().toString());
+    }
+
+    public InvestmentMethodsResponse calcularInvestimentos(){
+
+        UserEntity user = utilServices.getCurrentUser();
+
+        String InvestimentoENUM = user.getInvestimento().toString();
+
+        return switch (InvestimentoENUM) {
+            case "HARD" ->
+                    new InvestmentMethodsResponse(
+                            user.getInvestimento(),
+                            user.getReceita().
+                                    multiply(porcentagem.get(2).divide(new BigDecimal(100))));
+
+            case "MID" ->
+                    new InvestmentMethodsResponse(
+                            user.getInvestimento(),
+                            user.getReceita()
+                                    .multiply(porcentagem.get(1).divide(new BigDecimal(100))));
+
+            case "EASY" ->
+                    new InvestmentMethodsResponse(user.getInvestimento(),
+                            user.getReceita()
+                                    .multiply(porcentagem.getFirst().divide(new BigDecimal(100))));
+
+            default -> throw new IllegalArgumentException("Não foi possível calcular seu investimento");
+        };
+
     }
 
 }

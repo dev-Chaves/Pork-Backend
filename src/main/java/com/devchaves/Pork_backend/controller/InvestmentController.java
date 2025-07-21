@@ -1,5 +1,6 @@
 package com.devchaves.Pork_backend.controller;
 
+import com.devchaves.Pork_backend.DTO.InvestmentMethodsResponse;
 import com.devchaves.Pork_backend.DTO.InvestmentRequestDTO;
 import com.devchaves.Pork_backend.DTO.InvestmentResponseDTO;
 import com.devchaves.Pork_backend.services.InvestmentService;
@@ -26,6 +27,12 @@ public class InvestmentController {
     @PutMapping("alterar-investimento")
     public ResponseEntity<InvestmentResponseDTO> alterarTipoDeInvestimento(@Valid @RequestBody InvestmentRequestDTO dto){
         InvestmentResponseDTO response = investmentService.selecionarInvestimento(dto);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("consultar-investimento")
+    public ResponseEntity<InvestmentMethodsResponse> consultarInvestimento(){
+        InvestmentMethodsResponse response = investmentService.calcularInvestimentos();
         return ResponseEntity.ok(response);
     }
 

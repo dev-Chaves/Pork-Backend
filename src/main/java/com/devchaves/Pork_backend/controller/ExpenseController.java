@@ -35,6 +35,20 @@ public class ExpenseController {
         return ResponseEntity.ok(receita);
     }
 
+    @GetMapping("consultar-receita")
+    public ResponseEntity<ReceitaResponseDTO> consultarReceita(){
+        ReceitaResponseDTO response = expensesService.consultarReceita();
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("atualizar-receita")
+    public ResponseEntity<ReceitaResponseDTO> atualizarReceita(@Valid @RequestBody UserUpdateDTO dto){
+
+        ReceitaResponseDTO respose = expensesService.atualizarReceita(dto);
+
+        return ResponseEntity.ok(respose);
+    }
+
     @PostMapping("anotar-despesas")
     public ResponseEntity<List<ExpenseResponseDTO>> registrarDespesas(@Valid @RequestBody List<ExpenseRequestDTO> dto) {
     

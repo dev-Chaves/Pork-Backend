@@ -148,4 +148,22 @@ public class ExpensesService {
 
     }
 
+    public ReceitaResponseDTO consultarReceita(){
+
+        UserEntity user = utilServices.getCurrentUser();
+
+        return new ReceitaResponseDTO(user.getReceita());
+    }
+
+    public ReceitaResponseDTO atualizarReceita(UserUpdateDTO dto){
+
+        UserEntity user = utilServices.getCurrentUser();
+
+        user.setReceita(dto.receita());
+
+        userRepository.save(user);
+
+        return new ReceitaResponseDTO(user.getReceita());
+    }
+
 }   

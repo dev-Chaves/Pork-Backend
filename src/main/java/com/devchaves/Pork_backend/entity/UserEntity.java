@@ -123,7 +123,23 @@ public class UserEntity implements UserDetails {
     public void setExpenses(List<ExpenseEntity> expenses) {
         this.expenses = expenses;
     }
-    
+
+    public List<MetasEntity> getMetas() {
+        return metas;
+    }
+
+    public void setMetas(List<MetasEntity> metas) {
+        this.metas = metas;
+    }
+
+    public InvestimentoENUM getInvestimento() {
+        return investimento;
+    }
+
+    public void setInvestimento(InvestimentoENUM investimento) {
+        this.investimento = investimento;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));

@@ -30,12 +30,20 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-                
-        String authHeader = request.getHeader("Authorization");
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-        
+        String token = null;
+
+        if (request.getCookies() != null) {
+           for(jakarta.servlet.http.Cookie cookie : request.getCookies()){
+               if("jwt".equals(cookie.getName())){
+                   token = cookie.getValue();
+                   break;
+               }
+           }
+        }
+
+        if(token != null){
+
             try{
                 String username = tokenService.estaValido(token);
 

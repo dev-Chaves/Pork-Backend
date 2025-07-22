@@ -1,5 +1,7 @@
 package com.devchaves.Pork_backend.controller;
 
+import com.devchaves.Pork_backend.DTO.*;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,11 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.devchaves.Pork_backend.DTO.LoginRequestDTO;
-import com.devchaves.Pork_backend.DTO.LoginResponseDTO;
-import com.devchaves.Pork_backend.DTO.RegisterRequestDTO;
-import com.devchaves.Pork_backend.DTO.RegisterResponseDTO;
-import com.devchaves.Pork_backend.DTO.ResendEmail;
 import com.devchaves.Pork_backend.services.TokenService;
 import com.devchaves.Pork_backend.services.UserService;
 
@@ -33,8 +30,20 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<LoginResponseDTO> getMethodName(@Valid @RequestBody LoginRequestDTO dto) {
-        return ResponseEntity.ok(userService.login(dto));
+    public ResponseEntity<LoginResponseDTOV2> login(@Valid @RequestBody LoginRequestDTO dto, HttpServletResponse response) {
+
+        LoginResponseDTO loginResponse = userService.login(dto);
+
+        LoginResponseDTOV2 loginResponseDTOV2 = new LoginResponseDTOV2(loginResponse.email(), loginResponse.receita());
+
+        String token = loginResponse.token();
+
+        String cookieValue = "jwt=" + token +
+                "; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=" + (24 * 60 * 60);
+
+        response.setHeader("Set-Cookie", cookieValue);
+
+        return ResponseEntity.ok(loginResponseDTOV2);
     }
     
 

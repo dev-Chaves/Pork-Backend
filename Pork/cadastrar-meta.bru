@@ -1,0 +1,25 @@
+meta {
+  name: cadastrar-meta
+  type: http
+  seq: 8
+}
+
+post {
+  url: http:/localhost:8080/api/metas/cadastrar-metas
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJldWNoYXZleEBnbWFpbC5jb20iLCJpc3MiOiJBUEkgUE9SSyIsImV4cCI6MTc1MzE0ODEwMH0.2zbqwUZb2adZA11ZSCvMWzp-2gIMYpo7mP0fVGf3kVY
+}
+
+body:json {
+  [
+    {
+      "meta":"Comprar Nintendo Switch 2",
+      "valor": 5000,
+      "data":"15/05/2026"
+    }
+  ]
+}

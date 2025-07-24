@@ -1,23 +1,16 @@
 package com.devchaves.Pork_backend.services;
 
-import java.util.regex.Pattern;
-
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import com.devchaves.Pork_backend.DTO.EmailDTO;
-import com.devchaves.Pork_backend.DTO.LoginRequestDTO;
-import com.devchaves.Pork_backend.DTO.LoginResponseDTO;
-import com.devchaves.Pork_backend.DTO.RegisterRequestDTO;
-import com.devchaves.Pork_backend.DTO.RegisterResponseDTO;
-import com.devchaves.Pork_backend.DTO.ResendEmail;
+import com.devchaves.Pork_backend.DTO.*;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.entity.VerificationTokenEntity;
 import com.devchaves.Pork_backend.repository.TokenRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
-
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {

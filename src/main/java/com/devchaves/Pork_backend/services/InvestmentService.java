@@ -3,17 +3,12 @@ package com.devchaves.Pork_backend.services;
 import com.devchaves.Pork_backend.DTO.InvestmentMethodsResponse;
 import com.devchaves.Pork_backend.DTO.InvestmentRequestDTO;
 import com.devchaves.Pork_backend.DTO.InvestmentResponseDTO;
-import com.devchaves.Pork_backend.ENUM.InvestimentoENUM;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service

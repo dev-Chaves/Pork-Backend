@@ -1,11 +1,10 @@
 package com.devchaves.Pork_backend.entity;
 
+import com.devchaves.Pork_backend.ENUM.CategoriesENUM;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import com.devchaves.Pork_backend.ENUM.CategoriesENUM;
-
-import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tb_despesas")

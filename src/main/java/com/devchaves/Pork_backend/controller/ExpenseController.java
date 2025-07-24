@@ -1,19 +1,12 @@
 package com.devchaves.Pork_backend.controller;
 
-import java.util.List;
-
-import org.springframework.data.repository.query.Param;
+import com.devchaves.Pork_backend.DTO.*;
+import com.devchaves.Pork_backend.services.ExpensesService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.devchaves.Pork_backend.DTO.DashboardDTO;
-import com.devchaves.Pork_backend.DTO.ExpenseRequestDTO;
-import com.devchaves.Pork_backend.DTO.ExpenseResponseDTO;
-import com.devchaves.Pork_backend.DTO.ReceitaResponseDTO;
-import com.devchaves.Pork_backend.DTO.UserUpdateDTO;
-import com.devchaves.Pork_backend.services.ExpensesService;
-
-import jakarta.validation.Valid;
+import java.util.List;
 
 
 

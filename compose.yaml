@@ -10,6 +10,7 @@ services:
     depends_on:
       api:
         condition: service_healthy
+    restart: on-failure
 
   api:
     build: .
@@ -27,6 +28,8 @@ services:
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
       SPRING_SECRET: ${SECRET}
+    restart: on-failure
+
   db:
     image: 'postgres:latest'
     ports:
@@ -42,6 +45,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: on-failure
+
 
 volumes:
   pgdata:

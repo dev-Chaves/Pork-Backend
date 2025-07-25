@@ -103,7 +103,8 @@ public class ExpensesService {
                 .filter(n -> n.getCategoria().equals(CategoriesENUM.FIXA))
                 .map(s -> new ExpenseResponseDTO(s.getId(),s.getValor(),s.getDescricao(),s.getCategoria())).toList();
 
-        List<ExpenseResponseDTO> despesaCategoriaVariavel = despesas.stream()
+        List<ExpenseResponseDTO> despesaCategoriaVariavel =
+                despesas.stream()
                 .filter(n -> n.getCategoria().equals(CategoriesENUM.VARIAVEL))
                 .map(s -> new ExpenseResponseDTO(s.getId(),s.getValor(),s.getDescricao(),s.getCategoria())).toList();
 

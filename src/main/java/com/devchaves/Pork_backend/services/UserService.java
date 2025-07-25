@@ -130,6 +130,14 @@ public class UserService {
 
     }
 
+    public UserInfoResponse consultarInfo(){
+
+        UserEntity user = utilServices.getCurrentUser();
+
+        return new UserInfoResponse(user.getNome());
+
+    }
+
     private boolean isValidEmail(String email){
         if(email == null || email.trim().isEmpty()){
             return false;

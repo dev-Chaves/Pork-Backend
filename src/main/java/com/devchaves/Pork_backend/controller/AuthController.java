@@ -3,6 +3,8 @@ package com.devchaves.Pork_backend.controller;
 import com.devchaves.Pork_backend.DTO.*;
 import com.devchaves.Pork_backend.services.TokenService;
 import com.devchaves.Pork_backend.services.UserService;
+
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +33,14 @@ public class AuthController {
 
         String token = loginResponse.token();
 
-        String cookieValue = "jwt=" + token +
-                "; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=" + (24 * 60 * 60);
+        Cookie cookie = new Cookie("jwt", token);
 
-        response.setHeader("Set-Cookie", cookieValue);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setMaxAge(24 * 60 * 60);
+
+        response.addCookie(cookie);
 
         return ResponseEntity.ok(loginResponseDTOV2);
     }

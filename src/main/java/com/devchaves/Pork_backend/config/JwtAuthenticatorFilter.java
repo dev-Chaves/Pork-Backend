@@ -18,8 +18,6 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
 
     private final CustomUserDetailsService customUserDetailsService;
 
-    
-
     public JwtAuthenticatorFilter(TokenService tokenService, CustomUserDetailsService customUserDetailsService) {
         this.tokenService = tokenService;
         this.customUserDetailsService = customUserDetailsService;
@@ -54,7 +52,9 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
                 }
 
             }catch(Exception e){
-                throw new RuntimeException("JWT Token inválido", e);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("JWT Token inválido");
+                return;
             }
         }
 

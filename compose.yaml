@@ -1,8 +1,22 @@
 services:
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./src/main/resources/nginx/nginx.config:/etc/nginx/nginx.conf:ro
+      - ./src/main/resources/nginx/sites-enabled:/etc/nginx/sites-enabled:ro
+    depends_on:
+      api:
+        condition: service_healthy
+
   api:
     build: .
     ports:
       - "8080:8080"
+    deploy:
+      replicas: 2
     depends_on:
       db:
         condition: service_healthy

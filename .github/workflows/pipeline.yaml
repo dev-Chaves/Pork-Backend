@@ -1,42 +1,49 @@
-name: ci/cd pipeline
+name: Deploy to Docker Swarm
+
 on:
   push:
     branches:
       - main
+
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-      - uses: actions/setup-java@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
         with:
-          java-version: '21'
-          distribution: 'temurin'
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Spring Boot JAR
-        run: ./mvnw clean package -DskipTests
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
 
-      - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest .
+      - name: Copy compose.yaml to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "compose.yaml"
+          target: "/home/${{ secrets.VPS_USER }}/compose.yaml"
 
-      - name: Login no Docker Hub
-        run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-
-      - name: Push Docker image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
-
-      - name: Deploy na VPS via SSH
+      - name: Deploy on VPS via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-                  docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
-                  docker stop pork || true
-                  docker rm pork || true
-                  docker run -d --name pork -p 8080:8080 --env-file /caminho/.env ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
+            docker stack deploy -c /home/${{ secrets.VPS_USER }}/compose.yaml pork

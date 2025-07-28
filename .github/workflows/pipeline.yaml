@@ -47,7 +47,7 @@ jobs:
           ls -l src/main/resources/nginx/
           ls -l src/main/resources/nginx/sites-enabled/
   
-      - name: Copy compose.yaml and nginx configs to VPS
+      - name: Copy compose.yaml to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -55,8 +55,6 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           source: |
             compose.yaml
-            src/main/resources/nginx/nginx.conf
-            src/main/resources/nginx/sites-enabled
           target: "/home/${{ secrets.VPS_USER }}/pork-backend/"
 
       - name: Deploy on VPS via SSH

@@ -13,6 +13,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # --- Debugging Steps Start ---
+      - name: List files in root directory
+        run: ls -la
+
+      - name: List files in src/main/resources/nginx/
+        run: ls -la src/main/resources/nginx/
+
+      - name: List files in src/main/resources/nginx/sites-enabled/
+        run: ls -la src/main/resources/nginx/sites-enabled/
+      # --- Debugging Steps End ---
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 

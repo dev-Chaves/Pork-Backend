@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
 
   nginx:
@@ -54,7 +52,6 @@ services:
       timeout: 5s
       retries: 5
     restart: on-failure
-
 
 volumes:
   pgdata:

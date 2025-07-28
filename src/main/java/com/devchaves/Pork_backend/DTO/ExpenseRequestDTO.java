@@ -1,7 +1,8 @@
 package com.devchaves.Pork_backend.DTO;
 
-import java.math.BigDecimal;
 import com.devchaves.Pork_backend.ENUM.CategoriesENUM;
+
+import java.math.BigDecimal;
 
 public record ExpenseRequestDTO(
     BigDecimal valor,

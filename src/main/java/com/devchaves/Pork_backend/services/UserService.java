@@ -1,23 +1,16 @@
 package com.devchaves.Pork_backend.services;
 
-import java.util.regex.Pattern;
-
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import com.devchaves.Pork_backend.DTO.EmailDTO;
-import com.devchaves.Pork_backend.DTO.LoginRequestDTO;
-import com.devchaves.Pork_backend.DTO.LoginResponseDTO;
-import com.devchaves.Pork_backend.DTO.RegisterRequestDTO;
-import com.devchaves.Pork_backend.DTO.RegisterResponseDTO;
-import com.devchaves.Pork_backend.DTO.ResendEmail;
+import com.devchaves.Pork_backend.DTO.*;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.entity.VerificationTokenEntity;
 import com.devchaves.Pork_backend.repository.TokenRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
-
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {
@@ -36,7 +29,7 @@ public class UserService {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
-    private static final String url = "http://localhost:8080/api/auth/verificar?param=";
+    // private static final String url = "http://localhost/api/auth/verificar?param=";
     
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,TokenRepository tokenRepository, MailService mailService, TokenService tokenService, UtilServices utilServices){
         this.userRepository = userRepository;
@@ -48,7 +41,7 @@ public class UserService {
     }
 
     @Transactional
-    public RegisterResponseDTO register (RegisterRequestDTO dto){
+    public RegisterResponseDTO register (RegisterRequestDTO dto, String url){
         
         if(!isValidEmail(dto.email())){
             throw new IllegalArgumentException("Email com formato inválido");
@@ -74,7 +67,26 @@ public class UserService {
 
         String verificar = url + token.getToken();
 
-        EmailDTO email = new EmailDTO(user.getEmail(), "Bem vindo ao Pork ! Verifique sua Conta", "Obrigado por se registrar, agora verifica sua conta no link abaixo: !" + verificar);
+        String emailBody = String.format(
+            "Olá %s!\n\n" +
+            "Bem-vindo ao Pork! 🎉\n\n" +
+            "Obrigado por se registrar em nossa plataforma. Para começar a usar todos os recursos, " +
+            "você precisa verificar sua conta clicando no link abaixo:\n\n" +
+            "🔗 %s\n\n" +
+            "Este link é válido por 24 horas. Se você não conseguir clicar no link, " +
+            "copie e cole o endereço completo no seu navegador.\n\n" +
+            "Se você não se registrou no Pork, pode ignorar este email com segurança.\n\n" +
+            "Atenciosamente,\n" +
+            "Equipe Pork",
+            user.getNome(),
+            verificar
+        );
+
+        EmailDTO email = new EmailDTO(
+            user.getEmail(), 
+            "✅ Bem-vindo ao Pork - Confirme sua conta", 
+            emailBody
+        );
 
         mailService.sendEmailToRegister(email);
 
@@ -91,7 +103,7 @@ public class UserService {
             throw new IllegalArgumentException("Email inválido");
         }
     
-        UserEntity user =userRepository.findByEmail(dto.email()).orElseThrow(() -> new UsernameNotFoundException("Email inválido"));
+        UserEntity user = userRepository.findByEmail(dto.email()).orElseThrow(() -> new UsernameNotFoundException("Email inválido"));
             
          if (!user.getVerificado()) {
             throw new IllegalArgumentException("Usuário não verificado, por favor verifique seu usuário");
@@ -107,7 +119,7 @@ public class UserService {
 
     }
 
-    public void reenviarVerificacao(ResendEmail dto){
+    public void reenviarVerificacao(ResendEmail dto, String url){
 
         UserEntity user = userRepository.findByEmail(dto.email()).orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado com o email fornecido."));
 
@@ -123,17 +135,38 @@ public class UserService {
 
         String verificar = url + token.getToken();
 
+        String emailBody = String.format(
+            "Olá %s!\n\n" +
+            "Você solicitou um novo link de verificação para sua conta no Pork.\n\n" +
+            "Para ativar sua conta, clique no link abaixo:\n\n" +
+            "🔗 %s\n\n" +
+            "⏰ Este link é válido por 24 horas a partir do momento deste email.\n\n" +
+            "💡 Dica: Se você não conseguir clicar no link, copie e cole o endereço " +
+            "completo no seu navegador.\n\n" +
+            "Se você não solicitou este email, pode ignorá-lo com segurança. " +
+            "Sua conta permanecerá segura.\n\n" +
+            "Precisa de ajuda? Entre em contato conosco respondendo este email.\n\n" +
+            "Atenciosamente,\n" +
+            "Equipe Pork",
+            user.getNome(),
+            verificar
+        );
+
         EmailDTO email = new EmailDTO(
             dto.email(),
-            "Verificação de Conta - Novo Link Pork",
-            "Olá, " + user.getNome() + "!\n\n" +
-            "Você solicitou um novo link para verificar sua conta no Pork, pois o anterior expirou ou não foi utilizado a tempo.\n\n" +
-            "Para ativar sua comta, basta clicar no link abaixo:" +
-            verificar + "\n\n" +
-            "Se você não solicitou este email, por favor ignore-o."
+            "🔄 Pork - Novo link de verificação da conta",
+            emailBody
         );
 
         mailService.sendEmailToRegister(email);
+
+    }
+
+    public UserInfoResponse consultarInfo(){
+
+        UserEntity user = utilServices.getCurrentUser();
+
+        return new UserInfoResponse(user.getNome());
 
     }
 

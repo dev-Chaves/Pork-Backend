@@ -1,0 +1,26 @@
+Conectar na VPS:
+	ssh [nome_de_usuario]@[endereco_ip_da_vps]	
+	sudo apt update && sudo apt upgrade
+Criando usuário:
+	sudo adduser [nome_do_seu_usuario] -> criar usuário
+	sudo usermod -aG sudo [nome_do_seu_usuario] -> colocar ele no grupo adm.
+Adicionando DNS para login:
+	Cloudfare -> adicionar registro -> A -> @ -> vps ip.
+Adicionando atalho para ip:
+	Entrar na pasta .ssh -> criar um arquivo config :
+	Host financepork
+		HostName ipdavps
+copiar arquivos para VPS:
+	scp compose.yaml pork@62.171.135.58:/home/pork/pork-backend
+	scp .env pork@62.171.135.58:/home/usuario/pork-backend
+
+DEPLOY:
+	acesar vps
+	sudo docker swarm init
+	cd pork-backend
+	conferir o .env -> cat .env
+	sudo docker stack deploy -c compose.yaml pork
+	verificar se rodou: sudo docker stack services pork
+
+	CASO NECESSÁRIO ROLLBACK ->
+	sudo docker service update --rollback pork_api

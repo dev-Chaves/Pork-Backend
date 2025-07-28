@@ -2,9 +2,15 @@ package com.devchaves.Pork_backend.controller;
 
 import java.util.List;
 
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.devchaves.Pork_backend.DTO.DashboardDTO;
 import com.devchaves.Pork_backend.DTO.ExpenseRequestDTO;
@@ -13,12 +19,14 @@ import com.devchaves.Pork_backend.DTO.ReceitaResponseDTO;
 import com.devchaves.Pork_backend.DTO.UserUpdateDTO;
 import com.devchaves.Pork_backend.services.ExpensesService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 
 
 @RestController
 @RequestMapping("/despesas")
+@Tag(name = "Despesas e Receitas", description = "Endpoints para gerenciamento de receitas e despesas do usuário")
 public class ExpenseController {
 
     private final ExpensesService expensesService;

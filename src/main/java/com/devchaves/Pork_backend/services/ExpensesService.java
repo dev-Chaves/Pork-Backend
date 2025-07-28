@@ -1,23 +1,18 @@
 package com.devchaves.Pork_backend.services;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
-import com.devchaves.Pork_backend.DTO.DashboardDTO;
-import com.devchaves.Pork_backend.DTO.ExpenseRequestDTO;
-import com.devchaves.Pork_backend.DTO.ExpenseResponseDTO;
-import com.devchaves.Pork_backend.DTO.ReceitaResponseDTO;
-import com.devchaves.Pork_backend.DTO.UserUpdateDTO;
+import com.devchaves.Pork_backend.DTO.*;
 import com.devchaves.Pork_backend.ENUM.CategoriesENUM;
 import com.devchaves.Pork_backend.entity.ExpenseEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.ExpenseRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ExpensesService {
@@ -108,7 +103,8 @@ public class ExpensesService {
                 .filter(n -> n.getCategoria().equals(CategoriesENUM.FIXA))
                 .map(s -> new ExpenseResponseDTO(s.getId(),s.getValor(),s.getDescricao(),s.getCategoria())).toList();
 
-        List<ExpenseResponseDTO> despesaCategoriaVariavel = despesas.stream()
+        List<ExpenseResponseDTO> despesaCategoriaVariavel =
+                despesas.stream()
                 .filter(n -> n.getCategoria().equals(CategoriesENUM.VARIAVEL))
                 .map(s -> new ExpenseResponseDTO(s.getId(),s.getValor(),s.getDescricao(),s.getCategoria())).toList();
 

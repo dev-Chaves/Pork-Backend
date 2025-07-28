@@ -46,8 +46,8 @@ jobs:
           ls -l
           ls -l src/main/resources/nginx/
           ls -l src/main/resources/nginx/sites-enabled/
-
-      - name: Copy compose.yaml, env, and nginx configs to VPS
+  
+      - name: Copy compose.yaml and nginx configs to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}

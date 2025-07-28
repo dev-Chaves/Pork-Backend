@@ -36,7 +36,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           source: "compose.yaml"
-          target: "/home/${{ secrets.VPS_USER }}/pork-backend/compose.yaml"
+          target: "/home/${{ secrets.VPS_USER }}/pork-backend/"
 
       - name: Deploy on VPS via SSH
         uses: appleboy/ssh-action@v1.0.3

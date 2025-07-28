@@ -1,4 +1,4 @@
-name: Deploy to Docker Swarm
+name: Deploy via Docker
 
 on:
   push:
@@ -46,4 +46,6 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
-            docker stack deploy -c /home/${{ secrets.VPS_USER }}/pork-backend/compose.yaml pork
+            cd /home/${{ secrets.VPS_USER }}/pork-backend/
+            docker compose down || true
+            docker compose up -d --remove-orphans

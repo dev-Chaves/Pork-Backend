@@ -36,7 +36,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           source: "compose.yaml"
-          target: "/home/${{ secrets.VPS_USER }}/compose.yaml"
+          target: "/home/${{ secrets.VPS_USER }}/pork-backend/compose.yaml"
 
       - name: Deploy on VPS via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -46,4 +46,4 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
-            docker stack deploy -c /home/${{ secrets.VPS_USER }}/compose.yaml pork
+            docker stack deploy -c /home/${{ secrets.VPS_USER }}/pork-backend/compose.yaml pork

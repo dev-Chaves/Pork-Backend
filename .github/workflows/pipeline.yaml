@@ -58,5 +58,5 @@ jobs:
           script: |
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork-nginx:latest
-            docker-compose -f /home/${{ secrets.VPS_USER }}/compose.yaml down
-            docker-compose -f /home/${{ secrets.VPS_USER }}/compose.yaml up -d
+            docker compose -f /home/${{ secrets.VPS_USER }}/compose.yaml down
+            docker compose -f /home/${{ secrets.VPS_USER }}/compose.yaml up -d

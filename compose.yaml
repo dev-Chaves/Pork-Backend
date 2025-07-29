@@ -7,7 +7,7 @@ services:
       - "443:443"
     volumes:
       - ${NGINX_CONF_PATH}:/etc/nginx/nginx.conf:ro
-      - ${LOAD_BALANCER_CONF_PATH}:/etc/nginx/sites-enabled:ro
+      - ${LOAD_BALANCER_CONF_PATH}:/etc/nginx/sites-enabled/load-balancer.conf:ro
     depends_on:
       - api1
       - api2

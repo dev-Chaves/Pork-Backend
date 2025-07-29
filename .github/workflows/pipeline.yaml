@@ -1,4 +1,4 @@
-name: Deploy via Docker
+name: Deploy to VPS
 
 on:
   push:
@@ -13,17 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # --- Debugging Steps Start ---
-      - name: List files in root directory
-        run: ls -la
-
-      - name: List files in src/main/resources/nginx/
-        run: ls -la src/main/resources/nginx/
-
-      - name: List files in src/main/resources/nginx/sites-enabled/
-        run: ls -la src/main/resources/nginx/sites-enabled/
-      # --- Debugging Steps End ---
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -33,29 +22,32 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      # Build da aplicação Java
+      - name: Build and push Java app
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
 
-      - name: Debug List files before SCP
-        run: |
-          pwd
-          ls -l
-          ls -l src/main/resources/nginx/
-          ls -l src/main/resources/nginx/sites-enabled/
-  
+      # Build do Nginx
+      - name: Build and push Nginx
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.nginx
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pork-nginx:latest
+
       - name: Copy compose.yaml to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          source: |
-            compose.yaml
-          target: "/home/${{ secrets.VPS_USER }}/pork-backend/"
+          source: "compose.yaml"
+          target: "/home/${{ secrets.VPS_USER }}/compose.yaml"
 
       - name: Deploy on VPS via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -65,6 +57,6 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
-            cd /home/${{ secrets.VPS_USER }}/pork-backend/
-            docker compose down || true
-            docker compose up -d --remove-orphans
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork-nginx:latest
+            docker-compose -f /home/${{ secrets.VPS_USER }}/compose.yaml down
+            docker-compose -f /home/${{ secrets.VPS_USER }}/compose.yaml up -d

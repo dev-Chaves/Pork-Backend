@@ -8,16 +8,37 @@ services:
     volumes:
       - ${NGINX_CONF_PATH}:/etc/nginx/nginx.conf:ro
       - ${LOAD_BALANCER_CONF_PATH}:/etc/nginx/sites-enabled:ro
-    # depends_on:
-    #   api:
-    #     condition: service_healthy
+    depends_on:
+      - api1
+      - api2
     restart: on-failure
 
-  api:
+  api1:
     image: financepork/pork:latest
     build: .
-    deploy:
-      replicas: 2
+    container_name: pork-api1
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRESQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRESQL_PASSWORD}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+      SPRING_SECRET: ${SECRET}
+    restart: on-failure
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8080/api/actuator/health"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5
+    #   start_period: 40s
+
+  api2:
+    image: financepork/pork:latest
+    build: .
+    container_name: pork-api2
     depends_on:
       db:
         condition: service_healthy

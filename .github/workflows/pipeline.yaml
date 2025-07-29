@@ -1,4 +1,4 @@
-name: Deploy to Docker Swarm
+name: Deploy to VPS
 
 on:
   push:
@@ -22,12 +22,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      # Build da aplicação Java
+      - name: Build and push Java app
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
+
+      # Build do Nginx
+      - name: Build and push Nginx
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.nginx
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pork-nginx:latest
 
       - name: Copy compose.yaml to VPS
         uses: appleboy/scp-action@v0.1.7
@@ -46,4 +57,6 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
-            docker stack deploy -c /home/${{ secrets.VPS_USER }}/compose.yaml pork
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork-nginx:latest
+            docker-compose -f /home/${{ secrets.VPS_USER }}/compose.yaml down
+            docker-compose -f /home/${{ secrets.VPS_USER }}/compose.yaml up -d

@@ -1,0 +1,63 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Build da aplicação Java
+      - name: Build and push Java app
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
+
+      # Build do Nginx
+      - name: Build and push Nginx
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.nginx
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pork-nginx:latest
+
+      - name: Copy compose.yaml to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "compose.yaml"
+          target: "/home/${{ secrets.VPS_USER }}/compose.yaml"
+
+      - name: Deploy on VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork-nginx:latest
+            cd /home/${{ secrets.VPS_USER }}/pork-backend/
+            docker compose down || true
+            docker compose up -d --remove-orphans

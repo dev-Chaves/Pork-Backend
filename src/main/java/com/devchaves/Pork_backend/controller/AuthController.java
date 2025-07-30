@@ -84,7 +84,7 @@ public class AuthController {
     @PostMapping("reenviar-email")
     public ResponseEntity<String> reenviarEmail(@Valid @RequestBody ResendEmail dto, HttpServletRequest request) {
 
-        String baseUrl = getBaseUrl(request) + "api/auth/verificar?param=";
+        String baseUrl = getBaseUrl(request) + "/api/auth/verificar?param=";
         
         userService.reenviarVerificacao(dto, baseUrl);
 

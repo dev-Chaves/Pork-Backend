@@ -12,6 +12,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -53,7 +55,7 @@ public class AuthController {
     @PostMapping("register")
     public ResponseEntity<RegisterResponseDTO> register(@Valid @RequestBody RegisterRequestDTO dto, HttpServletRequest request) {
 
-        String baseUrl = getBaseUrl(request) + "api/auth/verificar?param=";
+        String baseUrl = getBaseUrl(request) + "/api/auth/verificar?param=";
         
         RegisterResponseDTO response = userService.register(dto, baseUrl);
 

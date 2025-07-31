@@ -18,11 +18,11 @@ public class InvestmentController {
         this.investmentService = investmentService;
     }
 
-    @PostMapping("adicionar-investimento")
-    public ResponseEntity<InvestmentResponseDTO> selecionarTipoDeInvestimento(@Valid @RequestBody InvestmentRequestDTO dto){
-        InvestmentResponseDTO response = investmentService.selecionarInvestimento(dto);
-        return ResponseEntity.ok(response);
-    }
+//    @PostMapping("adicionar-investimento")
+//    public ResponseEntity<InvestmentResponseDTO> selecionarTipoDeInvestimento(@Valid @RequestBody InvestmentRequestDTO dto){
+//        InvestmentResponseDTO response = investmentService.selecionarInvestimento(dto);
+//        return ResponseEntity.ok(response);
+//    }
 
     @PutMapping("alterar-investimento")
     public ResponseEntity<InvestmentResponseDTO> alterarTipoDeInvestimento(@Valid @RequestBody InvestmentRequestDTO dto){

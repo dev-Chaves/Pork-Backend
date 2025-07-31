@@ -7,6 +7,8 @@ import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.MetasRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,6 +76,20 @@ public class MetasService {
         }
 
         metasRepository.delete(metasRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Meta não encontrada")));
+
+    }
+
+    public List<MetasResponseDTO> consultarMetas(){
+
+        UserEntity user = utilServices.getCurrentUser();
+
+        List<MetasEntity> metas = metasRepository.findAll();
+
+        return metas.stream().map(n -> new MetasResponseDTO(
+                n.getMeta(),
+                n.getValor(),
+                n.getData()
+        )).toList();
 
     }
 

@@ -35,4 +35,9 @@ public class MetasController {
         return ResponseEntity.ok("Apagado com sucesso!");
     }
 
+    @GetMapping("consultar-metas")
+    public ResponseEntity<List<MetasResponseDTO>> consultarMetas(){
+        return ResponseEntity.ok(metasService.consultarMetas());
+    }
+
 }

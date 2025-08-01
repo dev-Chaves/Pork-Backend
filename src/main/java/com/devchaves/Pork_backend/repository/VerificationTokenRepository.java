@@ -12,6 +12,6 @@ import java.util.Optional;
 public interface VerificationTokenRepository extends JpaRepository<VerificationTokenEntity, Long> {
 
     @Query(value = "SELECT * FROM tb_verification_tokens WHERE token = :token", nativeQuery = true)
-    Optional<VerificationTokenEntity> findToken(@Param("token")String token);
+    Optional<VerificationTokenEntity> findByToken(@Param("token")String token);
 
 }

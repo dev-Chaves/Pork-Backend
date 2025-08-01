@@ -4,7 +4,7 @@ domains=(financepork.site)
 rsa_key_size=4096
 data_path="./certbot"
 email="financepork@gmail.com" # Adicione seu email aqui
-staging=1 # Mude para 1 se quiser testar primeiro
+staging=0 # Mude para 1 se quiser testar primeiro
 
 if [ -d "$data_path" ]; then
   read -p "Existing data found for $domains. Continue and replace existing certificate? (y/N) " decision

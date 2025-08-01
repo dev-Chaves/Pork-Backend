@@ -15,8 +15,11 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                                "https://pork-finance.vercel.app",
-                                "http://localhost:5173"
+                        "https://pork-finance.vercel.app",
+                        "https://financepork.site",
+                        "https://www.financepork.site",
+                        "http://localhost:5173",
+                        "http://localhost:3000"
                         )
                         .allowedMethods(
                                 "GET",

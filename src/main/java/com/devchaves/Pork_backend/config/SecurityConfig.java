@@ -29,28 +29,31 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors(Customizer.withDefaults())
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/verify/**").permitAll()
-                    .requestMatchers("/health/**").permitAll()
-                    .requestMatchers(
-                            "/swagger-ui.html",
-                            "/swagger-ui/**",
-                            "/v3/api-docs/**",
-                            "/swagger-resources/**",
-                            "/webjars/**"
-                    ).permitAll()
-                .anyRequest().authenticated()
-            )
+        http
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
 
-            .addFilterBefore(
-                new JwtAuthenticatorFilter(tokenService, customUserDetailsService),
-                UsernamePasswordAuthenticationFilter.class
-            );
-        
+                        .requestMatchers(
+                                "/auth/**",
+                                "/verify/**",
+                                "/health/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
+
+                        .anyRequest().authenticated()
+                )
+
+                .addFilterBefore(
+                        new JwtAuthenticatorFilter(tokenService, customUserDetailsService),
+                        UsernamePasswordAuthenticationFilter.class
+                );
+
         return http.build();
     }
 

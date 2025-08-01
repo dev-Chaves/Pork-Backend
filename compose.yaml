@@ -8,12 +8,21 @@ services:
       - api1
       - api2
     restart: on-failure
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
-  api:
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+  api1:
     image: financepork/pork:latest
     build: .
-    deploy:
-      replicas: 2
     depends_on:
       db:
         condition: service_healthy
@@ -25,12 +34,21 @@ services:
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
       SPRING_SECRET: ${SECRET}
     restart: on-failure
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8080/api/actuator/health"]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 5
-    #   start_period: 40s
+
+  api2:
+    image: financepork/pork:latest
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRESQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRESQL_PASSWORD}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+      SPRING_SECRET: ${SECRET}
+    restart: on-failure
 
   db:
     image: 'postgres:latest'
@@ -48,7 +66,6 @@ services:
       timeout: 5s
       retries: 5
     restart: on-failure
-
 
 volumes:
   pgdata:

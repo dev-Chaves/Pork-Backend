@@ -40,14 +40,14 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/pork-nginx:latest
 
-      - name: Copy compose.yaml to VPS
+      - name: Copy files to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          source: "compose.yaml"
-          target: "/home/${{ secrets.VPS_USER }}/compose.yaml"
+          source: "compose.yaml,init-letsencrypt.sh"
+          target: "/home/${{ secrets.VPS_USER }}/pork-backend/"
 
       - name: Deploy on VPS via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -56,8 +56,19 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            cd /home/${{ secrets.VPS_USER }}/pork-backend/
+            chmod +x init-letsencrypt.sh
+            
+            # Pull das imagens mais recentes
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork:latest
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork-nginx:latest
-            cd /home/${{ secrets.VPS_USER }}/pork-backend/
-            docker compose down || true
-            docker compose up -d --remove-orphans
+            
+            # Se não existir certificado, executar script de inicialização
+            if [ ! -d "./certbot/conf/live/financepork.site" ]; then
+              echo "Iniciando configuração SSL..."
+              ./init-letsencrypt.sh
+            else
+              echo "Certificado SSL já existe, fazendo deploy normal..."
+              docker compose down || true
+              docker compose up -d --remove-orphans
+            fi

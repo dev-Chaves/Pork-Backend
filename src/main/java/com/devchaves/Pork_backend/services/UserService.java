@@ -4,6 +4,7 @@ import com.devchaves.Pork_backend.DTO.*;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.entity.VerificationTokenEntity;
 import com.devchaves.Pork_backend.repository.UserRepository;
+import com.devchaves.Pork_backend.repository.VerificationTokenRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,8 +15,6 @@ import java.util.regex.Pattern;
 @Service
 public class UserService {
 
-    private final TokenRepository tokenRepository;
-
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
@@ -24,19 +23,21 @@ public class UserService {
 
     private final TokenService tokenService;
 
-    private final UtilServices utilServices;    
+    private final UtilServices utilServices;
+
+    private final VerificationTokenRepository verificationTokenRepository;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
     // private static final String url = "http://localhost/api/auth/verificar?param=";
     
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,TokenRepository tokenRepository, MailService mailService, TokenService tokenService, UtilServices utilServices){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenRepository verificationTokenRepository, MailService mailService, TokenService tokenService, UtilServices utilServices){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.tokenRepository = tokenRepository;
         this.mailService = mailService;
         this.tokenService = tokenService;
         this.utilServices = utilServices;
+        this.verificationTokenRepository = verificationTokenRepository;
     }
 
     @Transactional
@@ -62,7 +63,7 @@ public class UserService {
 
         token.setUser(user);
 
-        tokenRepository.save(token);
+        verificationTokenRepository.save(token);
 
         String verificar = url + token.getToken();
 
@@ -130,7 +131,7 @@ public class UserService {
 
         token.setUser(user);
         
-        tokenRepository.save(token);
+        verificationTokenRepository.save(token);
 
         String verificar = url + token.getToken();
 

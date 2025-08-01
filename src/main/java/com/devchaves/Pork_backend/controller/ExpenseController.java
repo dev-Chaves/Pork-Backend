@@ -35,13 +35,13 @@ public class ExpenseController {
         this.expensesService = expensesService;
     }
 
-    @PostMapping("anotar-receita")
-    public ResponseEntity<ReceitaResponseDTO> registrarReceita(@Valid @RequestBody UserUpdateDTO dto) {
-        
-        ReceitaResponseDTO receita = expensesService.adicionarReceita(dto);
-        
-        return ResponseEntity.ok(receita);
-    }
+//    @PostMapping("anotar-receita")
+//    public ResponseEntity<ReceitaResponseDTO> registrarReceita(@Valid @RequestBody UserUpdateDTO dto) {
+//
+//        ReceitaResponseDTO receita = expensesService.adicionarReceita(dto);
+//
+//        return ResponseEntity.ok(receita);
+//    }
 
     @GetMapping("consultar-receita")
     public ResponseEntity<ReceitaResponseDTO> consultarReceita(){

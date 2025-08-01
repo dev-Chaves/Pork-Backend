@@ -6,8 +6,8 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.entity.VerificationTokenEntity;
-import com.devchaves.Pork_backend.repository.TokenRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
+import com.devchaves.Pork_backend.repository.VerificationTokenRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -23,12 +23,13 @@ public class TokenService {
 
     private final long expirationTime = 86400000;
 
-    private final TokenRepository tokenRepository;
+
+    private final VerificationTokenRepository verificationTokenRepository;
 
     private final UserRepository userRepository;
 
-    public TokenService(TokenRepository tokenRepository, UserRepository userRepository) {
-        this.tokenRepository = tokenRepository;
+    public TokenService( VerificationTokenRepository verificationTokenRepository, UserRepository userRepository) {
+        this.verificationTokenRepository = verificationTokenRepository;
         this.userRepository = userRepository;
     }
 
@@ -38,7 +39,7 @@ public class TokenService {
             throw new IllegalArgumentException("Token não pode ser inválido ou vazio!");
         }
 
-        VerificationTokenEntity token = tokenRepository.findByToken(request);
+        VerificationTokenEntity token = verificationTokenRepository.findByToken(request).orElseThrow(() -> new IllegalArgumentException("Token de verificação inválido"));
 
         verificarExpiracao(token);
 
@@ -52,7 +53,7 @@ public class TokenService {
 
         userRepository.save(user);
 
-        tokenRepository.delete(token);
+        verificationTokenRepository.delete(token);
 
     }
 

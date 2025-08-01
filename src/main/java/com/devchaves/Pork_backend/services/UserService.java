@@ -3,7 +3,6 @@ package com.devchaves.Pork_backend.services;
 import com.devchaves.Pork_backend.DTO.*;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.entity.VerificationTokenEntity;
-import com.devchaves.Pork_backend.repository.TokenRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -73,7 +72,7 @@ public class UserService {
             "Obrigado por se registrar em nossa plataforma. Para começar a usar todos os recursos, " +
             "você precisa verificar sua conta clicando no link abaixo:\n\n" +
             "🔗 %s\n\n" +
-            "Este link é válido por 24 horas. Se você não conseguir clicar no link, " +
+            "Este link é válido por 10 minutos. Se você não conseguir clicar no link, " +
             "copie e cole o endereço completo no seu navegador.\n\n" +
             "Se você não se registrou no Pork, pode ignorar este email com segurança.\n\n" +
             "Atenciosamente,\n" +
@@ -83,8 +82,8 @@ public class UserService {
         );
 
         EmailDTO email = new EmailDTO(
-            user.getEmail(), 
-            "✅ Bem-vindo ao Pork - Confirme sua conta", 
+            user.getEmail(),
+            "✅ Bem-vindo ao Pork - Confirme sua conta",
             emailBody
         );
 
@@ -140,7 +139,7 @@ public class UserService {
             "Você solicitou um novo link de verificação para sua conta no Pork.\n\n" +
             "Para ativar sua conta, clique no link abaixo:\n\n" +
             "🔗 %s\n\n" +
-            "⏰ Este link é válido por 24 horas a partir do momento deste email.\n\n" +
+            "⏰ Este link é válido por 10 minutos a partir do momento deste email.\n\n" +
             "💡 Dica: Se você não conseguir clicar no link, copie e cole o endereço " +
             "completo no seu navegador.\n\n" +
             "Se você não solicitou este email, pode ignorá-lo com segurança. " +
@@ -159,6 +158,14 @@ public class UserService {
         );
 
         mailService.sendEmailToRegister(email);
+
+    }
+
+    public void enviarEmaiLRedefenirSenha(String email){
+
+        UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+
+
 
     }
 

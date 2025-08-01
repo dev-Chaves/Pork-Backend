@@ -1,6 +1,6 @@
 #!/bin/bash
 
-domains=(financepork.site www.financepork.site)
+domains=(financepork.site)
 rsa_key_size=4096
 data_path="./certbot"
 email="financepork@gmail.com" # Adicione seu email aqui

@@ -1,8 +1,10 @@
 package com.devchaves.Pork_backend.services;
 
 import com.devchaves.Pork_backend.DTO.*;
+import com.devchaves.Pork_backend.entity.PasswordTokenEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.entity.VerificationTokenEntity;
+import com.devchaves.Pork_backend.repository.PasswordTokenRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
 import com.devchaves.Pork_backend.repository.VerificationTokenRepository;
 import jakarta.transaction.Transactional;
@@ -10,6 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Service
@@ -27,17 +31,20 @@ public class UserService {
 
     private final VerificationTokenRepository verificationTokenRepository;
 
+    private final PasswordTokenRepository passwordTokenRepository;
+
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
     // private static final String url = "http://localhost/api/auth/verificar?param=";
     
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenRepository verificationTokenRepository, MailService mailService, TokenService tokenService, UtilServices utilServices){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenRepository verificationTokenRepository, MailService mailService, TokenService tokenService, UtilServices utilServices, PasswordTokenRepository passwordTokenRepository){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
         this.tokenService = tokenService;
         this.utilServices = utilServices;
         this.verificationTokenRepository = verificationTokenRepository;
+        this.passwordTokenRepository = passwordTokenRepository;
     }
 
     @Transactional
@@ -166,11 +173,50 @@ public class UserService {
 
         UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
+        PasswordTokenEntity token = new PasswordTokenEntity();
+
+        token.setToken(UUID.randomUUID().toString());
+        token.setUser(user);
+
+        passwordTokenRepository.save(token);
+
+        String url = "https://localhost:5173/api/auth/redefinir-senha?token=" + token.getToken();
+
+        String corpoEmail = String.format(
+                "Olá %s,\n\n" +
+                        "Você solicitou a redefinição da sua senha. Clique no link abaixo para continuar:\n\n" +
+                        "🔗 %s\n\n" +
+                        "Se você não fez esta solicitação, pode ignorar este e-mail.",
+                user.getNome(),
+                url
+        );
+
+        EmailDTO emailDto = new EmailDTO(
+                user.getEmail(),
+                "Pork - Redefinição de Senha",
+                corpoEmail
+        );
+
+        mailService.sendEmailToRegister(emailDto);
     }
 
     @Transactional
-    public boolean redefinirSenha(ChangePasswordRequest dto){
-        return true;
+    public void redefinirSenha(ChangePasswordRequest dto, String token){
+
+        PasswordTokenEntity resetToken = passwordTokenRepository.findByToken(token).orElseThrow(() -> new IllegalArgumentException("Token inválido"));
+
+        UserEntity user = resetToken.getUser();
+
+        if(!Objects.equals(dto.password(), dto.secondPassword())){
+            throw new IllegalArgumentException("Senhas devem ser iguais");
+        }
+
+        user.setSenha(dto.password());
+
+        userRepository.save(user);
+
+        passwordTokenRepository.delete(resetToken);
+
     }
 
     public UserInfoResponse consultarInfo(){

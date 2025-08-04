@@ -71,25 +71,25 @@ public class ExpensesService {
 
     }
 
-    public ReceitaResponseDTO adicionarReceita(UserUpdateDTO dto){
-
-        UserEntity user = utilServices.getCurrentUser();
-
-        if (!user.getVerificado()) {
-            throw new IllegalStateException("Usuário não verificado!");
-        }
-
-        System.out.println(user.getUsername());
-
-        System.out.println(dto.receita());
-
-        user.setReceita(dto.receita());
-
-        userRepository.save(user);
-
-        return new ReceitaResponseDTO(user.getReceita());
-
-    }
+//    public ReceitaResponseDTO adicionarReceita(UserUpdateDTO dto){
+//
+//        UserEntity user = utilServices.getCurrentUser();
+//
+//        if (!user.getVerificado()) {
+//            throw new IllegalStateException("Usuário não verificado!");
+//        }
+//
+//        System.out.println(user.getUsername());
+//
+//        System.out.println(dto.receita());
+//
+//        user.setReceita(dto.receita());
+//
+//        userRepository.save(user);
+//
+//        return new ReceitaResponseDTO(user.getReceita());
+//
+//    }
 
     public DashboardDTO consultarDespesas(){
     

@@ -96,7 +96,7 @@ public class AuthController {
     @PostMapping("redefinir-email-senha")
     public ResponseEntity<String> reenviarEmailSenha(@Valid @RequestBody ResendEmail dto, HttpServletRequest request){
 
-        String baseUrl = "localhost:5173" + "/redefinir-senha";
+
 
         return ResponseEntity.ok("Enviado Email!");
     }

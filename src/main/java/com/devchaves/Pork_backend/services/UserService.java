@@ -166,8 +166,11 @@ public class UserService {
 
         UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
+    }
 
-
+    @Transactional
+    public boolean redefinirSenha(ChangePasswordRequest dto){
+        return true;
     }
 
     public UserInfoResponse consultarInfo(){

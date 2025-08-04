@@ -54,6 +54,8 @@ public class UserEntity implements UserDetails {
     protected void onCreate() {
         this.criadoEm = LocalDateTime.now();
         this.verificado = false;
+        this.receita = BigDecimal.valueOf(0);
+        this.investimento = InvestimentoENUM.MID;
     }
 
     public UserEntity() {

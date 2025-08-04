@@ -93,6 +93,21 @@ public class AuthController {
         return ResponseEntity.ok("Verificando...");
     }
 
+    @PostMapping("redefinir-email-senha")
+    public ResponseEntity<String> reenviarEmailSenha(@Valid @RequestBody ResendEmail dto, HttpServletRequest request){
+
+        String baseUrl = "localhost:5173" + "/redefinir-senha";
+
+        return ResponseEntity.ok("Enviado Email!");
+    }
+
+    @PostMapping("redefinir-senha")
+    public ResponseEntity<Boolean> redefinirSenha(@Valid @RequestBody ChangePasswordRequest dto){
+        return ResponseEntity.ok(true);
+    }
+
+
+
     private String getBaseUrl(HttpServletRequest request) {
         String scheme = request.getScheme();
         String serverName = request.getServerName();

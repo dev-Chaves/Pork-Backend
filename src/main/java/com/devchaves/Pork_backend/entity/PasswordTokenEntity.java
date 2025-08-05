@@ -32,6 +32,7 @@ public class PasswordTokenEntity {
     protected void onCreate() {
         this.criadoEm = LocalDateTime.now();
         this.expirado = false;
+        this.expiraEm = LocalDateTime.now().plusMinutes(10);
     }
 
     public PasswordTokenEntity() {

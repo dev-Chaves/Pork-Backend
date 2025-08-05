@@ -1,5 +1,6 @@
 package com.devchaves.Pork_backend.repository;
 
+import com.devchaves.Pork_backend.ENUM.InvestimentoENUM;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -25,5 +26,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Modifying
     @Query(value = "UPDATE tb_usuarios SET receita = :receita WHERE id = :userId", nativeQuery = true)
     void updateReceita(@Param("userId") Long userId, @Param("receita")BigDecimal receita);
+
+    @Modifying
+    @Query(value = "UPDATE tb_usuarios SET investimento = :investimento WHERE id = :userId", nativeQuery = true)
+    void updateInvestimento(@Param("userId")Long userId, @Param("investimento")InvestimentoENUM investimento);
 
 }

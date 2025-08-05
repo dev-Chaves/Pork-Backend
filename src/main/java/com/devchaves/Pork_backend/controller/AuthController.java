@@ -96,17 +96,18 @@ public class AuthController {
     @PostMapping("redefinir-email-senha")
     public ResponseEntity<String> reenviarEmailSenha(@Valid @RequestBody ResendEmail dto, HttpServletRequest request){
 
-
+        userService.enviarEmaiLRedefenirSenha(dto.email());
 
         return ResponseEntity.ok("Enviado Email!");
     }
 
     @PostMapping("redefinir-senha")
-    public ResponseEntity<Boolean> redefinirSenha(@Valid @RequestBody ChangePasswordRequest dto){
-        return ResponseEntity.ok(true);
+    public ResponseEntity<String> redefinirSenha(@RequestParam("token") String token, @Valid @RequestBody ChangePasswordRequest dto){
+
+        userService.redefinirSenha(dto, token);
+
+        return ResponseEntity.ok("Senha redefinida com sucesso!");
     }
-
-
 
     private String getBaseUrl(HttpServletRequest request) {
         String scheme = request.getScheme();

@@ -5,6 +5,7 @@ import com.devchaves.Pork_backend.DTO.InvestmentRequestDTO;
 import com.devchaves.Pork_backend.DTO.InvestmentResponseDTO;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,13 +26,12 @@ public class InvestmentService {
 
     private static final List<BigDecimal> porcentagem = Stream.of(10,30,50).map(BigDecimal::new).toList();
 
+    @Transactional
     public InvestmentResponseDTO selecionarInvestimento(InvestmentRequestDTO dto){
 
         UserEntity user = utilServices.getCurrentUser();
 
-        user.setInvestimento(dto.tipo());
-
-        userRepository.save(user);
+        userRepository.updateInvestimento(user.getId(), dto.tipo().toString());
 
         return new InvestmentResponseDTO(user.getInvestimento().toString());
     }

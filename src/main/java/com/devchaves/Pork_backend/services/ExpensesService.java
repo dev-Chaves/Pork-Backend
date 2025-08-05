@@ -71,46 +71,26 @@ public class ExpensesService {
 
     }
 
-//    public ReceitaResponseDTO adicionarReceita(UserUpdateDTO dto){
-//
-//        UserEntity user = utilServices.getCurrentUser();
-//
-//        if (!user.getVerificado()) {
-//            throw new IllegalStateException("Usuário não verificado!");
-//        }
-//
-//        System.out.println(user.getUsername());
-//
-//        System.out.println(dto.receita());
-//
-//        user.setReceita(dto.receita());
-//
-//        userRepository.save(user);
-//
-//        return new ReceitaResponseDTO(user.getReceita());
-//
-//    }
-
     public DashboardDTO consultarDespesas(){
     
         UserEntity user = utilServices.getCurrentUser();
 
-        List<ExpenseEntity> despesas = expenseRepository.findByUser(user.getId());
+        List<ExpenseEntity> todasDespesas = expenseRepository.findByUser(user.getId());
 
-        List<ExpenseResponseDTO> despesaTotal = despesas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
+        List<ExpenseEntity> despesasFixas = expenseRepository.findFixedsExpensesByUserId(user.getId());
 
-        List<ExpenseResponseDTO> despesaCategoriaFixo = despesas.stream()
-                .filter(n -> n.getCategoria().equals(CategoriesENUM.FIXA))
-                .map(s -> new ExpenseResponseDTO(s.getId(),s.getValor(),s.getDescricao(),s.getCategoria())).toList();
+        List<ExpenseEntity> despesasVariaveis = expenseRepository.findVariablesExpensesByUserId(user.getId());
+
+        BigDecimal despesasTotal = expenseRepository.sumTotalExpenseByUserId(user.getId());
+
+        List<ExpenseResponseDTO> despesaTotal = todasDespesas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
+
+        List<ExpenseResponseDTO> despesaCategoriaFixo = despesasFixas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
 
         List<ExpenseResponseDTO> despesaCategoriaVariavel =
-                despesas.stream()
-                .filter(n -> n.getCategoria().equals(CategoriesENUM.VARIAVEL))
-                .map(s -> new ExpenseResponseDTO(s.getId(),s.getValor(),s.getDescricao(),s.getCategoria())).toList();
+                despesasVariaveis.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
 
-        BigDecimal totalDespesas = despesas.stream().map(ExpenseEntity::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        return new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, totalDespesas);
+        return new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, despesasTotal);
     }
 
     public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto ){
@@ -123,12 +103,12 @@ public class ExpensesService {
             throw new IllegalArgumentException("Despesa não encontrada para o usuário fornecido.");
         }
 
-        despesa.setValor(dto.valor());
-        despesa.setDescricao(dto.descricao());
-        despesa.setCategoria(dto.categoria());
-        despesa.setAtualizadoEm(LocalDateTime.now());
-
-        expenseRepository.save(despesa);
+        expenseRepository.updateDespesa(
+                dto.valor(),
+                dto.descricao(),
+                dto.categoria().toString(),
+                despesa.getId(),
+                user.getId());
 
         return new ExpenseResponseDTO( despesa.getId(),despesa.getValor(), despesa.getDescricao(), despesa.getCategoria());
 
@@ -155,9 +135,7 @@ public class ExpensesService {
 
         UserEntity user = utilServices.getCurrentUser();
 
-        user.setReceita(dto.receita());
-
-        userRepository.save(user);
+        userRepository.updateReceita(user.getId(), dto.receita());
 
         return new ReceitaResponseDTO(user.getReceita());
     }

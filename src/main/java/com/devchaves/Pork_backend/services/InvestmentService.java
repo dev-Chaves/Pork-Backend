@@ -31,7 +31,7 @@ public class InvestmentService {
 
         UserEntity user = utilServices.getCurrentUser();
 
-        userRepository.updateInvestimento(user.getId(), dto.tipo());
+        userRepository.updateInvestimento(user.getId(), dto.tipo().toString());
 
         return new InvestmentResponseDTO(user.getInvestimento().toString());
     }

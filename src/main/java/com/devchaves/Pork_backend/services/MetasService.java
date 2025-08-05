@@ -7,8 +7,6 @@ import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.MetasRepository;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +81,7 @@ public class MetasService {
 
         UserEntity user = utilServices.getCurrentUser();
 
-        List<MetasEntity> metas = metasRepository.findAll();
+        List<MetasEntity> metas = metasRepository.findByUserId(user.getId());
 
         return metas.stream().map(n -> new MetasResponseDTO(
                 n.getMeta(),

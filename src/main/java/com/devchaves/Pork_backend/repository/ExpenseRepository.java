@@ -31,7 +31,7 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long> {
     public BigDecimal sumTotalExpenseByUserId(Long userId);
 
     @Modifying
-    @Query(value = "UPDATE tb_despesas SET valor = :valor, descricao =: descricao, categoria = :categoria, atualizado_em = CURRENT_TIMESTAMP WHERE id = :id AND user_id = :userId")
+    @Query(value = "UPDATE tb_despesas SET valor = :valor, descricao =: descricao, categoria = :categoria, atualizado_em = CURRENT_TIMESTAMP WHERE id = :id AND user_id = :userId", nativeQuery = true)
     void updateDespesa(
             @Param("valor") BigDecimal valor,
             @Param("descricao")String descricao,

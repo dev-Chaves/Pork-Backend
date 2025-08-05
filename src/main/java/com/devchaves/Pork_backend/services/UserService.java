@@ -211,7 +211,7 @@ public class UserService {
             throw new IllegalArgumentException("Senhas devem ser iguais");
         }
 
-        user.setSenha(dto.password());
+        user.setSenha(passwordEncoder.encode(dto.password()));
 
         userRepository.save(user);
 

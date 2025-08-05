@@ -14,6 +14,6 @@ CREATE TABLE tb_password_token (
 
     CONSTRAINT fk_password_token_user
         FOREIGN KEY (user_id)
-        REFERENCES tb_user(id)
+        REFERENCES tb_usuarios(id)
         ON DELETE CASCADE
 );

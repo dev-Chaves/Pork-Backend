@@ -103,12 +103,12 @@ public class ExpensesService {
             throw new IllegalArgumentException("Despesa não encontrada para o usuário fornecido.");
         }
 
-        despesa.setValor(dto.valor());
-        despesa.setDescricao(dto.descricao());
-        despesa.setCategoria(dto.categoria());
-        despesa.setAtualizadoEm(LocalDateTime.now());
-
-        expenseRepository.save(despesa);
+        expenseRepository.updateDespesa(
+                dto.valor(),
+                dto.descricao(),
+                dto.categoria().toString(),
+                despesa.getId(),
+                user.getId());
 
         return new ExpenseResponseDTO( despesa.getId(),despesa.getValor(), despesa.getDescricao(), despesa.getCategoria());
 

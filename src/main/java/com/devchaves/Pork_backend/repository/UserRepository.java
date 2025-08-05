@@ -29,6 +29,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Modifying
     @Query(value = "UPDATE tb_usuarios SET investimento = :investimento WHERE id = :userId", nativeQuery = true)
-    void updateInvestimento(@Param("userId")Long userId, @Param("investimento")InvestimentoENUM investimento);
+    void updateInvestimento(@Param("userId")Long userId, @Param("investimento")String investimento);
 
 }

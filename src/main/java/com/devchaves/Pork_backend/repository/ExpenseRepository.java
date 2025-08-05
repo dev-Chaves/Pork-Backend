@@ -1,8 +1,11 @@
 package com.devchaves.Pork_backend.repository;
 
+import com.devchaves.Pork_backend.ENUM.CategoriesENUM;
 import com.devchaves.Pork_backend.entity.ExpenseEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,5 +29,14 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long> {
 
     @Query(value = "SELECT SUM(valor) FROM tb_despesas WHERE user_id = :userId", nativeQuery = true)
     public BigDecimal sumTotalExpenseByUserId(Long userId);
+
+    @Modifying
+    @Query(value = "UPDATE tb_despesas SET valor = :valor, descricao =: descricao, categoria = :categoria, atualizado_em = CURRENT_TIMESTAMP WHERE id = :id AND user_id = :userId")
+    void updateDespesa(
+            @Param("valor") BigDecimal valor,
+            @Param("descricao")String descricao,
+            @Param("categoria")String categoria,
+            @Param("id")Long id,
+            @Param("userId")Long userId);
 
 }

@@ -29,11 +29,11 @@ public class InvestmentService {
     @Transactional
     public InvestmentResponseDTO selecionarInvestimento(InvestmentRequestDTO dto){
 
-        UserEntity user = utilServices.getCurrentUser();
+        Long userId = utilServices.getCurrentUserId();
 
-        userRepository.updateInvestimento(user.getId(), dto.tipo().toString());
+        userRepository.updateInvestimento(userId, dto.tipo().toString());
 
-        return new InvestmentResponseDTO(user.getInvestimento().toString());
+        return new InvestmentResponseDTO(dto.tipo().toString());
     }
 
     public InvestmentMethodsResponse calcularInvestimentos(){

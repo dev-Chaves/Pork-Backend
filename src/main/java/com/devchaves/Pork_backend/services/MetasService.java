@@ -58,6 +58,7 @@ public class MetasService {
         meta.setMeta(dto.meta());
         meta.setValor(dto.valor());
         meta.setData(dto.data());
+        meta.setUser(utilServices.getCurrentUser());
 
         metasRepository.save(meta);
 
@@ -79,9 +80,9 @@ public class MetasService {
 
     public List<MetasResponseDTO> consultarMetas(){
 
-        UserEntity user = utilServices.getCurrentUser();
+        Long userId = utilServices.getCurrentUserId();
 
-        List<MetasEntity> metas = metasRepository.findByUserId(user.getId());
+        List<MetasEntity> metas = metasRepository.findByUserId(userId);
 
         return metas.stream().map(n -> new MetasResponseDTO(
                 n.getMeta(),

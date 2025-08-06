@@ -74,15 +74,15 @@ public class ExpensesService {
 
     public DashboardDTO consultarDespesas(){
     
-        UserEntity user = utilServices.getCurrentUser();
+        Long userId = utilServices.getCurrentUser().getId();
 
-        List<ExpenseEntity> todasDespesas = expenseRepository.findByUser(user.getId());
+        List<ExpenseEntity> todasDespesas = expenseRepository.findByUser(userId);
 
-        List<ExpenseEntity> despesasFixas = expenseRepository.findFixedsExpensesByUserId(user.getId());
+        List<ExpenseEntity> despesasFixas = expenseRepository.findFixedsExpensesByUserId(userId);
 
-        List<ExpenseEntity> despesasVariaveis = expenseRepository.findVariablesExpensesByUserId(user.getId());
+        List<ExpenseEntity> despesasVariaveis = expenseRepository.findVariablesExpensesByUserId(userId);
 
-        BigDecimal despesasTotal = expenseRepository.sumTotalExpenseByUserId(user.getId());
+        BigDecimal despesasTotal = expenseRepository.sumTotalExpenseByUserId(userId);
 
         List<ExpenseResponseDTO> despesaTotal = todasDespesas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
 
@@ -97,9 +97,9 @@ public class ExpensesService {
     @Transactional
     public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto ){
 
-        UserEntity user = utilServices.getCurrentUser();
+        Long userId = utilServices.getCurrentUser().getId();
 
-        ExpenseEntity despesa = expenseRepository.findByIdAndUserId(id, user.getId());
+        ExpenseEntity despesa = expenseRepository.findByIdAndUserId(id, userId);
         
         if(despesa == null){
             throw new IllegalArgumentException("Despesa não encontrada para o usuário fornecido.");
@@ -110,7 +110,7 @@ public class ExpensesService {
                 dto.descricao(),
                 dto.categoria().toString(),
                 despesa.getId(),
-                user.getId());
+                userId);
 
         return new ExpenseResponseDTO( despesa.getId(),despesa.getValor(), despesa.getDescricao(), despesa.getCategoria());
 
@@ -128,19 +128,18 @@ public class ExpensesService {
 
     public ReceitaResponseDTO consultarReceita(){
 
-        UserEntity user = utilServices.getCurrentUser();
+        return new ReceitaResponseDTO(utilServices.getCurrentUser().getReceita());
 
-        return new ReceitaResponseDTO(user.getReceita());
     }
 
     @Transactional
     public ReceitaResponseDTO atualizarReceita(UserUpdateDTO dto){
 
-        UserEntity user = utilServices.getCurrentUser();
+        Long user = utilServices.getCurrentUser().getId();
 
-        userRepository.updateReceita(user.getId(), dto.receita());
+        userRepository.updateReceita(user, dto.receita());
 
-        return new ReceitaResponseDTO(user.getReceita());
+        return new ReceitaResponseDTO(dto.receita());
     }
 
 }   

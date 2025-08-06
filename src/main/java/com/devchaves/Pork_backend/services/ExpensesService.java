@@ -97,7 +97,7 @@ public class ExpensesService {
     @Transactional
     public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto ){
 
-        Long userId = utilServices.getCurrentUser().getId();
+        Long userId = utilServices.getCurrentUserId();
 
         ExpenseEntity despesa = expenseRepository.findByIdAndUserId(id, userId);
         
@@ -118,9 +118,9 @@ public class ExpensesService {
 
     public void apagarDespesa(Long id){
 
-        UserEntity user = utilServices.getCurrentUser();
+        Long userId = utilServices.getCurrentUserId();
 
-        ExpenseEntity despesa = expenseRepository.findByIdAndUserId(id, user.getId());
+        ExpenseEntity despesa = expenseRepository.findByIdAndUserId(id, userId);
 
         expenseRepository.delete(despesa);
 
@@ -135,7 +135,7 @@ public class ExpensesService {
     @Transactional
     public ReceitaResponseDTO atualizarReceita(UserUpdateDTO dto){
 
-        Long user = utilServices.getCurrentUser().getId();
+        Long user = utilServices.getCurrentUserId();
 
         userRepository.updateReceita(user, dto.receita());
 

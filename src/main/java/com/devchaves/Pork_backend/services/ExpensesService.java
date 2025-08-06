@@ -112,7 +112,7 @@ public class ExpensesService {
                 despesa.getId(),
                 userId);
 
-        return new ExpenseResponseDTO( despesa.getId(),despesa.getValor(), despesa.getDescricao(), despesa.getCategoria());
+        return new ExpenseResponseDTO( despesa.getId(),dto.valor(), dto.descricao(), dto.categoria());
 
     }
 

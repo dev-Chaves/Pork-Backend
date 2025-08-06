@@ -6,6 +6,7 @@ import com.devchaves.Pork_backend.entity.ExpenseEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.ExpenseRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -93,6 +94,7 @@ public class ExpensesService {
         return new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, despesasTotal);
     }
 
+    @Transactional
     public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto ){
 
         UserEntity user = utilServices.getCurrentUser();
@@ -131,6 +133,7 @@ public class ExpensesService {
         return new ReceitaResponseDTO(user.getReceita());
     }
 
+    @Transactional
     public ReceitaResponseDTO atualizarReceita(UserUpdateDTO dto){
 
         UserEntity user = utilServices.getCurrentUser();

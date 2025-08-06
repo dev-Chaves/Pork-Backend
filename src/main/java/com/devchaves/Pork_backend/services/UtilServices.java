@@ -2,6 +2,7 @@ package com.devchaves.Pork_backend.services;
 
 import com.devchaves.Pork_backend.entity.UserEntity;
 
+import com.devchaves.Pork_backend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UtilServices {
+
+    private final UserRepository userRepository;
+
+    public UtilServices(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public UserEntity getCurrentUser(){
 
@@ -24,6 +31,14 @@ public class UtilServices {
         }
         throw new UsernameNotFoundException("Usuário não encontrado!");
     
+    }
+
+    public Long getCurrentUserId() {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return userRepository.findIdByEmail(email);
+
     }
 
     public String getBaseUrl(HttpServletRequest request) {

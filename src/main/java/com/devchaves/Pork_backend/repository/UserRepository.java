@@ -23,6 +23,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query(value = "SELECT * FROM tb_usuarios WHERE token = :token", nativeQuery = true)
     Optional<UserEntity> findByToken(@Param("token") String token);
 
+    @Query("SELECT u.id FROM UserEntity u WHERE u.email = :email")
+    Long findIdByEmail(@Param("email") String email);
+
     @Modifying
     @Query(value = "UPDATE tb_usuarios SET receita = :receita WHERE id = :userId", nativeQuery = true)
     void updateReceita(@Param("userId") Long userId, @Param("receita")BigDecimal receita);

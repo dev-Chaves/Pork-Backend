@@ -10,7 +10,11 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,12 +40,14 @@ public class ExpensesService {
         this.utilServices = utilServices;
     }
 
-    @Cacheable(value = "dashboardCache")
-    public DashboardDTO consultarDespesas(){
+    @Cacheable(value = "despesa_cache", key = "#userDetails.username")
+    public DashboardDTO consultarDespesas(UserDetails userDetails){
 
         logger.info("Executando o método consultarDespesas(). Isso só deve aparecer no primeiro acesso ou após o cache ser invalidado.");
 
-        Long userId = utilServices.getCurrentUser().getId();
+        UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
+
+        Long userId = user.getId();
 
         List<ExpenseEntity> todasDespesas = expenseRepository.findByUser(userId);
 
@@ -65,10 +71,10 @@ public class ExpensesService {
         return new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, despesasTotal);
     }
 
-    @CacheEvict(value = "dashboardCache", allEntries = true)
-    public List<ExpenseResponseDTO> cadastrarDespesas(List<ExpenseRequestDTO> dtos){
+    @CachePut(value = "dashboardCache", key = "#userDetails.username")
+    public List<ExpenseResponseDTO> cadastrarDespesas(List<ExpenseRequestDTO> dtos, UserDetails userDetails){
 
-       UserEntity user = utilServices.getCurrentUser();
+        UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
 
        System.out.println(user.getEmail());
 
@@ -109,10 +115,12 @@ public class ExpensesService {
     }
 
     @Transactional
-    @CacheEvict(value = "dashboardCache", allEntries = true)
-    public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto ){
+    @CacheEvict(value = "dashboardCache", key = "#userDetails.username")
+    public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto, UserDetails userDetails ){
 
-        Long userId = utilServices.getCurrentUserId();
+        UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
+
+        Long userId = user.getId();
 
         ExpenseEntity despesa = expenseRepository.findByIdAndUserId(id, userId);
         
@@ -131,10 +139,12 @@ public class ExpensesService {
 
     }
 
-    @CacheEvict(value = "dashboardCache", allEntries = true)
-    public void apagarDespesa(Long id){
+    @CacheEvict(value = "dashboardCache", key = "#userDetails.username")
+    public void apagarDespesa(Long id, UserDetails userDetails){
 
-        Long userId = utilServices.getCurrentUserId();
+        UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
+
+        Long userId = user.getId();
 
         ExpenseEntity despesa = expenseRepository.findByIdAndUserId(id, userId);
 
@@ -142,18 +152,22 @@ public class ExpensesService {
 
     }
 
-    @Cacheable(value = "receitaCache")
-    public ReceitaResponseDTO consultarReceita(){
+    @Cacheable(value = "receitaCache", key = "#userDetails.username")
+    public ReceitaResponseDTO consultarReceita(UserDetails userDetails){
 
-        return new ReceitaResponseDTO(utilServices.getCurrentUser().getReceita());
+        UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
+
+        return new ReceitaResponseDTO(user.getReceita());
 
     }
 
     @Transactional
-    @CacheEvict(value = "receitaCache", allEntries = true)
-    public ReceitaResponseDTO atualizarReceita(UserUpdateDTO dto){
+    @CacheEvict(value = "receitaCache", key = "#userDetails.username")
+    public ReceitaResponseDTO atualizarReceita(UserUpdateDTO dto, UserDetails userDetails){
 
-        Long user = utilServices.getCurrentUserId();
+        UserEntity userD = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encotrado"));
+
+        Long user = userD.getId();
 
         userRepository.updateReceita(user, dto.receita());
 

@@ -3,6 +3,9 @@ package com.devchaves.Pork_backend.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,45 +47,45 @@ public class ExpenseController {
 //    }
 
     @GetMapping("consultar-receita")
-    public ResponseEntity<ReceitaResponseDTO> consultarReceita(){
-        ReceitaResponseDTO response = expensesService.consultarReceita();
+    public ResponseEntity<ReceitaResponseDTO> consultarReceita(@AuthenticationPrincipal UserDetails userDetails){
+        ReceitaResponseDTO response = expensesService.consultarReceita(userDetails);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("atualizar-receita")
-    public ResponseEntity<ReceitaResponseDTO> atualizarReceita(@Valid @RequestBody UserUpdateDTO dto){
+    public ResponseEntity<ReceitaResponseDTO> atualizarReceita(@Valid @RequestBody UserUpdateDTO dto, @AuthenticationPrincipal UserDetails userDetails){
 
-        ReceitaResponseDTO respose = expensesService.atualizarReceita(dto);
+        ReceitaResponseDTO respose = expensesService.atualizarReceita(dto, userDetails);
 
         return ResponseEntity.ok(respose);
     }
 
     @PostMapping("anotar-despesas")
-    public ResponseEntity<List<ExpenseResponseDTO>> registrarDespesas(@Valid @RequestBody List<ExpenseRequestDTO> dto) {
+    public ResponseEntity<List<ExpenseResponseDTO>> registrarDespesas(@Valid @RequestBody List<ExpenseRequestDTO> dto, @AuthenticationPrincipal UserDetails userDetails) {
     
-        List<ExpenseResponseDTO> responses = expensesService.cadastrarDespesas(dto);
+        List<ExpenseResponseDTO> responses = expensesService.cadastrarDespesas(dto, userDetails);
         
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("consultar-despesas")
-    public ResponseEntity<DashboardDTO> consultarDespesas() {
-        DashboardDTO response = expensesService.consultarDespesas();
+    public ResponseEntity<DashboardDTO> consultarDespesas(@AuthenticationPrincipal UserDetails userDetails) {
+        DashboardDTO response = expensesService.consultarDespesas(userDetails);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("apagar-despesa/{id}")
-    public ResponseEntity<String> apagarDespesa(@PathVariable Long id){
+    public ResponseEntity<String> apagarDespesa(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
 
-        expensesService.apagarDespesa(id);
+        expensesService.apagarDespesa(id, userDetails);
 
         return ResponseEntity.ok().body("Apagado com sucesso!");
 
     }
 
     @PutMapping("atualizar-despesa/{id}")
-    public ResponseEntity<ExpenseResponseDTO> atualizarDespesa(@PathVariable Long id, @Valid @RequestBody ExpenseRequestDTO dto){
-        ExpenseResponseDTO response = expensesService.atualizarDespesa(id, dto);
+    public ResponseEntity<ExpenseResponseDTO> atualizarDespesa(@PathVariable Long id, @Valid @RequestBody ExpenseRequestDTO dto, @AuthenticationPrincipal UserDetails userDetails){
+        ExpenseResponseDTO response = expensesService.atualizarDespesa(id, dto, userDetails);
         return ResponseEntity.ok(response);
     } 
 

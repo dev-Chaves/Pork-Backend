@@ -23,13 +23,17 @@ public class UtilServices {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication != null
-                && authentication.isAuthenticated()
-                && authentication.getPrincipal() instanceof UserEntity
-        ){
-            return (UserEntity) authentication.getPrincipal();
-        }
-        throw new UsernameNotFoundException("Usuário não encontrado!");
+//        if(authentication != null
+//                && authentication.isAuthenticated()
+//                && authentication.getPrincipal() instanceof UserEntity
+//        ){
+//            return (UserEntity) authentication.getPrincipal();
+//        }
+//        throw new UsernameNotFoundException("Usuário não encontrado!");
+
+        String email = authentication.getName();
+
+        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
     
     }
 

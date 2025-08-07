@@ -1,8 +1,8 @@
 services:
   nginx:
     build:
-      context: .
-      dockerfile: Dockerfile.nginx.teste
+      context: ../..
+      dockerfile: environments/dev/Dockerfile.nginx.teste
     ports:
       - "80:80"
     depends_on:
@@ -13,7 +13,9 @@ services:
 
   api1:
     image: financepork/pork:latest
-    build: .
+    build:
+      context: ../..
+      dockerfile: Dockerfile
     depends_on:
       db:
         condition: service_healthy
@@ -28,7 +30,6 @@ services:
 
   api2:
     image: financepork/pork:latest
-    build: .
     depends_on:
       db:
         condition: service_healthy

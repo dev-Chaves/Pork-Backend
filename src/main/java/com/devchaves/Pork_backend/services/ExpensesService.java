@@ -7,6 +7,10 @@ import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.ExpenseRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,6 +21,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ExpensesService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ExpensesService.class);
 
     private final ExpenseRepository expenseRepository;
 
@@ -30,6 +36,36 @@ public class ExpensesService {
         this.utilServices = utilServices;
     }
 
+    @Cacheable(value = "dashboardCache")
+    public DashboardDTO consultarDespesas(){
+
+        logger.info("Executando o método consultarDespesas(). Isso só deve aparecer no primeiro acesso ou após o cache ser invalidado.");
+
+        Long userId = utilServices.getCurrentUser().getId();
+
+        List<ExpenseEntity> todasDespesas = expenseRepository.findByUser(userId);
+
+        List<ExpenseEntity> despesasFixas = expenseRepository.findFixedsExpensesByUserId(userId);
+
+        List<ExpenseEntity> despesasVariaveis = expenseRepository.findVariablesExpensesByUserId(userId);
+
+        BigDecimal despesasTotal = expenseRepository.sumTotalExpenseByUserId(userId);
+
+        if(despesasTotal == null){
+            despesasTotal = BigDecimal.ZERO;
+        }
+
+        List<ExpenseResponseDTO> despesaTotal = todasDespesas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
+
+        List<ExpenseResponseDTO> despesaCategoriaFixo = despesasFixas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
+
+        List<ExpenseResponseDTO> despesaCategoriaVariavel =
+                despesasVariaveis.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
+
+        return new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, despesasTotal);
+    }
+
+    @CacheEvict(value = "dashboardCache", allEntries = true)
     public List<ExpenseResponseDTO> cadastrarDespesas(List<ExpenseRequestDTO> dtos){
 
        UserEntity user = utilServices.getCurrentUser();
@@ -72,29 +108,8 @@ public class ExpensesService {
 
     }
 
-    public DashboardDTO consultarDespesas(){
-    
-        Long userId = utilServices.getCurrentUser().getId();
-
-        List<ExpenseEntity> todasDespesas = expenseRepository.findByUser(userId);
-
-        List<ExpenseEntity> despesasFixas = expenseRepository.findFixedsExpensesByUserId(userId);
-
-        List<ExpenseEntity> despesasVariaveis = expenseRepository.findVariablesExpensesByUserId(userId);
-
-        BigDecimal despesasTotal = expenseRepository.sumTotalExpenseByUserId(userId);
-
-        List<ExpenseResponseDTO> despesaTotal = todasDespesas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
-
-        List<ExpenseResponseDTO> despesaCategoriaFixo = despesasFixas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
-
-        List<ExpenseResponseDTO> despesaCategoriaVariavel =
-                despesasVariaveis.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
-
-        return new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, despesasTotal);
-    }
-
     @Transactional
+    @CacheEvict(value = "dashboardCache", allEntries = true)
     public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto ){
 
         Long userId = utilServices.getCurrentUserId();
@@ -116,6 +131,7 @@ public class ExpensesService {
 
     }
 
+    @CacheEvict(value = "dashboardCache", allEntries = true)
     public void apagarDespesa(Long id){
 
         Long userId = utilServices.getCurrentUserId();
@@ -126,6 +142,7 @@ public class ExpensesService {
 
     }
 
+    @Cacheable(value = "receitaCache")
     public ReceitaResponseDTO consultarReceita(){
 
         return new ReceitaResponseDTO(utilServices.getCurrentUser().getReceita());
@@ -133,6 +150,7 @@ public class ExpensesService {
     }
 
     @Transactional
+    @CacheEvict(value = "receitaCache", allEntries = true)
     public ReceitaResponseDTO atualizarReceita(UserUpdateDTO dto){
 
         Long user = utilServices.getCurrentUserId();

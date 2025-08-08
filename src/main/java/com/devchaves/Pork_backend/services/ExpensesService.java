@@ -71,7 +71,7 @@ public class ExpensesService {
         return new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, despesasTotal);
     }
 
-    @CachePut(value = "dashboardCache", key = "#userDetails.username")
+    @CachePut(value = "despesa_cache", key = "#userDetails.username")
     public List<ExpenseResponseDTO> cadastrarDespesas(List<ExpenseRequestDTO> dtos, UserDetails userDetails){
 
         UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
@@ -115,7 +115,7 @@ public class ExpensesService {
     }
 
     @Transactional
-    @CacheEvict(value = "dashboardCache", key = "#userDetails.username")
+    @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
     public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto, UserDetails userDetails ){
 
         UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
@@ -139,7 +139,7 @@ public class ExpensesService {
 
     }
 
-    @CacheEvict(value = "dashboardCache", key = "#userDetails.username")
+    @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
     public void apagarDespesa(Long id, UserDetails userDetails){
 
         UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));

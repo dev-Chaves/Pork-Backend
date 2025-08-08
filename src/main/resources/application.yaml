@@ -49,6 +49,19 @@ spring:
       host: redis
       port: 6379
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 'health,metrics'
+    endpoint:
+      health:
+        show-details: always
+        show-components: always
+    health:
+      db:
+        enabled: true
+
 jwt:
   secret: ${SPRING_SECRET}
 
@@ -59,17 +72,3 @@ server:
   port: 8080
   servlet:
     context-path: /api
-
-
-# management:
-#   endpoints:
-#     web:
-#       exposure:
-#         include: health,info
-#   endpoint:
-#     health:
-#       show-details: always
-#       show-components: always
-#   health:
-#     db:
-#       enabled: true

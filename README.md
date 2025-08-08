@@ -17,6 +17,7 @@ Pork é o serviço backend para uma aplicação SaaS de finanças pessoais. Ele 
 
 *   **Backend**: Java 21, Spring Boot 3
 *   **Banco de Dados**: PostgreSQL
+*   ** Cache **: Redis
 *   **Autenticação**: Spring Security, JSON Web Tokens (JWT)
 *   **ORM e Migrações**: Spring Data JPA (Hibernate), Flyway
 *   **Containerização**: Docker, Docker Compose

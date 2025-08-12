@@ -41,7 +41,7 @@ public class ExpensesService {
     }
 
     @Cacheable(value = "despesa_cache", key = "#userDetails.username")
-    public DashboardDTO consultarDespesas(UserDetails userDetails){
+    public DashboardDTO consultarDespesasInfo(UserDetails userDetails){
 
         logger.info("Executando o método consultarDespesas(). Isso só deve aparecer no primeiro acesso ou após o cache ser invalidado.");
 
@@ -70,6 +70,18 @@ public class ExpensesService {
 
         return new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, despesasTotal);
     }
+
+    @Cacheable(value = "despesa_cache", key = "#userDetails.username" )
+    public List<ExpenseResponseDTO> consultarDespesas(UserDetails details){
+
+        UserEntity user = userRepository.findByEmail(details.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encotrado"));
+
+        List<ExpenseEntity> despesas = expenseRepository.findByUser(user.getId());
+
+        return despesas.stream().map((n)-> new ExpenseResponseDTO(n.getId(), n.getValor(),n.getDescricao(), n.getCategoria())).toList();
+
+    }
+
 
     @CachePut(value = "despesa_cache", key = "#userDetails.username")
     public List<ExpenseResponseDTO> cadastrarDespesas(List<ExpenseRequestDTO> dtos, UserDetails userDetails){

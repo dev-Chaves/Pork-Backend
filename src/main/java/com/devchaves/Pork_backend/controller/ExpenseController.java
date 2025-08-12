@@ -69,9 +69,15 @@ public class ExpenseController {
     }
 
     @GetMapping("consultar-despesas")
-    public ResponseEntity<DashboardDTO> consultarDespesas(@AuthenticationPrincipal UserDetails userDetails) {
-        DashboardDTO response = expensesService.consultarDespesas(userDetails);
+    public ResponseEntity<List<ExpenseResponseDTO>> consultarDespesas(@AuthenticationPrincipal UserDetails userDetails) {
+        List<ExpenseResponseDTO> response = expensesService.consultarDespesas(userDetails);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("consultar-despesas-completa")
+    public ResponseEntity<DashboardDTO> despesaCompleta(@AuthenticationPrincipal UserDetails userDetails){
+        DashboardDTO response = expensesService.consultarDespesasInfo(userDetails);
+        return ResponseEntity.ok( response );
     }
 
     @DeleteMapping("apagar-despesa/{id}")

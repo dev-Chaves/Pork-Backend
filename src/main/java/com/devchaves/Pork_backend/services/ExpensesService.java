@@ -1,7 +1,6 @@
 package com.devchaves.Pork_backend.services;
 
 import com.devchaves.Pork_backend.DTO.*;
-import com.devchaves.Pork_backend.ENUM.CategoriesENUM;
 import com.devchaves.Pork_backend.entity.ExpenseEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.ExpenseRepository;
@@ -12,13 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +37,7 @@ public class ExpensesService {
         this.utilServices = utilServices;
     }
 
-    @Cacheable(value = "despesa_cache", key = "#userDetails.username")
+    @Cacheable(value = "dashboard_cache", key = "#userDetails.username")
     public DashboardDTO consultarDespesasInfo(UserDetails userDetails){
 
         logger.info("Executando o método consultarDespesas(). Isso só deve aparecer no primeiro acesso ou após o cache ser invalidado.");
@@ -72,9 +69,9 @@ public class ExpensesService {
     }
 
     @Cacheable(value = "despesa_cache", key = "#userDetails.username" )
-    public List<ExpenseResponseDTO> consultarDespesas(UserDetails details){
+    public List<ExpenseResponseDTO> consultarDespesas(UserDetails userDetails){
 
-        UserEntity user = userRepository.findByEmail(details.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encotrado"));
+        UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
 
         List<ExpenseEntity> despesas = expenseRepository.findByUser(user.getId());
 

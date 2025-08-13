@@ -5,6 +5,7 @@ import com.devchaves.Pork_backend.DTO.MetasResponseDTO;
 import com.devchaves.Pork_backend.entity.MetasEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.MetasRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class MetasService {
         this.utilServices = utilServices;
     }
 
+    @Transactional
     public List<MetasResponseDTO> cadastrarMetas(List<MetasRequestDTO> dtos){
 
         UserEntity user = utilServices.getCurrentUser();
@@ -47,6 +49,7 @@ public class MetasService {
 
     }
 
+    @Transactional
     public MetasResponseDTO alterarMeta(Long id, MetasRequestDTO dto){
 
         MetasEntity meta = metasRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Meta não encontrada"));
@@ -66,6 +69,7 @@ public class MetasService {
 
     }
 
+    @Transactional
     public void apagarMeta(Long id){
 
         UserEntity user = utilServices.getCurrentUser();
@@ -74,7 +78,7 @@ public class MetasService {
             throw new IllegalArgumentException("ID de meta inválido");
         }
 
-        metasRepository.delete(metasRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Meta não encontrada")));
+        metasRepository.deletarMeta(id, user.getId());
 
     }
 

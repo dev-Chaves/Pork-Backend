@@ -2,6 +2,7 @@ package com.devchaves.Pork_backend.config;
 
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.UserRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,6 +18,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
+    @Cacheable(value = "userDetailsCache", key = "#email")
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         UserEntity user = userRepository.findByEmail(email)

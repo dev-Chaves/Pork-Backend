@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: "api-pork-job  "
+    metrics_path: "api/actuator/prometheus"
+    static_configs:
+      - targets: ["api1:8080", "api2:8080"]
+        labels:
+          application: "api-pork"

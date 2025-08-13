@@ -1,41 +1,54 @@
-# Pork Backend
+# Pork-Backend
 
 [![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/dev-Chaves/Pork-Backend)
 
-Pork é o serviço backend para uma aplicação SaaS de finanças pessoais. Ele fornece uma API robusta para gerenciar autenticação de usuários, rastrear receitas e despesas, definir metas financeiras e obter sugestões de investimentos. Construído com Java e o framework Spring Boot, foi projetado para ser escalável e de fácil manutenção.
+[![Java](https://img.shields.io/badge/Java-21-blue.svg)](https://www.oracle.com/java/technologies/downloads/#java21)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3-green.svg)](https://spring.io/projects/spring-boot)
+[![Docker](https://img.shields.io/badge/Docker-blue.svg)](https://www.docker.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-blue.svg)](https://www.postgresql.org/)
+[![Nginx](https://img.shields.io/badge/Nginx-green.svg)](https://www.nginx.com/)
 
-## ✨ Funcionalidades
+Pork-Backend é o serviço de back-end para uma aplicação SaaS de finanças pessoais. Ele fornece uma API robusta para gerenciar autenticação de usuários, rastrear receitas e despesas, definir metas financeiras e obter sugestões de investimentos. Construído com Java e o framework Spring Boot, foi projetado para ser escalável e de fácil manutenção.
 
-*   **Gerenciamento de Usuários**: Registro seguro de usuários com verificação de e-mail e autenticação baseada em JWT para login.
-*   **Rastreamento de Despesas e Receitas**: Operações CRUD para despesas fixas e variáveis. Registre e atualize a renda mensal.
-*   **Painel Financeiro**: Obtenha uma visão consolidada de todas as despesas, categorizadas em fixas e variáveis, juntamente com o total de gastos.
-*   **Definição de Metas**: Crie, atualize, visualize e exclua metas financeiras.
-*   **Sugestões de Investimento**: Usuários podem selecionar um perfil de investimento (Fácil, Médio, Difícil) para receber sugestões sobre quanto de sua renda investir.
-*   **Documentação da API**: Swagger UI integrado para fácil exploração e teste da API.
+## ✨ Funcionalidades Principais
+
+*   **Autenticação e Gerenciamento de Usuários**: Registro seguro com verificação de e-mail, login via JWT e gerenciamento de perfil.
+*   **Rastreamento de Transações**: Operações CRUD para despesas e receitas.
+*   **Gerenciamento de Investimentos**: Rastreie diferentes tipos de investimentos.
+*   **Definição de Metas Financeiras**: Crie, atualize e acompanhe metas financeiras.
+*   **Dashboard Financeiro**: Obtenha uma visão consolidada da saúde financeira do usuário.
+*   **Segurança**: Autenticação baseada em JWT, redefinição de senha segura e validação de e-mail.
 
 ## 🛠️ Stack Tecnológica
 
-*   **Backend**: Java 21, Spring Boot 3
+*   **Backend**: Java 21, Spring Boot 3, Spring Security
 *   **Banco de Dados**: PostgreSQL
-*   **Autenticação**: Spring Security, JSON Web Tokens (JWT)
+*   **Cache**: Redis
 *   **ORM e Migrações**: Spring Data JPA (Hibernate), Flyway
+*   **Autenticação**: JSON Web Tokens (JWT)
 *   **Containerização**: Docker, Docker Compose
 *   **Proxy Reverso**: Nginx
+*   **CI/CD**: GitHub Actions
 *   **Ferramenta de Build**: Maven
-*   **Teste de API**: Bruno
 
-## 🚀 Começando
+## 🏗️ Arquitetura
 
-Para executar a aplicação em sua máquina local, siga estes passos.
+O projeto segue uma arquitetura em camadas clássica, promovendo a separação de responsabilidades e a manutenibilidade:
 
-### Pré-requisitos
+*   **Controller**: Expõe a API REST para o cliente. Responsável por receber requisições HTTP e retornar respostas.
+*   **Service**: Contém a lógica de negócios principal da aplicação. Orquestra as operações entre os repositórios e outros serviços.
+*   **Repository**: Camada de acesso a dados, utilizando Spring Data JPA para interagir com o banco de dados.
+*   **Entity**: Classes que mapeiam as tabelas do banco de dados (modelo de domínio).
+*   **DTO (Data Transfer Object)**: Objetos que carregam dados entre as camadas e para o cliente, evitando a exposição das entidades internas.
+*   **Config**: Classes de configuração do Spring para segurança, CORS, Redis, etc.
 
-*   [Java 21](https://www.oracle.com/java/technologies/downloads/#java21)
-*   [Maven](https://maven.apache.org/download.cgi)
-*   [Docker](https://docs.docker.com/get-docker/)
-*   [Docker Compose](https://docs.docker.com/compose/install/)
+## 🚀 Como Executar o Projeto
 
-### Instalação e Configuração
+Existem duas maneiras de executar a aplicação: via Docker Compose (recomendado para um ambiente de produção simulado) ou localmente via Maven (ideal para desenvolvimento).
+
+### 1. Usando Docker Compose (Recomendado)
+
+Este método orquestra todos os serviços necessários: a aplicação, o banco de dados, o Redis e o Nginx.
 
 1.  **Clone o repositório:**
     ```sh
@@ -43,68 +56,66 @@ Para executar a aplicação em sua máquina local, siga estes passos.
     cd Pork-Backend
     ```
 
-2.  **Crie o arquivo de ambiente:**
-    Copie o arquivo de exemplo de ambiente `.env.example` para um novo arquivo chamado `.env`.
+2.  **Crie e configure o arquivo de ambiente:**
+    Copie `.env.example` para `.env` e preencha as variáveis (credenciais do banco de dados, segredo JWT, etc.).
     ```sh
     cp .env.example .env
     ```
 
-3.  **Configure suas variáveis de ambiente** no arquivo `.env`. Você precisará fornecer credenciais para seu banco de dados PostgreSQL e um segredo para geração de JWT.
-
-    ```dotenv
-    # Banco de Dados PostgreSQL
-    POSTGRESQL_USER=seu_usuario_postgres
-    POSTGRESQL_PASSWORD=sua_senha_postgres
-    POSTGRESQL_DATABASE=pork_db
-
-    # Java Mail Sender (para verificação de e-mail)
-    SPRING_MAIL_USERNAME=seu_usuario_gmail@gmail.com
-    SPRING_MAIL_PASSWORD=sua_senha_de_app_gmail
-
-    # Segredo JWT
-    SECRET=sua_chave_jwt_super_secreta
-    ```
-
-4.  **Construa e execute a aplicação usando Docker Compose:**
-    Este comando irá construir as imagens Docker para a aplicação e Nginx, e iniciar os containers para o app, o banco de dados e o proxy reverso.
+3.  **Construa e inicie os contêineres:**
     ```sh
     docker-compose up --build -d
     ```
+    A aplicação estará disponível na porta configurada no Nginx (geralmente `http://localhost`).
 
-A aplicação estará acessível em `http://localhost:8080`.
+### 2. Executando Localmente com Maven
 
-## 📖 Uso da API
+Este método requer que você tenha o Java, Maven, PostgreSQL e Redis instalados e em execução em sua máquina.
 
-A API está documentada usando OpenAPI (Swagger). Uma vez que a aplicação esteja em execução, você pode acessar o Swagger UI para explorar e testar os endpoints:
+1.  **Pré-requisitos**: JDK 21+, Maven, PostgreSQL, Redis.
 
-*   **Swagger UI**: `http://localhost:8080/api/swagger-ui.html`
+2.  **Configure a Aplicação**:
+    Configure as variáveis de ambiente em sua IDE ou sistema operacional, ou modifique o arquivo `src/main/resources/application.yaml` para apontar para seus serviços locais.
 
-### Teste da API com Bruno
+3.  **Execute a aplicação:**
+    Use o Maven Wrapper para iniciar o servidor.
+    ```sh
+    ./mvnw spring-boot:run
+    ```
+    A aplicação estará disponível em `http://localhost:8080` (ou na porta configurada).
 
-Este repositório inclui uma coleção [Bruno](https://www.usebruno.com/) no diretório `Pork/`. Você pode importar esta coleção em seu cliente Bruno para testar facilmente os endpoints da API.
+## 📖 Endpoints da API
 
-## 🏗️ Estrutura do Projeto
+A API está organizada em torno de recursos RESTful.
 
-*   `src/main/java`: Contém o código-fonte principal da aplicação, organizado por funcionalidade (controller, service, repository, DTO, etc.).
-*   `src/main/resources`: Contém arquivos de configuração (`application.yaml`), migrações de banco de dados e configuração do Nginx.
-*   `src/main/resources/db/migration`: Scripts de migração SQL do Flyway para configurar o esquema do banco de dados.
-*   `Dockerfile`: Define o processo de construção para o container da aplicação Spring Boot.
-*   `Dockerfile.nginx`: Define a construção para o container do proxy reverso Nginx.
-*   `compose.yaml`: Arquivo Docker Compose para orquestrar os serviços da aplicação, banco de dados e Nginx.
-*   `pom.xml`: Arquivo de projeto Maven definindo as dependências do projeto e configuração de build.
-*   `Pork/`: Contém a coleção de API Bruno para testes fáceis.
+*   **Autenticação (`/auth`)**
+    *   `POST /login`: Autentica um usuário e retorna um token JWT.
+    *   `POST /register`: Registra um novo usuário e envia um e-mail de verificação.
+    *   `POST /resend-email`: Reenvia o e-mail de verificação.
+    *   `POST /change-password`: Permite que um usuário autenticado altere sua senha.
+    *   `POST /forgot-password`: Inicia o fluxo de recuperação de senha.
+
+*   **Usuário (`/user`)**
+    *   `GET /info`: Retorna informações do usuário autenticado.
+    *   `PUT /update`: Atualiza as informações do perfil do usuário.
+    *   `GET /dashboard`: Retorna dados consolidados para o painel financeiro.
+
+*   **Despesas e Receitas (`/expense`)**
+    *   `POST /`: Cria uma nova despesa ou receita.
+    *   `GET /`: Lista todas as transações do usuário, com suporte a filtros.
+    *   `DELETE /{id}`: Exclui uma transação.
+
+*   **Investimentos (`/investment`)**
+    *   `POST /`: Adiciona um novo registro de investimento.
+    *   `GET /`: Lista os investimentos do usuário.
+    *   `GET /methods`: Retorna os tipos de investimentos disponíveis.
+
+*   **Metas (`/metas`)**
+    *   `POST /`: Cria uma nova meta financeira.
+    *   `GET /`: Lista todas as metas do usuário.
+    *   `PUT /{id}`: Atualiza uma meta existente.
+    *   `DELETE /{id}`: Exclui uma meta.
 
 ## 🔄 Pipeline CI/CD
 
-Este projeto usa GitHub Actions para integração e implantação contínuas. O workflow está definido em `.github/workflows/pipeline.yaml` e executa os seguintes passos a cada push para o branch `main`:
-
-1.  **Checkout do Código**: Faz o checkout da versão mais recente do repositório.
-2.  **Login no DockerHub**: Autentica com o DockerHub usando secrets.
-3.  **Construir e Enviar Imagens**:
-    *   Constrói a imagem Docker para a aplicação Java (`pork:latest`) e envia para o DockerHub.
-    *   Constrói a imagem Docker para o Nginx (`pork-nginx:latest`) e envia para o DockerHub.
-4.  **Implantar no VPS**:
-    *   Copia com segurança o arquivo `compose.yaml` para um servidor privado virtual (VPS) de produção.
-    *   Conecta ao VPS via SSH.
-    *   Baixa as imagens mais recentes do DockerHub.
-    *   Para os serviços em execução atuais e inicia a nova versão usando `docker-compose up`.
+Este projeto usa GitHub Actions para integração e implantação contínuas. O workflow, definido em `.github/workflows/pipeline.yaml`, automatiza o build, o push das imagens Docker para o DockerHub e a implantação em um servidor de produção a cada push para o branch `main`.

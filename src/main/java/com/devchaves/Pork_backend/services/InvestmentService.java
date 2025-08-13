@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -47,18 +48,21 @@ public class InvestmentService {
                     new InvestmentMethodsResponse(
                             user.getInvestimento(),
                             user.getReceita().
-                                    multiply(porcentagem.get(2).divide(new BigDecimal(100))));
+                                    multiply(porcentagem.get(2).divide(new BigDecimal(100)))
+                                    .setScale(0, RoundingMode.CEILING));
 
             case "MID" ->
                     new InvestmentMethodsResponse(
                             user.getInvestimento(),
                             user.getReceita()
-                                    .multiply(porcentagem.get(1).divide(new BigDecimal(100))));
+                                    .multiply(porcentagem.get(1).divide(new BigDecimal(100)))
+                                    .setScale(0, RoundingMode.CEILING));
 
             case "EASY" ->
                     new InvestmentMethodsResponse(user.getInvestimento(),
                             user.getReceita()
-                                    .multiply(porcentagem.getFirst().divide(new BigDecimal(100))));
+                                    .multiply(porcentagem.getFirst().divide(new BigDecimal(100)))
+                                    .setScale(0, RoundingMode.CEILING));
 
             default -> throw new IllegalArgumentException("Não foi possível calcular seu investimento");
         };

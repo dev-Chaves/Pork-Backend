@@ -52,8 +52,6 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
                 }
 
             }catch(Exception e){
-                System.out.println("====== ERRO REAL NO FILTRO JWT ======");
-                e.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("JWT Token inválido");
                 return;

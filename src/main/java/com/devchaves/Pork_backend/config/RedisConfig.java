@@ -4,6 +4,8 @@ import com.devchaves.Pork_backend.DTO.DashboardDTO;
 import com.devchaves.Pork_backend.DTO.ExpenseListDTO;
 import com.devchaves.Pork_backend.DTO.ReceitaResponseDTO;
 import com.devchaves.Pork_backend.DTO.UserInfoResponse;
+import com.devchaves.Pork_backend.entity.UserEntity;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -32,52 +34,40 @@ public class RedisConfig {
 
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         return objectMapper;
 
+    }
+
+    private <T> RedisCacheConfiguration createCacheConfiguration(ObjectMapper objectMapper,Class<T> clazz, Duration ttl){
+        Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer(objectMapper, clazz);
+
+        return RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(ttl)
+                .disableCachingNullValues()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
     }
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory){
 
-        Jackson2JsonRedisSerializer<ExpenseListDTO> expenseListSerializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper(), ExpenseListDTO.class);
-
-        Jackson2JsonRedisSerializer<ReceitaResponseDTO> receitaSerializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper(), ReceitaResponseDTO.class);
-
-        Jackson2JsonRedisSerializer<UserInfoResponse> userInfoSerializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper(), UserInfoResponse.class);
-
-        Jackson2JsonRedisSerializer<DashboardDTO> dashboardSerializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper(), DashboardDTO.class);
-
-        // Cache Despesa -> despesa_cache
-        RedisCacheConfiguration despesaCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10))
-                .disableCachingNullValues()
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(expenseListSerializer));
-
-        RedisCacheConfiguration receitaCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10))
-                .disableCachingNullValues()
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(receitaSerializer));
-
-        RedisCacheConfiguration userInfoCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10))
-                .disableCachingNullValues()
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(userInfoSerializer));
-
-        RedisCacheConfiguration dashboardCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10))
-                .disableCachingNullValues()
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(dashboardSerializer));
-
         Map<String, RedisCacheConfiguration> cacheConfiguration = new HashMap<>();
 
-        cacheConfiguration.put("despesa_cache", despesaCacheConfig);
-        cacheConfiguration.put("receitaCache", receitaCacheConfig);
-        cacheConfiguration.put("userCache", userInfoCacheConfig);
-        cacheConfiguration.put("dashboard_cache", dashboardCacheConfig);
+        Duration fastCache = Duration.ofMinutes(10);
+
+        Duration longCache = Duration.ofHours(24);
+
+        cacheConfiguration.put("despesa_cache", createCacheConfiguration(redisObjectMapper(),ExpenseListDTO.class , fastCache));
+
+        cacheConfiguration.put("receitaCache",createCacheConfiguration(redisObjectMapper(),ReceitaResponseDTO.class, fastCache) );
+
+        cacheConfiguration.put("userCache", createCacheConfiguration(redisObjectMapper(), UserInfoResponse.class, longCache));
+
+        cacheConfiguration.put("userDetailsCache", createCacheConfiguration(redisObjectMapper(), UserEntity.class, longCache));
+
+        cacheConfiguration.put("dashboard_cache", createCacheConfiguration(redisObjectMapper(), DashboardDTO.class, fastCache));
 
         return RedisCacheManager.builder(redisConnectionFactory).withInitialCacheConfigurations(cacheConfiguration).build();
 

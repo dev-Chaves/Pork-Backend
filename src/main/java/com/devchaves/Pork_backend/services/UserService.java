@@ -9,6 +9,7 @@ import com.devchaves.Pork_backend.repository.UserRepository;
 import com.devchaves.Pork_backend.repository.VerificationTokenRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -220,10 +221,10 @@ public class UserService {
 
     }
 
-    @Cacheable(value = "userCache")
-    public UserInfoResponse consultarInfo(){
+    @Cacheable(value = "userCache", key = "#userDetails.username")
+    public UserInfoResponse consultarInfo(UserDetails userDetails){
 
-        UserEntity user = utilServices.getCurrentUser();
+        UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado!"));
 
         return new UserInfoResponse(user.getNome());
 

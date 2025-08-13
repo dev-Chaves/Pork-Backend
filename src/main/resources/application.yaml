@@ -49,6 +49,12 @@ spring:
       host: redis
       port: 6379
 
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
 management:
   endpoints:
     web:

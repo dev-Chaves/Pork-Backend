@@ -5,6 +5,7 @@ import com.devchaves.Pork_backend.DTO.ExpenseListDTO;
 import com.devchaves.Pork_backend.DTO.ReceitaResponseDTO;
 import com.devchaves.Pork_backend.DTO.UserInfoResponse;
 import com.devchaves.Pork_backend.entity.UserEntity;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -32,6 +33,8 @@ public class RedisConfig {
         objectMapper.registerModule(new JavaTimeModule());
 
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         return objectMapper;
 

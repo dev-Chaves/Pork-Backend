@@ -1,6 +1,7 @@
 package com.devchaves.Pork_backend.entity;
 
 import com.devchaves.Pork_backend.ENUM.InvestimentoENUM;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -38,12 +39,15 @@ public class UserEntity implements UserDetails {
     @Column(name = "criado_em", nullable = false)
     private LocalDateTime criadoEm;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExpenseEntity> expenses;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VerificationTokenEntity> tokens;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MetasEntity> metas;
 
@@ -141,6 +145,7 @@ public class UserEntity implements UserDetails {
         this.investimento = investimento;
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));

@@ -69,16 +69,15 @@ public class ExpensesService {
     }
 
     @Cacheable(value = "despesa_cache", key = "#userDetails.username" )
-    public List<ExpenseResponseDTO> consultarDespesas(UserDetails userDetails){
+    public ExpenseListDTO consultarDespesas(UserDetails userDetails){
 
         UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
 
         List<ExpenseEntity> despesas = expenseRepository.findByUser(user.getId());
 
-        return despesas.stream().map((n)-> new ExpenseResponseDTO(n.getId(), n.getValor(),n.getDescricao(), n.getCategoria())).toList();
+        return new ExpenseListDTO( despesas.stream().map((n)-> new ExpenseResponseDTO(n.getId(), n.getValor(),n.getDescricao(), n.getCategoria())).toList());
 
     }
-
 
     @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
     public List<ExpenseResponseDTO> cadastrarDespesas(List<ExpenseRequestDTO> dtos, UserDetails userDetails){

@@ -2,6 +2,7 @@ package com.devchaves.Pork_backend.controller;
 
 import java.util.List;
 
+import com.devchaves.Pork_backend.DTO.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -15,11 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.devchaves.Pork_backend.DTO.DashboardDTO;
-import com.devchaves.Pork_backend.DTO.ExpenseRequestDTO;
-import com.devchaves.Pork_backend.DTO.ExpenseResponseDTO;
-import com.devchaves.Pork_backend.DTO.ReceitaResponseDTO;
-import com.devchaves.Pork_backend.DTO.UserUpdateDTO;
 import com.devchaves.Pork_backend.services.ExpensesService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -61,8 +57,8 @@ public class ExpenseController {
     }
 
     @GetMapping("consultar-despesas")
-    public ResponseEntity<List<ExpenseResponseDTO>> consultarDespesas(@AuthenticationPrincipal UserDetails userDetails) {
-        List<ExpenseResponseDTO> response = expensesService.consultarDespesas(userDetails);
+    public ResponseEntity<ExpenseListDTO> consultarDespesas(@AuthenticationPrincipal UserDetails userDetails) {
+        ExpenseListDTO response = expensesService.consultarDespesas(userDetails);
         return ResponseEntity.ok(response);
     }
 

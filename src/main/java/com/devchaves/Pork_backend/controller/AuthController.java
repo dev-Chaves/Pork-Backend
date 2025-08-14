@@ -109,6 +109,21 @@ public class AuthController {
         return ResponseEntity.ok("Senha redefinida com sucesso!");
     }
 
+    @PostMapping("logout")
+    public ResponseEntity<String> logout(HttpServletResponse response){
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("None")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.ok("Logout efetuado com sucesso!");
+    }
+
     private String getBaseUrl(HttpServletRequest request) {
         String scheme = request.getScheme();
         String serverName = request.getServerName();

@@ -6,6 +6,7 @@ import com.devchaves.Pork_backend.entity.MetasEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.MetasRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -78,7 +79,10 @@ public class MetasService {
             throw new IllegalArgumentException("ID de meta inválido");
         }
 
-        metasRepository.deletarMeta(id, user.getId());
+        MetasEntity metaParaApagar = metasRepository.findById(id).filter(m -> m.getUser().getId().equals(user.getId()))
+                        .orElseThrow(() -> new UsernameNotFoundException("Meta não encontrada"));
+
+        metasRepository.delete(metaParaApagar);
 
     }
 

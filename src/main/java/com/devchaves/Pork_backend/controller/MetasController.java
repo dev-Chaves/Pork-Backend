@@ -5,6 +5,8 @@ import com.devchaves.Pork_backend.DTO.MetasResponseDTO;
 import com.devchaves.Pork_backend.services.MetasService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,24 +22,24 @@ public class MetasController {
     }
 
     @PostMapping("cadastrar-metas")
-    public ResponseEntity<List<MetasResponseDTO>> cadastrarMetas(@Valid @RequestBody List<MetasRequestDTO> dtos){
-        return ResponseEntity.ok(metasService.cadastrarMetas(dtos));
+    public ResponseEntity<List<MetasResponseDTO>> cadastrarMetas(@Valid @RequestBody List<MetasRequestDTO> dtos, @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(metasService.cadastrarMetas(dtos, userDetails));
     }
 
     @PutMapping("atualizar-meta/{id}")
-    public ResponseEntity<MetasResponseDTO> atualizarMeta(@PathVariable Long id, @Valid @RequestBody MetasRequestDTO dto){
-        return ResponseEntity.ok(metasService.alterarMeta(id, dto));
+    public ResponseEntity<MetasResponseDTO> atualizarMeta(@PathVariable Long id, @Valid @RequestBody MetasRequestDTO dto, @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(metasService.alterarMeta(id, dto, userDetails));
     }
 
     @DeleteMapping("deletar-meta/{id}")
-    public ResponseEntity<String> apagarMeta(@PathVariable Long id){
-        metasService.apagarMeta(id);
+    public ResponseEntity<String> apagarMeta(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
+        metasService.apagarMeta(id, userDetails);
         return ResponseEntity.ok("Apagado com sucesso!");
     }
 
     @GetMapping("consultar-metas")
-    public ResponseEntity<List<MetasResponseDTO>> consultarMetas(){
-        return ResponseEntity.ok(metasService.consultarMetas());
+    public ResponseEntity<List<MetasResponseDTO>> consultarMetas(@AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(metasService.consultarMetas(userDetails));
     }
 
 }

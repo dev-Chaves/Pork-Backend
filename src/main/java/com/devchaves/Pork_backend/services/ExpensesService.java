@@ -70,7 +70,7 @@ public class ExpensesService {
     @Cacheable(value = "despesa_cache", key = "#userDetails.username" )
     public ExpenseListDTO consultarDespesas(UserDetails userDetails){
 
-        UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
+        UserEntity user = (UserEntity) userDetails;
 
         List<ExpenseEntity> despesas = expenseRepository.findByUser(user.getId());
 
@@ -81,42 +81,42 @@ public class ExpensesService {
     @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
     public List<ExpenseResponseDTO> cadastrarDespesas(List<ExpenseRequestDTO> dtos, UserDetails userDetails){
 
-        UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
+        UserEntity user = (UserEntity) userDetails;
 
-       System.out.println(user.getEmail());
+        System.out.println(user.getEmail());
 
-       if (!user.getVerificado()) {
-        throw new IllegalStateException("Usuário não verificado!");
-       }
+        if (!user.getVerificado()) {
+            throw new IllegalStateException("Usuário não verificado!");
+        }
 
-       for (ExpenseRequestDTO dto : dtos) {
-           if (dto == null) {
+        for (ExpenseRequestDTO dto : dtos) {
+            if (dto == null) {
                 throw new IllegalArgumentException("Não deve conter valores nulos!");
-           }
+            }
 
             if(dto.valor().compareTo(BigDecimal.ZERO) <= 0){
                 throw new IllegalArgumentException("O valor da despesa deve ser maior que zero!");
             }
-       }
+        }
 
-       List<ExpenseEntity> despesas = new ArrayList<>();
+        List<ExpenseEntity> despesas = new ArrayList<>();
 
-       for(ExpenseRequestDTO dto : dtos){
-        ExpenseEntity despesa = new ExpenseEntity();
-        despesa.setUser(user);
-        despesa.setValor(dto.valor());
-        despesa.setDescricao(dto.descricao());
-        despesa.setCategoria(dto.categoria());
-        despesas.add(despesa);
-       }
+        for(ExpenseRequestDTO dto : dtos){
+            ExpenseEntity despesa = new ExpenseEntity();
+            despesa.setUser(user);
+            despesa.setValor(dto.valor());
+            despesa.setDescricao(dto.descricao());
+            despesa.setCategoria(dto.categoria());
+            despesas.add(despesa);
+        }
 
         expenseRepository.saveAll(despesas);
 
         return despesas.stream().map((despesa -> new ExpenseResponseDTO(
-        despesa.getId(),
-        despesa.getValor(),
-        despesa.getDescricao(),
-        despesa.getCategoria())))
+            despesa.getId(),
+            despesa.getValor(),
+            despesa.getDescricao(),
+            despesa.getCategoria())))
         .collect(Collectors.toList());
 
     }
@@ -149,7 +149,7 @@ public class ExpensesService {
     @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
     public void apagarDespesa(Long id, UserDetails userDetails){
 
-        UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
+        UserEntity user = (UserEntity) userDetails;
 
         Long userId = user.getId();
 
@@ -162,7 +162,7 @@ public class ExpensesService {
     @Cacheable(value = "receitaCache", key = "#userDetails.username")
     public ReceitaResponseDTO consultarReceita(UserDetails userDetails){
 
-        UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
+        UserEntity user = (UserEntity) userDetails;
 
         return new ReceitaResponseDTO(user.getReceita());
 

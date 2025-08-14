@@ -6,6 +6,7 @@ import com.devchaves.Pork_backend.DTO.InvestmentResponseDTO;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,28 +19,25 @@ public class InvestmentService {
 
     private final UserRepository userRepository;
 
-    private final UtilServices utilServices;
-
-    public InvestmentService(UserRepository userRepository, UtilServices utilServices) {
+    public InvestmentService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.utilServices = utilServices;
     }
 
     private static final List<BigDecimal> porcentagem = Stream.of(10,30,50).map(BigDecimal::new).toList();
 
     @Transactional
-    public InvestmentResponseDTO selecionarInvestimento(InvestmentRequestDTO dto){
+    public InvestmentResponseDTO selecionarInvestimento(InvestmentRequestDTO dto, UserDetails userDetails){
 
-        Long userId = utilServices.getCurrentUserId();
+        UserEntity user = (UserEntity) userDetails;
 
-        userRepository.updateInvestimento(userId, dto.tipo().toString());
+        userRepository.updateInvestimento(user.getId(), dto.tipo().toString());
 
         return new InvestmentResponseDTO(dto.tipo().toString());
     }
 
-    public InvestmentMethodsResponse calcularInvestimentos(){
+    public InvestmentMethodsResponse calcularInvestimentos(UserDetails userDetails){
 
-        UserEntity user = utilServices.getCurrentUser();
+        UserEntity user = (UserEntity) userDetails;
 
         String InvestimentoENUM = user.getInvestimento().toString();
 

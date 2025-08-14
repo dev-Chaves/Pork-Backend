@@ -228,7 +228,7 @@ public class UserService {
     @Cacheable(value = "userCache", key = "#userDetails.username")
     public UserInfoResponse consultarInfo(UserDetails userDetails){
 
-        UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado!"));
+        UserEntity user = (UserEntity) userDetails;
 
         return new UserInfoResponse(user.getNome());
 

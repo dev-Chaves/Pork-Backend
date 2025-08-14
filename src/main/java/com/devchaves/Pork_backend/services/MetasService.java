@@ -6,6 +6,7 @@ import com.devchaves.Pork_backend.entity.MetasEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.MetasRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -17,17 +18,14 @@ public class MetasService {
 
     private final MetasRepository metasRepository;
 
-    private final UtilServices utilServices;
-
-    public MetasService(MetasRepository metasRepository, UtilServices utilServices){
+    public MetasService(MetasRepository metasRepository){
         this.metasRepository = metasRepository;
-        this.utilServices = utilServices;
     }
 
     @Transactional
-    public List<MetasResponseDTO> cadastrarMetas(List<MetasRequestDTO> dtos){
+    public List<MetasResponseDTO> cadastrarMetas(List<MetasRequestDTO> dtos, UserDetails userDetails){
 
-        UserEntity user = utilServices.getCurrentUser();
+        UserEntity user = (UserEntity) userDetails;
 
         if(dtos == null){
             throw new IllegalArgumentException("Metas não podem conter valores vazios");
@@ -51,7 +49,9 @@ public class MetasService {
     }
 
     @Transactional
-    public MetasResponseDTO alterarMeta(Long id, MetasRequestDTO dto){
+    public MetasResponseDTO alterarMeta(Long id, MetasRequestDTO dto, UserDetails userDetails){
+
+        UserEntity user = (UserEntity) userDetails;
 
         MetasEntity meta = metasRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Meta não encontrada"));
 
@@ -62,7 +62,7 @@ public class MetasService {
         meta.setMeta(dto.meta());
         meta.setValor(dto.valor());
         meta.setData(dto.data());
-        meta.setUser(utilServices.getCurrentUser());
+        meta.setUser(user);
 
         metasRepository.save(meta);
 
@@ -71,9 +71,9 @@ public class MetasService {
     }
 
     @Transactional
-    public void apagarMeta(Long id){
+    public void apagarMeta(Long id, UserDetails userDetails){
 
-        UserEntity user = utilServices.getCurrentUser();
+        UserEntity user = (UserEntity) userDetails;
 
         if(id == null){
             throw new IllegalArgumentException("ID de meta inválido");
@@ -86,9 +86,11 @@ public class MetasService {
 
     }
 
-    public List<MetasResponseDTO> consultarMetas(){
+    public List<MetasResponseDTO> consultarMetas(UserDetails userDetails){
 
-        Long userId = utilServices.getCurrentUserId();
+        UserEntity user = (UserEntity) userDetails;
+
+        Long userId = user.getId();
 
         List<MetasEntity> metas = metasRepository.findByUserId(userId);
 

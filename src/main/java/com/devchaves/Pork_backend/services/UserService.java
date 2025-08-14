@@ -1,7 +1,6 @@
 package com.devchaves.Pork_backend.services;
 
 import com.devchaves.Pork_backend.DTO.*;
-import com.devchaves.Pork_backend.config.UrlConfig;
 import com.devchaves.Pork_backend.entity.PasswordTokenEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.entity.VerificationTokenEntity;
@@ -9,6 +8,7 @@ import com.devchaves.Pork_backend.repository.PasswordTokenRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
 import com.devchaves.Pork_backend.repository.VerificationTokenRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,13 +36,14 @@ public class UserService {
 
     private final PasswordTokenRepository passwordTokenRepository;
 
-    private final UrlConfig urlConfig;
-
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
     // private static final String url = "http://localhost/api/auth/verificar?param=";
+
+    @Value("${url.redefinir-senha}")
+    private String redefinirSenhaUrl;
     
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenRepository verificationTokenRepository, MailService mailService, TokenService tokenService, UtilServices utilServices, PasswordTokenRepository passwordTokenRepository, UrlConfig urlConfig){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenRepository verificationTokenRepository, MailService mailService, TokenService tokenService, UtilServices utilServices, PasswordTokenRepository passwordTokenRepository){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
@@ -50,7 +51,6 @@ public class UserService {
         this.utilServices = utilServices;
         this.verificationTokenRepository = verificationTokenRepository;
         this.passwordTokenRepository = passwordTokenRepository;
-        this.urlConfig = urlConfig;
     }
 
     @Transactional
@@ -186,7 +186,7 @@ public class UserService {
 
         passwordTokenRepository.save(token);
 
-        String url = urlConfig.getRedefinirSenha() + "?token=" + token.getToken();
+        String url = redefinirSenhaUrl + "?token=" + token.getToken();
 
         String corpoEmail = String.format(
                 "Olá %s,\n\n" +

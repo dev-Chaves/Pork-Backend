@@ -79,3 +79,9 @@ server:
   port: 8080
   servlet:
     context-path: /api
+
+logging:
+  level:
+    org.springframework.cache: DEBUG
+    org.springframework.data.redis: DEBUG
+    com.devchaves.Pork_backend: DEBUG

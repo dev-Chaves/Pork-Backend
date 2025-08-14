@@ -37,7 +37,6 @@ public class ExpensesService {
         this.utilServices = utilServices;
     }
 
-    @Cacheable(value = "dashboard_cache", key = "#userDetails.username")
     public DashboardDTO consultarDespesasInfo(UserDetails userDetails){
 
         logger.info("Executando o método consultarDespesas(). Isso só deve aparecer no primeiro acesso ou após o cache ser invalidado.");

@@ -24,12 +24,12 @@ public class MetasController {
         return ResponseEntity.ok(metasService.cadastrarMetas(dtos));
     }
 
-    @PutMapping("atualizar-meta")
+    @PutMapping("atualizar-meta/${id}")
     public ResponseEntity<MetasResponseDTO> atualizarMeta(@PathVariable Long id, @Valid @RequestBody MetasRequestDTO dto){
         return ResponseEntity.ok(metasService.alterarMeta(id, dto));
     }
 
-    @DeleteMapping("deletar-meta")
+    @DeleteMapping("deletar-meta/${id}")
     public ResponseEntity<String> apagarMeta(@PathVariable Long id){
         metasService.apagarMeta(id);
         return ResponseEntity.ok("Apagado com sucesso!");

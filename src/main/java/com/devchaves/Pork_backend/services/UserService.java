@@ -1,6 +1,7 @@
 package com.devchaves.Pork_backend.services;
 
 import com.devchaves.Pork_backend.DTO.*;
+import com.devchaves.Pork_backend.config.UrlConfig;
 import com.devchaves.Pork_backend.entity.PasswordTokenEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.entity.VerificationTokenEntity;
@@ -35,11 +36,13 @@ public class UserService {
 
     private final PasswordTokenRepository passwordTokenRepository;
 
+    private final UrlConfig urlConfig;
+
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
     // private static final String url = "http://localhost/api/auth/verificar?param=";
     
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenRepository verificationTokenRepository, MailService mailService, TokenService tokenService, UtilServices utilServices, PasswordTokenRepository passwordTokenRepository){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenRepository verificationTokenRepository, MailService mailService, TokenService tokenService, UtilServices utilServices, PasswordTokenRepository passwordTokenRepository, UrlConfig urlConfig){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
@@ -47,6 +50,7 @@ public class UserService {
         this.utilServices = utilServices;
         this.verificationTokenRepository = verificationTokenRepository;
         this.passwordTokenRepository = passwordTokenRepository;
+        this.urlConfig = urlConfig;
     }
 
     @Transactional
@@ -182,7 +186,7 @@ public class UserService {
 
         passwordTokenRepository.save(token);
 
-        String url = "https://localhost:5173/api/auth/redefinir-senha?token=" + token.getToken();
+        String url = urlConfig.getRedefinirSenha() + "?token=" + token.getToken();
 
         String corpoEmail = String.format(
                 "Olá %s,\n\n" +

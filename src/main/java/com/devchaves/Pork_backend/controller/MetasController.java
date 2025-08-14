@@ -29,7 +29,7 @@ public class MetasController {
         return ResponseEntity.ok(metasService.alterarMeta(id, dto));
     }
 
-    @DeleteMapping("deletar-meta")
+    @DeleteMapping("deletar-meta/${id}")
     public ResponseEntity<String> apagarMeta(@PathVariable Long id){
         metasService.apagarMeta(id);
         return ResponseEntity.ok("Apagado com sucesso!");

@@ -64,6 +64,14 @@ public class RedisConfig {
         cacheConfiguration.put("userCache", createCacheConfiguration(objectMapper, UserInfoResponse.class, longCache));
         cacheConfiguration.put("userDetailsCache", createCacheConfiguration(objectMapper, UserEntity.class, longCache));
 
+        RedisCacheConfiguration stringCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(fastCache)
+                .disableCachingNullValues()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()));
+
+        cacheConfiguration.put("gastos_cache", stringCacheConfig);
+
         RedisCacheWriter cacheWriter = RedisCacheWriter.lockingRedisCacheWriter(redisConnectionFactory);
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig();
 

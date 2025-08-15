@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -75,7 +76,7 @@ public class ExpensesService {
         return new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, despesasTotal);
     }
 
-    @Cacheable(value = "invalido_cache", key = "#userDetails.username" )
+    @Cacheable(value = "despesa_cache", key = "#userDetails.username" )
     public ExpenseListDTO consultarDespesas(UserDetails userDetails){
 
         logger.info("Executando o método consultarDespesas(). Isso só deve aparecer no primeiro acesso ou após o cache ser invalidado.");
@@ -93,10 +94,9 @@ public class ExpensesService {
 
     }
 
-    @Cacheable(value = "despesa_cache", key = "#userDetails.username")
+    @Cacheable(value = "gastos_cache", key = "#userDetails.username")
     public String consultarDespensasJson(UserDetails userDetails){
         UserEntity user = (UserEntity) userDetails;
-
 
         List<ExpenseEntity> despesas = expenseRepository.findByUser(user.getId());
 
@@ -116,7 +116,11 @@ public class ExpensesService {
 
     }
 
-    @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
+    @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "despesa_cache", key = "#userDetails.username"),
+            @CacheEvict(value = "gastos_cache", key = "#userDetails.username")
+    })
     public List<ExpenseResponseDTO> cadastrarDespesas(List<ExpenseRequestDTO> dtos, UserDetails userDetails){
 
         UserEntity user = (UserEntity) userDetails;
@@ -160,7 +164,10 @@ public class ExpensesService {
     }
 
     @Transactional
-    @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
+    @Caching(evict = {
+            @CacheEvict(value = "despesa_cache", key = "#userDetails.username"),
+            @CacheEvict(value = "gastos_cache", key = "#userDetails.username")
+    })
     public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto, UserDetails userDetails ){
 
         UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
@@ -184,7 +191,10 @@ public class ExpensesService {
 
     }
 
-    @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
+    @Caching(evict = {
+            @CacheEvict(value = "despesa_cache", key = "#userDetails.username"),
+            @CacheEvict(value = "gastos_cache", key = "#userDetails.username")
+    })
     public void apagarDespesa(Long id, UserDetails userDetails){
 
         UserEntity user = (UserEntity) userDetails;

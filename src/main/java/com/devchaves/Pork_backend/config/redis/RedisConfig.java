@@ -27,6 +27,10 @@ import java.util.Map;
 @Configuration
 public class RedisConfig {
 
+    Duration fastCache = Duration.ofMinutes(10);
+
+    Duration longCache = Duration.ofHours(24);
+
     @Bean
     @Primary
     public ObjectMapper redisObjectMapper(){
@@ -52,17 +56,26 @@ public class RedisConfig {
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
     }
 
+
+
+    RedisCacheConfiguration stringCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(fastCache)
+            .disableCachingNullValues()
+            .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()));
+
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory, ObjectMapper objectMapper) {
 
         Map<String, RedisCacheConfiguration> cacheConfiguration = new HashMap<>();
-        Duration fastCache = Duration.ofMinutes(10);
-        Duration longCache = Duration.ofHours(24);
+
 
         cacheConfiguration.put("despesa_cache", createCacheConfiguration(objectMapper, ExpenseListDTO.class, fastCache));
         cacheConfiguration.put("receitaCache", createCacheConfiguration(objectMapper, ReceitaResponseDTO.class, fastCache));
         cacheConfiguration.put("userCache", createCacheConfiguration(objectMapper, UserInfoResponse.class, longCache));
         cacheConfiguration.put("userDetailsCache", createCacheConfiguration(objectMapper, UserEntity.class, longCache));
+
+        cacheConfiguration.put("gastos_cache", stringCacheConfig);
 
         RedisCacheWriter cacheWriter = RedisCacheWriter.lockingRedisCacheWriter(redisConnectionFactory);
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig();

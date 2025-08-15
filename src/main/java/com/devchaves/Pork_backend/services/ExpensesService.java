@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -173,7 +174,10 @@ public class ExpensesService {
     }
 
     @Transactional
-    @CacheEvict(value = "receitaCache", key = "#userDetails.username")
+    @Caching( evict = {
+            @CacheEvict(value = "receitaCache", key = "#userDetails.username"),
+            @CacheEvict(value = "userDetailsCache", key = "#userDetails.username")
+    })
     public ReceitaResponseDTO atualizarReceita(UserUpdateDTO dto, UserDetails userDetails){
 
         UserEntity userD = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encotrado"));

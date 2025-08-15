@@ -1,4 +1,4 @@
-package com.devchaves.Pork_backend.config;
+package com.devchaves.Pork_backend.config.redis;
 
 import com.devchaves.Pork_backend.DTO.DashboardDTO;
 import com.devchaves.Pork_backend.DTO.ExpenseListDTO;
@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -53,26 +53,26 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory){
+    public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory, ObjectMapper objectMapper) {
 
         Map<String, RedisCacheConfiguration> cacheConfiguration = new HashMap<>();
-
         Duration fastCache = Duration.ofMinutes(10);
-
         Duration longCache = Duration.ofHours(24);
 
-        cacheConfiguration.put("despesa_cache", createCacheConfiguration(redisObjectMapper(),ExpenseListDTO.class , fastCache));
+        cacheConfiguration.put("despesa_cache", createCacheConfiguration(objectMapper, ExpenseListDTO.class, fastCache));
+        cacheConfiguration.put("receitaCache", createCacheConfiguration(objectMapper, ReceitaResponseDTO.class, fastCache));
+        cacheConfiguration.put("userCache", createCacheConfiguration(objectMapper, UserInfoResponse.class, longCache));
+        cacheConfiguration.put("userDetailsCache", createCacheConfiguration(objectMapper, UserEntity.class, longCache));
 
-        cacheConfiguration.put("receitaCache",createCacheConfiguration(redisObjectMapper(),ReceitaResponseDTO.class, fastCache) );
+        RedisCacheWriter cacheWriter = RedisCacheWriter.lockingRedisCacheWriter(redisConnectionFactory);
+        RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig();
 
-        cacheConfiguration.put("userCache", createCacheConfiguration(redisObjectMapper(), UserInfoResponse.class, longCache));
-
-        cacheConfiguration.put("userDetailsCache", createCacheConfiguration(redisObjectMapper(), UserEntity.class, longCache));
-
-        cacheConfiguration.put("dashboard_cache", createCacheConfiguration(redisObjectMapper(), DashboardDTO.class, fastCache));
-
-        return RedisCacheManager.builder(redisConnectionFactory).withInitialCacheConfigurations(cacheConfiguration).build();
-
+        return new LoggingRedisCacheManager(
+                cacheWriter,
+                defaultCacheConfig,
+                cacheConfiguration,
+                true
+        );
     }
 
 }

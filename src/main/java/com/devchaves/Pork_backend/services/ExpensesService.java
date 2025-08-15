@@ -39,9 +39,7 @@ public class ExpensesService {
 
     public DashboardDTO consultarDespesasInfo(UserDetails userDetails){
 
-        logger.info("Executando o método consultarDespesas(). Isso só deve aparecer no primeiro acesso ou após o cache ser invalidado.");
-
-        UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
+        UserEntity user = (UserEntity) userDetails;
 
         Long userId = user.getId();
 
@@ -70,9 +68,16 @@ public class ExpensesService {
     @Cacheable(value = "despesa_cache", key = "#userDetails.username" )
     public ExpenseListDTO consultarDespesas(UserDetails userDetails){
 
+        logger.info("Executando o método consultarDespesas(). Isso só deve aparecer no primeiro acesso ou após o cache ser invalidado.");
+
+        long startTime = System.currentTimeMillis();
+
         UserEntity user = (UserEntity) userDetails;
 
         List<ExpenseEntity> despesas = expenseRepository.findByUser(user.getId());
+
+        long endTime = System.currentTimeMillis();
+        logger.info("Tempo para consultar despesas: {} ms", (endTime - startTime));
 
         return new ExpenseListDTO( despesas.stream().map((n)-> new ExpenseResponseDTO(n.getId(), n.getValor(),n.getDescricao(), n.getCategoria())).toList());
 

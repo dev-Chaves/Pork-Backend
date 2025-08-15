@@ -69,16 +69,6 @@ public class ExpenseController {
         return ResponseEntity.ok( response );
     }
 
-    @GetMapping("consultar-gastos")
-    public ResponseEntity<String> consultarGastos(@AuthenticationPrincipal UserDetails userDetails){
-
-        String result = expensesService.consultarDespensasJson(userDetails);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(result);
-    }
-
     @DeleteMapping("apagar-despesa/{id}")
     public ResponseEntity<String> apagarDespesa(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
 

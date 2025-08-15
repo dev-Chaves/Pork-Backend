@@ -5,16 +5,11 @@ import com.devchaves.Pork_backend.entity.ExpenseEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.ExpenseRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -33,19 +28,11 @@ public class ExpensesService {
 
     private final UserRepository userRepository;
 
-    private final UtilServices utilServices;
 
-    private final ObjectMapper objectMapper;
 
-    private final RedisTemplate<String, String> stringRedisTemplate;
-
-    public ExpensesService(ExpenseRepository expenseRepository, UserRepository userRepository, UtilServices utilServices, ObjectMapper objectMapper, RedisTemplate<String, String> stringRedisTemplate) {
+    public ExpensesService(ExpenseRepository expenseRepository, UserRepository userRepository) {
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;
-        this.utilServices = utilServices;
-        this.objectMapper = objectMapper;
-
-        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     public DashboardDTO consultarDespesasInfo(UserDetails userDetails){
@@ -94,33 +81,8 @@ public class ExpensesService {
 
     }
 
-    @Cacheable(value = "gastos_cache", key = "#userDetails.username")
-    public String consultarDespensasJson(UserDetails userDetails){
-        UserEntity user = (UserEntity) userDetails;
-
-        List<ExpenseEntity> despesas = expenseRepository.findByUser(user.getId());
-
-        List<ExpenseResponseDTO> result = despesas.stream()
-                .map(n -> new ExpenseResponseDTO(
-                        n.getId(),
-                        n.getValor(),
-                        n.getDescricao(),
-                        n.getCategoria()
-                )).toList();
-
-        try {
-            return objectMapper.writeValueAsString(result);
-        }catch (JsonProcessingException e ){
-            throw new RuntimeException("Erro na serialização");
-        }
-
-    }
-
     @Transactional
-    @Caching(evict = {
-            @CacheEvict(value = "despesa_cache", key = "#userDetails.username"),
-            @CacheEvict(value = "gastos_cache", key = "#userDetails.username")
-    })
+    @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
     public List<ExpenseResponseDTO> cadastrarDespesas(List<ExpenseRequestDTO> dtos, UserDetails userDetails){
 
         UserEntity user = (UserEntity) userDetails;
@@ -164,10 +126,7 @@ public class ExpensesService {
     }
 
     @Transactional
-    @Caching(evict = {
-            @CacheEvict(value = "despesa_cache", key = "#userDetails.username"),
-            @CacheEvict(value = "gastos_cache", key = "#userDetails.username")
-    })
+    @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
     public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto, UserDetails userDetails ){
 
         UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
@@ -191,10 +150,7 @@ public class ExpensesService {
 
     }
 
-    @Caching(evict = {
-            @CacheEvict(value = "despesa_cache", key = "#userDetails.username"),
-            @CacheEvict(value = "gastos_cache", key = "#userDetails.username")
-    })
+    @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
     public void apagarDespesa(Long id, UserDetails userDetails){
 
         UserEntity user = (UserEntity) userDetails;

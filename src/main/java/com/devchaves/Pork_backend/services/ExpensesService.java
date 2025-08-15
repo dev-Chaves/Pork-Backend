@@ -5,12 +5,15 @@ import com.devchaves.Pork_backend.entity.ExpenseEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.ExpenseRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -31,10 +34,17 @@ public class ExpensesService {
 
     private final UtilServices utilServices;
 
-    public ExpensesService(ExpenseRepository expenseRepository, UserRepository userRepository, UtilServices utilServices) {
+    private final ObjectMapper objectMapper;
+
+    private final RedisTemplate<String, String> stringRedisTemplate;
+
+    public ExpensesService(ExpenseRepository expenseRepository, UserRepository userRepository, UtilServices utilServices, ObjectMapper objectMapper, RedisTemplate<String, String> stringRedisTemplate) {
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;
         this.utilServices = utilServices;
+        this.objectMapper = objectMapper;
+
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     public DashboardDTO consultarDespesasInfo(UserDetails userDetails){
@@ -65,7 +75,7 @@ public class ExpensesService {
         return new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, despesasTotal);
     }
 
-    @Cacheable(value = "despesa_cache", key = "#userDetails.username" )
+    @Cacheable(value = "invalido_cache", key = "#userDetails.username" )
     public ExpenseListDTO consultarDespesas(UserDetails userDetails){
 
         logger.info("Executando o método consultarDespesas(). Isso só deve aparecer no primeiro acesso ou após o cache ser invalidado.");
@@ -80,6 +90,29 @@ public class ExpensesService {
         logger.info("Tempo para consultar despesas: {} ms", (endTime - startTime));
 
         return new ExpenseListDTO( despesas.stream().map((n)-> new ExpenseResponseDTO(n.getId(), n.getValor(),n.getDescricao(), n.getCategoria())).toList());
+
+    }
+
+    @Cacheable(value = "despesa_cache", key = "#userDetails.username")
+    public String consultarDespensasJson(UserDetails userDetails){
+        UserEntity user = (UserEntity) userDetails;
+
+
+        List<ExpenseEntity> despesas = expenseRepository.findByUser(user.getId());
+
+        List<ExpenseResponseDTO> result = despesas.stream()
+                .map(n -> new ExpenseResponseDTO(
+                        n.getId(),
+                        n.getValor(),
+                        n.getDescricao(),
+                        n.getCategoria()
+                )).toList();
+
+        try {
+            return objectMapper.writeValueAsString(result);
+        }catch (JsonProcessingException e ){
+            throw new RuntimeException("Erro na serialização");
+        }
 
     }
 

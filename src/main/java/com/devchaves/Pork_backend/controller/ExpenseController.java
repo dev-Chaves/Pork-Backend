@@ -3,6 +3,7 @@ package com.devchaves.Pork_backend.controller;
 import java.util.List;
 
 import com.devchaves.Pork_backend.DTO.*;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -66,6 +67,16 @@ public class ExpenseController {
     public ResponseEntity<DashboardDTO> despesaCompleta(@AuthenticationPrincipal UserDetails userDetails){
         DashboardDTO response = expensesService.consultarDespesasInfo(userDetails);
         return ResponseEntity.ok( response );
+    }
+
+    @GetMapping("consultar-gastos")
+    public ResponseEntity<String> consultarGastos(@AuthenticationPrincipal UserDetails userDetails){
+
+        String result = expensesService.consultarDespensasJson(userDetails);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(result);
     }
 
     @DeleteMapping("apagar-despesa/{id}")

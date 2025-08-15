@@ -6,6 +6,7 @@ import com.devchaves.Pork_backend.DTO.InvestmentResponseDTO;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class InvestmentService {
     private static final List<BigDecimal> porcentagem = Stream.of(10,30,50).map(BigDecimal::new).toList();
 
     @Transactional
+    @CacheEvict(value = "userDetailsCache", key = "#userDetails.username")
     public InvestmentResponseDTO selecionarInvestimento(InvestmentRequestDTO dto, UserDetails userDetails){
 
         UserEntity user = (UserEntity) userDetails;

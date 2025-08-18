@@ -29,20 +29,20 @@ services:
       REDEFINIR_SENHA_URL: ${REDEFINIR_SENHA_URL}
     restart: on-failure
 
-  api2:
-    image: financepork/pork:latest
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRESQL_USER}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRESQL_PASSWORD}
-      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
-      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
-      SPRING_SECRET: ${SECRET}
-      REDEFINIR_SENHA_URL: ${REDEFINIR_SENHA_URL}
-    restart: on-failure
+#  api2:
+#    image: financepork/pork:latest
+#    depends_on:
+#      db:
+#        condition: service_healthy
+#    environment:
+#      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+#      SPRING_DATASOURCE_USERNAME: ${POSTGRESQL_USER}
+#      SPRING_DATASOURCE_PASSWORD: ${POSTGRESQL_PASSWORD}
+#      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+#      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+#      SPRING_SECRET: ${SECRET}
+#      REDEFINIR_SENHA_URL: ${REDEFINIR_SENHA_URL}
+#    restart: on-failure
 
   db:
     image: 'postgres:latest'

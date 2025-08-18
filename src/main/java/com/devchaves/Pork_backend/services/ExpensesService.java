@@ -29,8 +29,6 @@ public class ExpensesService {
 
     private final UserRepository userRepository;
 
-
-
     public ExpensesService(ExpenseRepository expenseRepository, UserRepository userRepository) {
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;

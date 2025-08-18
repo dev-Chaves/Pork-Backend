@@ -44,7 +44,7 @@ public class MetasService {
 
         metasRepository.saveAll(metas);
 
-        return metas.stream().map(m -> new MetasResponseDTO(m.getMeta(), m.getValor(), m.getData())).toList();
+        return metas.stream().map(m -> new MetasResponseDTO(m.getId(), m.getMeta(), m.getValor(), m.getData())).toList();
 
     }
 
@@ -66,7 +66,7 @@ public class MetasService {
 
         metasRepository.save(meta);
 
-        return new MetasResponseDTO(meta.getMeta(), meta.getValor(), meta.getData());
+        return new MetasResponseDTO(meta.getId(), meta.getMeta(), meta.getValor(), meta.getData());
 
     }
 
@@ -95,6 +95,7 @@ public class MetasService {
         List<MetasEntity> metas = metasRepository.findByUserId(userId);
 
         return metas.stream().map(n -> new MetasResponseDTO(
+                n.getId(),
                 n.getMeta(),
                 n.getValor(),
                 n.getData()

@@ -78,7 +78,9 @@ public class UserService {
 
         verificationTokenRepository.save(token);
 
-        String verificar = url + token.getToken();
+        String urlTeste = "https://pork-finance.vercel.app/verificar?=";
+
+        String verificar = urlTeste + token.getToken();
 
         String emailBody = String.format(
             "Olá %s!\n\n" +
@@ -146,7 +148,9 @@ public class UserService {
         
         verificationTokenRepository.save(token);
 
-        String verificar = url + token.getToken();
+        String urlTeste = "https://pork-finance.vercel.app/verificar?=";
+
+        String verificar = urlTeste + token.getToken();
 
         String emailBody = String.format(
             "Olá %s!\n\n" +

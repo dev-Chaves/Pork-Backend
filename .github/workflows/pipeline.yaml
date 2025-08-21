@@ -64,7 +64,7 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pork-nginx:latest
             
             # Se não existir certificado, executar script de inicialização
-            if [ ! -d "./certbot/conf/live/financepork.site" ]; then
+            if [ ! -d "./certbot/conf/live/api.financepork.site" ]; then
               echo "Iniciando configuração SSL..."
               ./init-letsencrypt.sh
             else

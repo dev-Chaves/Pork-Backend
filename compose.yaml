@@ -11,7 +11,7 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    command: "/bin/sh -c 'while [ ! -f /etc/letsencrypt/options-ssl-nginx.conf ]; do echo \"Waiting for SSL config...\"; sleep 5; done && nginx -g \"daemon off;\"'"
 
   certbot:
     image: certbot/certbot

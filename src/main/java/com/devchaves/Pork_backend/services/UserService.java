@@ -75,7 +75,7 @@ public class UserService {
 
         verificationTokenRepository.save(token);
 
-        String urlTeste = "https://pork-finance.vercel.app/verificar?=";
+        String urlTeste = "https://pork-finance.vercel.app/verificar-email?=";
 
         String verificar = urlTeste + token.getToken();
 
@@ -145,7 +145,7 @@ public class UserService {
         
         verificationTokenRepository.save(token);
 
-        String urlTeste = "https://financepork.site/verificar?=";
+        String urlTeste = "https://financepork.site/verificar-email?=";
 
         String verificar = urlTeste + token.getToken();
 

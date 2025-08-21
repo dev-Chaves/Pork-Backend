@@ -42,7 +42,7 @@ public class AuthController {
                 .secure(true)
                 .path("/")
                 .maxAge(Duration.ofDays(1))
-                .sameSite("Lax")
+                .sameSite("None")
                 .domain("financepork.site")
                 .build();
 
@@ -55,7 +55,7 @@ public class AuthController {
     @PostMapping("register")
     public ResponseEntity<RegisterResponseDTO> register(@Valid @RequestBody RegisterRequestDTO dto, HttpServletRequest request) {
 
-        String baseUrl = getBaseUrl(request) + "/api/auth/verificar?param=";
+        String baseUrl = getBaseUrl(request) + "/api/auth/verificar-email?param=";
         
         RegisterResponseDTO response = userService.register(dto, baseUrl);
 
@@ -85,7 +85,7 @@ public class AuthController {
     @PostMapping("reenviar-email")
     public ResponseEntity<String> reenviarEmail(@Valid @RequestBody ResendEmail dto, HttpServletRequest request) {
 
-        String baseUrl = getBaseUrl(request) + "/api/auth/verificar?param=";
+        String baseUrl = getBaseUrl(request) + "/api/auth/verificar-email?param=";
         
         userService.reenviarVerificacao(dto, baseUrl);
 
@@ -114,8 +114,9 @@ public class AuthController {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(0)
-                .sameSite("Lax")
+                .maxAge(Duration.ofDays(1))
+                .domain("financepork.site")
+                .sameSite("None")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());

@@ -13,6 +13,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -43,8 +45,9 @@ public class AuthController {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(24 * 60 * 60)
-                .sameSite("None")
+                .maxAge(Duration.ofDays(1))
+                .sameSite("Lax")
+                .domain("financepork.site")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());

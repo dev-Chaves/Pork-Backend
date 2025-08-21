@@ -3,8 +3,6 @@ package com.devchaves.Pork_backend.controller;
 import com.devchaves.Pork_backend.DTO.*;
 import com.devchaves.Pork_backend.services.TokenService;
 import com.devchaves.Pork_backend.services.UserService;
-import com.devchaves.Pork_backend.services.UtilServices;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -24,12 +22,10 @@ public class AuthController {
 
     private final TokenService tokenService;
 
-    private final UtilServices utilServices;
-
-    public AuthController(UserService userService, TokenService tokenService, UtilServices utilServices){
+    public AuthController(UserService userService, TokenService tokenService){
         this.userService = userService;
         this.tokenService = tokenService;
-        this.utilServices = utilServices;
+
     }
 
     @PostMapping("login")

@@ -30,8 +30,6 @@ public class UserService {
 
     private final TokenService tokenService;
 
-    private final UtilServices utilServices;
-
     private final VerificationTokenRepository verificationTokenRepository;
 
     private final PasswordTokenRepository passwordTokenRepository;
@@ -43,12 +41,11 @@ public class UserService {
     @Value("${url.redefinir-senha}")
     private String redefinirSenhaUrl;
     
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenRepository verificationTokenRepository, MailService mailService, TokenService tokenService, UtilServices utilServices, PasswordTokenRepository passwordTokenRepository){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenRepository verificationTokenRepository, MailService mailService, TokenService tokenService, PasswordTokenRepository passwordTokenRepository){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
         this.tokenService = tokenService;
-        this.utilServices = utilServices;
         this.verificationTokenRepository = verificationTokenRepository;
         this.passwordTokenRepository = passwordTokenRepository;
     }

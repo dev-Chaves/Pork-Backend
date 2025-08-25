@@ -145,7 +145,7 @@ public class UserService {
         
         verificationTokenRepository.save(token);
 
-        String urlTeste = "https://financepork.site/verificar-email?=";
+        String urlTeste = "https://financepork.site/verificar-email?token=";
 
         String verificar = urlTeste + token.getToken();
 

@@ -4,7 +4,7 @@
 
 ## Tarefa (task)
 - **O QUE exatamente deve ser feito?**
-- "Análise os trechos de código identifique gargalos e más práticas"
+- "Análise os trechos de código identifique gargalos e más práticas de um desenvolvedor estagiário/junior e o guie"
 
 ## Contexto (context)
 - **QUAL é o cenário atual ?**

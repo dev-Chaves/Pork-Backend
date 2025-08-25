@@ -1,9 +1,7 @@
 package com.devchaves.Pork_backend.repository;
 
 import com.devchaves.Pork_backend.entity.MetasEntity;
-import com.devchaves.Pork_backend.entity.UserEntity;
 import io.lettuce.core.dynamic.annotation.Param;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

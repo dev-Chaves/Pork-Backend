@@ -46,7 +46,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          source: "compose.yaml,init-letsencrypt.sh,prometheus.yml"
+          source: "compose.yaml,init-letsencrypt.sh"
           target: "/home/${{ secrets.VPS_USER }}/pork-backend/"
 
       - name: Deploy on VPS via SSH

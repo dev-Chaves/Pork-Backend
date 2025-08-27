@@ -35,6 +35,7 @@ public class ExpenseEntity {
     private CategoriesENUM categoria;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "categorias")
     private CategoriasDeGastos categoriasDeGastos;
 
     @PrePersist

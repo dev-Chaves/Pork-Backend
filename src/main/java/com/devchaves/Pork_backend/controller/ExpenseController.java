@@ -94,4 +94,16 @@ public class ExpenseController {
 
     }
 
+    @GetMapping("consultar-despesas-por-mes-unitario")
+    public ResponseEntity<ExpenseListDTO> consultarDespesasPorMesUnitario(
+            @RequestParam int mes,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        ExpenseListDTO response = expensesService.consultarDespesasPorMesEntradaDeMes(mes, userDetails);
+
+        return ResponseEntity.ok(response);
+
+    }
+
+
 }

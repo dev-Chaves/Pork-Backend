@@ -16,7 +16,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -187,10 +189,6 @@ public class ExpensesService {
             throw new IllegalArgumentException("A receita não pode ser negativa!");
         }
 
-        if (dto.receita().compareTo(BigDecimal.ZERO) == 0){
-            throw new IllegalArgumentException("TU É DURO  KKKKKKKKK !");
-        }
-
         userRepository.updateReceita(user, dto.receita());
 
         return new ReceitaResponseDTO(dto.receita());
@@ -221,5 +219,40 @@ public class ExpensesService {
         );
 
     }
+
+    public ExpenseListDTO consultarDespesasPorMesEntradaDeMes(int mes, UserDetails user){
+
+        LocalDate diaUm = LocalDate.now().withMonth(mes).withDayOfMonth(1);
+
+        LocalDate ultimoDia = diaUm.withDayOfMonth(diaUm.lengthOfMonth());
+
+        LocalDateTime inicio = diaUm.atStartOfDay();
+
+        LocalDateTime fim = ultimoDia.atTime(LocalTime.MAX);
+
+        UserEntity userEntity = (UserEntity) user;
+
+        System.out.println("Buscando despesas para o usuário ID: " + userEntity.getId());
+        System.out.println("Data de Início (LocalDateTime): " + inicio);
+        System.out.println("Data de Fim (LocalDateTime): " + fim);
+
+        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(inicio, fim, userEntity.getId());
+
+        return new ExpenseListDTO(
+                despesas.stream().map(
+                        (d) -> new ExpenseResponseDTO(
+                                d.getId(),
+                                d.getValor(),
+                                d.getDescricao(),
+                                d.getCategoriasDeGastos()
+                        )
+                ).toList()
+        );
+
+    }
+
+
+
+
 
 }   

@@ -129,36 +129,7 @@ public class ExpensesService {
 
     @Transactional
     @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
-    public ExpenseListDTO consultarDespesasPorMesEntradaDeMes(int mes, UserDetails user){
-
-        LocalDate diaUm = LocalDate.now().withMonth(mes).withDayOfMonth(1);
-
-        LocalDate ultimoDia = diaUm.withDayOfMonth(diaUm.lengthOfMonth());
-
-        LocalDateTime inicio = diaUm.atStartOfDay();
-
-        LocalDateTime fim = ultimoDia.atTime(LocalTime.MAX);
-
-        UserEntity userEntity = (UserEntity) user;
-
-        System.out.println("Buscando despesas para o usuário ID: " + userEntity.getId());
-        System.out.println("Data de Início (LocalDateTime): " + inicio);
-        System.out.println("Data de Fim (LocalDateTime): " + fim);
-
-        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(inicio, fim, userEntity.getId());
-
-        return new ExpenseListDTO(
-                despesas.stream().map(
-                        (d) -> new ExpenseResponseDTO(
-                                d.getId(),
-                                d.getValor(),
-                                d.getDescricao(),
-                                d.getCategoriasDeGastos()
-                        )
-                ).toList()
-        );
-
-    }    public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto, UserDetails userDetails ){
+    public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto, UserDetails userDetails ){
 
         UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
 
@@ -229,6 +200,37 @@ public class ExpensesService {
 
         LocalDateTime inicio = dto.dataInicio().atStartOfDay();
         LocalDateTime fim = dto.dataFim().atTime(23, 59, 59);
+
+        System.out.println("Buscando despesas para o usuário ID: " + userEntity.getId());
+        System.out.println("Data de Início (LocalDateTime): " + inicio);
+        System.out.println("Data de Fim (LocalDateTime): " + fim);
+
+        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(inicio, fim, userEntity.getId());
+
+        return new ExpenseListDTO(
+                despesas.stream().map(
+                        (d) -> new ExpenseResponseDTO(
+                                d.getId(),
+                                d.getValor(),
+                                d.getDescricao(),
+                                d.getCategoriasDeGastos()
+                        )
+                ).toList()
+        );
+
+    }
+
+    public ExpenseListDTO consultarDespesasPorMesEntradaDeMes(int mes, UserDetails user){
+
+        LocalDate diaUm = LocalDate.now().withMonth(mes).withDayOfMonth(1);
+
+        LocalDate ultimoDia = diaUm.withDayOfMonth(diaUm.lengthOfMonth());
+
+        LocalDateTime inicio = diaUm.atStartOfDay();
+
+        LocalDateTime fim = ultimoDia.atTime(LocalTime.MAX);
+
+        UserEntity userEntity = (UserEntity) user;
 
         System.out.println("Buscando despesas para o usuário ID: " + userEntity.getId());
         System.out.println("Data de Início (LocalDateTime): " + inicio);

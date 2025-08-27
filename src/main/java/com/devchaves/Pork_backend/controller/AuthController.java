@@ -63,7 +63,7 @@ public class AuthController {
     }
 
     @GetMapping("verificar")
-    public ResponseEntity<String> verificarUsuario(@RequestParam String param) {
+    public ResponseEntity<String> verificarUsuario(@RequestParam("token") String param) {
 
         try{
             tokenService.verificarToken(param);

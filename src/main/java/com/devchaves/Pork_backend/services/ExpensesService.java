@@ -183,6 +183,14 @@ public class ExpensesService {
 
         Long user = userD.getId();
 
+        if(dto.receita().compareTo(BigDecimal.ZERO) < 0){
+            throw new IllegalArgumentException("A receita não pode ser negativa!");
+        }
+
+        if (dto.receita().compareTo(BigDecimal.ZERO) == 0){
+            throw new IllegalArgumentException("TU É DURO  KKKKKKKKK !");
+        }
+
         userRepository.updateReceita(user, dto.receita());
 
         return new ReceitaResponseDTO(dto.receita());

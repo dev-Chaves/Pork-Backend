@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -191,7 +192,10 @@ public class ExpensesService {
 
         UserEntity userEntity = (UserEntity) user;
 
-        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(dto.dataInicio(), dto.dataFim(), userEntity.getId());
+        LocalDateTime inicio = dto.dataInicio().atStartOfDay();
+        LocalDateTime fim = dto.dataFim().atTime(23, 59);
+
+        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(fim, inicio, userEntity.getId());
 
         return new ExpenseListDTO(
                 despesas.stream().map(

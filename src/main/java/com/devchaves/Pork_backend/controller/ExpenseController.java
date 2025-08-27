@@ -1,22 +1,17 @@
 package com.devchaves.Pork_backend.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.devchaves.Pork_backend.DTO.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.devchaves.Pork_backend.services.ExpensesService;
 
@@ -85,8 +80,11 @@ public class ExpenseController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("consultar-despesas-por-mes/{dataInicio}/{dataFim}")
-    public ResponseEntity<ExpenseListDTO> consultarDespesasPorMes(@PathVariable LocalDateTime dataInicio, @PathVariable LocalDateTime dataFim, @AuthenticationPrincipal UserDetails userDetails) {
+    @GetMapping("consultar-despesas-por-mes")
+    public ResponseEntity<ExpenseListDTO> consultarDespesasPorMes(
+            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate dataInicio,
+            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate dataFim,
+            @AuthenticationPrincipal UserDetails userDetails) {
 
         ExpenseMesRequest dto = new ExpenseMesRequest(dataInicio, dataFim);
 

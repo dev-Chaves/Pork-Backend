@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -217,5 +218,33 @@ public class ExpensesService {
         );
 
     }
+
+    public ExpenseListDTO consultarDespesasPorMesEntradaDeMes(int mes, UserDetails user){
+
+        LocalDateTime inicio = LocalDate.now().withMonth(mes).withDayOfMonth(1).atStartOfDay();
+        LocalDateTime fim = inicio.plusDays(30);
+
+        UserEntity userEntity = (UserEntity) user;
+
+        System.out.println("Buscando despesas para o usuário ID: " + userEntity.getId());
+        System.out.println("Data de Início (LocalDateTime): " + inicio);
+        System.out.println("Data de Fim (LocalDateTime): " + fim);
+
+        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(inicio, fim, userEntity.getId());
+
+        return new ExpenseListDTO(
+                despesas.stream().map(
+                        (d) -> new ExpenseResponseDTO(
+                                d.getId(),
+                                d.getValor(),
+                                d.getDescricao(),
+                                d.getCategoriasDeGastos()
+                        )
+                ).toList()
+        );
+
+    }
+
+
 
 }   

@@ -52,12 +52,12 @@ public class ExpensesService {
             despesasTotal = BigDecimal.ZERO;
         }
 
-        List<ExpenseResponseDTO> despesaTotal = todasDespesas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
+        List<ExpenseResponseDTO> despesaTotal = todasDespesas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoriasDeGastos())).toList();
 
-        List<ExpenseResponseDTO> despesaCategoriaFixo = despesasFixas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
+        List<ExpenseResponseDTO> despesaCategoriaFixo = despesasFixas.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoriasDeGastos())).toList();
 
         List<ExpenseResponseDTO> despesaCategoriaVariavel =
-                despesasVariaveis.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoria())).toList();
+                despesasVariaveis.stream().map(n -> new ExpenseResponseDTO(n.getId(), n.getValor(), n.getDescricao(), n.getCategoriasDeGastos())).toList();
 
         return new DashboardDTO(despesaTotal, despesaCategoriaVariavel, despesaCategoriaFixo, despesasTotal);
     }
@@ -76,7 +76,7 @@ public class ExpensesService {
         long endTime = System.currentTimeMillis();
         logger.info("Tempo para consultar despesas: {} ms", (endTime - startTime));
 
-        return new ExpenseListDTO( despesas.stream().map((n)-> new ExpenseResponseDTO(n.getId(), n.getValor(),n.getDescricao(), n.getCategoria())).toList());
+        return new ExpenseListDTO( despesas.stream().map((n)-> new ExpenseResponseDTO(n.getId(), n.getValor(),n.getDescricao(), n.getCategoriasDeGastos())).toList());
 
     }
 
@@ -109,7 +109,7 @@ public class ExpensesService {
             despesa.setUser(user);
             despesa.setValor(dto.valor());
             despesa.setDescricao(dto.descricao());
-            despesa.setCategoria(dto.categoria());
+            despesa.setCategoriasDeGastos(dto.categoria());
             despesas.add(despesa);
         }
 
@@ -119,7 +119,7 @@ public class ExpensesService {
             despesa.getId(),
             despesa.getValor(),
             despesa.getDescricao(),
-            despesa.getCategoria())))
+            despesa.getCategoriasDeGastos())))
         .collect(Collectors.toList());
 
     }

@@ -199,7 +199,7 @@ public class ExpensesService {
         System.out.println("Data de Início (LocalDateTime): " + inicio);
         System.out.println("Data de Fim (LocalDateTime): " + fim);
 
-        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(fim, inicio, userEntity.getId());
+        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(inicio, fim, userEntity.getId());
 
         return new ExpenseListDTO(
                 despesas.stream().map(

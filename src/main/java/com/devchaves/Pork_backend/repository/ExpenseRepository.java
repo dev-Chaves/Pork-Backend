@@ -14,22 +14,22 @@ import java.util.List;
 public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long> {
 
     @Query(value = "SELECT * FROM tb_despesas WHERE categoria = :categoria", nativeQuery = true)
-    public List<ExpenseEntity> findByCategory(String category);
+    List<ExpenseEntity> findByCategory(String category);
 
     @Query(value = "SELECT * FROM tb_despesas WHERE user_id = :userId", nativeQuery = true)
-    public List<ExpenseEntity> findByUser(Long userId);
+    List<ExpenseEntity> findByUser(Long userId);
 
     @Query(value = "SELECT * FROM tb_despesas WHERE id = :id AND user_id = :userId", nativeQuery = true)
-    public ExpenseEntity findByIdAndUserId(Long id, Long userId);
+    ExpenseEntity findByIdAndUserId(Long id, Long userId);
 
     @Query(value = "SELECT * FROM tb_despesas WHERE user_id = :userId AND categoria = 'VARIAVEL'", nativeQuery = true)
-    public List<ExpenseEntity> findVariablesExpensesByUserId(Long userId);
+    List<ExpenseEntity> findVariablesExpensesByUserId(Long userId);
 
     @Query(value = "SELECT * FROM tb_despesas WHERE user_id = :userId AND categoria = 'FIXA'", nativeQuery = true)
-    public List<ExpenseEntity> findFixedsExpensesByUserId(Long userId);
+    List<ExpenseEntity> findFixedsExpensesByUserId(Long userId);
 
     @Query(value = "SELECT SUM(valor) FROM tb_despesas WHERE user_id = :userId", nativeQuery = true)
-    public BigDecimal sumTotalExpenseByUserId(Long userId);
+    BigDecimal sumTotalExpenseByUserId(Long userId);
 
     @Modifying
     @Query(value = "UPDATE tb_despesas SET valor = :valor, descricao = :descricao, categoria = :categoria, atualizado_em = CURRENT_TIMESTAMP WHERE id = :id AND user_id = :userId", nativeQuery = true)

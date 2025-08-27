@@ -193,7 +193,7 @@ public class ExpensesService {
         UserEntity userEntity = (UserEntity) user;
 
         LocalDateTime inicio = dto.dataInicio().atStartOfDay();
-        LocalDateTime fim = dto.dataFim().atTime(23, 59);
+        LocalDateTime fim = dto.dataFim().atTime(23, 59, 59);
 
         List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(fim, inicio, userEntity.getId());
 

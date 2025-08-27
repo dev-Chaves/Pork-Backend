@@ -195,6 +195,10 @@ public class ExpensesService {
         LocalDateTime inicio = dto.dataInicio().atStartOfDay();
         LocalDateTime fim = dto.dataFim().atTime(23, 59, 59);
 
+        System.out.println("Buscando despesas para o usuário ID: " + userEntity.getId());
+        System.out.println("Data de Início (LocalDateTime): " + inicio);
+        System.out.println("Data de Fim (LocalDateTime): " + fim);
+
         List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(fim, inicio, userEntity.getId());
 
         return new ExpenseListDTO(

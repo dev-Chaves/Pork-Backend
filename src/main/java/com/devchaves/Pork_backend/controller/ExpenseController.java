@@ -1,5 +1,6 @@
 package com.devchaves.Pork_backend.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.devchaves.Pork_backend.DTO.*;
@@ -82,6 +83,17 @@ public class ExpenseController {
     public ResponseEntity<ExpenseResponseDTO> atualizarDespesa(@PathVariable Long id, @Valid @RequestBody ExpenseRequestDTO dto, @AuthenticationPrincipal UserDetails userDetails){
         ExpenseResponseDTO response = expensesService.atualizarDespesa(id, dto, userDetails);
         return ResponseEntity.ok(response);
-    } 
+    }
+
+    @GetMapping("consultar-despesas-por-mes/{dataInicio}/{dataFim}")
+    public ResponseEntity<ExpenseListDTO> consultarDespesasPorMes(@PathVariable LocalDateTime dataInicio, @PathVariable LocalDateTime dataFim, @AuthenticationPrincipal UserDetails userDetails) {
+
+        ExpenseMesRequest dto = new ExpenseMesRequest(dataInicio, dataFim);
+
+        ExpenseListDTO response = expensesService.consultarDespesasPorMes(dto, userDetails);
+
+        return ResponseEntity.ok(response);
+
+    }
 
 }

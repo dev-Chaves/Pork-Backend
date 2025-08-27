@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -128,7 +129,36 @@ public class ExpensesService {
 
     @Transactional
     @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
-    public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto, UserDetails userDetails ){
+    public ExpenseListDTO consultarDespesasPorMesEntradaDeMes(int mes, UserDetails user){
+
+        LocalDate diaUm = LocalDate.now().withMonth(mes).withDayOfMonth(1);
+
+        LocalDate ultimoDia = diaUm.withDayOfMonth(diaUm.lengthOfMonth());
+
+        LocalDateTime inicio = diaUm.atStartOfDay();
+
+        LocalDateTime fim = ultimoDia.atTime(LocalTime.MAX);
+
+        UserEntity userEntity = (UserEntity) user;
+
+        System.out.println("Buscando despesas para o usuário ID: " + userEntity.getId());
+        System.out.println("Data de Início (LocalDateTime): " + inicio);
+        System.out.println("Data de Fim (LocalDateTime): " + fim);
+
+        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(inicio, fim, userEntity.getId());
+
+        return new ExpenseListDTO(
+                despesas.stream().map(
+                        (d) -> new ExpenseResponseDTO(
+                                d.getId(),
+                                d.getValor(),
+                                d.getDescricao(),
+                                d.getCategoriasDeGastos()
+                        )
+                ).toList()
+        );
+
+    }    public ExpenseResponseDTO atualizarDespesa(Long id, ExpenseRequestDTO dto, UserDetails userDetails ){
 
         UserEntity user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Usuário não encontrado"));
 
@@ -219,31 +249,7 @@ public class ExpensesService {
 
     }
 
-    public ExpenseListDTO consultarDespesasPorMesEntradaDeMes(int mes, UserDetails user){
 
-        LocalDateTime inicio = LocalDate.now().withMonth(mes).withDayOfMonth(1).atStartOfDay();
-        LocalDateTime fim = inicio.plusDays(30);
-
-        UserEntity userEntity = (UserEntity) user;
-
-        System.out.println("Buscando despesas para o usuário ID: " + userEntity.getId());
-        System.out.println("Data de Início (LocalDateTime): " + inicio);
-        System.out.println("Data de Fim (LocalDateTime): " + fim);
-
-        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(inicio, fim, userEntity.getId());
-
-        return new ExpenseListDTO(
-                despesas.stream().map(
-                        (d) -> new ExpenseResponseDTO(
-                                d.getId(),
-                                d.getValor(),
-                                d.getDescricao(),
-                                d.getCategoriasDeGastos()
-                        )
-                ).toList()
-        );
-
-    }
 
 
 

@@ -41,6 +41,6 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long> {
             @Param("userId")Long userId);
 
     @Query(value = "SELECT d FROM ExpenseEntity d WHERE d.criadoEm BETWEEN :dataInicio AND :dataFim AND d.user.id = :userId")
-    public List<ExpenseEntity> findByDateRangeAndUserId(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim, @Param("userId") Long userId);
+     List<ExpenseEntity> findByDateRangeAndUserId(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim, @Param("userId") Long userId);
 
 }

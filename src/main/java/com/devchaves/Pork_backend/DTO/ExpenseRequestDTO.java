@@ -1,5 +1,6 @@
 package com.devchaves.Pork_backend.DTO;
 
+import com.devchaves.Pork_backend.ENUM.CategoriasDeGastos;
 import com.devchaves.Pork_backend.ENUM.CategoriesENUM;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +17,7 @@ public record ExpenseRequestDTO(
         String descricao,
 
         @NotNull(message = "A categoria não pode ser nula.")
-        CategoriesENUM categoria
+        CategoriasDeGastos categoria
 ) {
 
 }

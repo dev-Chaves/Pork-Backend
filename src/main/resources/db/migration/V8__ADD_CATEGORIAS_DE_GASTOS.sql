@@ -1,0 +1,1 @@
+ALTER TABLE tb_despesas ADD COLUMN categorias VARCHAR(50)

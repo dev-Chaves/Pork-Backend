@@ -1,5 +1,6 @@
 package com.devchaves.Pork_backend.entity;
 
+import com.devchaves.Pork_backend.ENUM.CategoriasDeGastos;
 import com.devchaves.Pork_backend.ENUM.CategoriesENUM;
 import jakarta.persistence.*;
 
@@ -32,6 +33,9 @@ public class ExpenseEntity {
 
     @Enumerated(EnumType.STRING)
     private CategoriesENUM categoria;
+
+    @Enumerated(EnumType.STRING)
+    private CategoriasDeGastos categoriasDeGastos;
 
     @PrePersist
     protected void onCreate() {
@@ -98,5 +102,11 @@ public class ExpenseEntity {
         this.categoria = categoria;
     }
 
+    public CategoriasDeGastos getCategoriasDeGastos() {
+        return categoriasDeGastos;
+    }
 
+    public void setCategoriasDeGastos(CategoriasDeGastos categoriasDeGastos) {
+        this.categoriasDeGastos = categoriasDeGastos;
+    }
 }

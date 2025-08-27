@@ -7,7 +7,7 @@ services:
       - "80:80"
     depends_on:
       - api1
-      - api2
+#      - api2
     restart: on-failure
     command: "/bin/sh -c 'nginx -g \"daemon off;\"'"
 

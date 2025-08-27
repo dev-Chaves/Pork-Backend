@@ -114,8 +114,8 @@ public class AuthController {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(Duration.ofDays(1))
-                .domain("financepork.site")
+                .maxAge(0)
+                .domain(".financepork.site")
                 .sameSite("None")
                 .build();
 

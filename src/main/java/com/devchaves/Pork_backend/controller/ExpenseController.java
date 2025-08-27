@@ -80,7 +80,7 @@ public class ExpenseController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("consultar-despesas-por-mes")
+    @GetMapping("consultar-despesas-por-periodo")
     public ResponseEntity<ExpenseListDTO> consultarDespesasPorMes(
             @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate dataInicio,
             @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate dataFim,
@@ -94,7 +94,7 @@ public class ExpenseController {
 
     }
 
-    @GetMapping("consultar-despesas-por-mes-unitario")
+    @GetMapping("consultar-despesas-por-mes")
     public ResponseEntity<ExpenseListDTO> consultarDespesasPorMesUnitario(
             @RequestParam int mes,
             @AuthenticationPrincipal UserDetails userDetails) {

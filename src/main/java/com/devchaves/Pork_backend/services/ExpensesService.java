@@ -187,4 +187,23 @@ public class ExpensesService {
         return new ReceitaResponseDTO(dto.receita());
     }
 
+    public ExpenseListDTO consultarDespesasPorMes(ExpenseMesRequest dto, UserDetails user){
+
+        UserEntity userEntity = (UserEntity) user;
+
+        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(dto.dataInicio(), dto.dataFim(), userEntity.getId());
+
+        return new ExpenseListDTO(
+                despesas.stream().map(
+                        (d) -> new ExpenseResponseDTO(
+                                d.getId(),
+                                d.getValor(),
+                                d.getDescricao(),
+                                d.getCategoriasDeGastos()
+                        )
+                ).toList()
+        );
+
+    }
+
 }   

@@ -5,9 +5,9 @@ import java.util.List;
 
 public record DashboardDTO(
 
-    List<ExpenseResponseDTO> todasDespesas, 
-    List<ExpenseResponseDTO> variaveis, 
-    List<ExpenseResponseDTO> fixas, 
+    List<ExpenseResponseDTO> todasDespesas,
+    List<ExpenseResponseDTO> variaveis,
+    List<ExpenseResponseDTO> fixas,
     BigDecimal totalDespesas
 
 ) {

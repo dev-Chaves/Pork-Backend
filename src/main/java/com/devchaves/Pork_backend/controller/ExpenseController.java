@@ -1,10 +1,12 @@
 package com.devchaves.Pork_backend.controller;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.devchaves.Pork_backend.DTO.*;
+import com.devchaves.Pork_backend.ENUM.CategoriasDeGastos;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -115,6 +117,14 @@ public class ExpenseController {
 
         return ResponseEntity.ok(expensesService.consultarDespesasPaginadas(pageNo, pageSize, userDetails));
 
+    }
+
+    @GetMapping("consultar-despesas-total-por-categoria")
+    public ResponseEntity<BigDecimal> consultarDespesasTotalPorCategoria(
+            @RequestParam CategoriasDeGastos categoriasDeGastos,
+            @AuthenticationPrincipal UserDetails userDetails
+            ){
+        return ResponseEntity.ok(expensesService.consultarValorDeGastosPorCategoria(categoriasDeGastos, userDetails));
     }
 
 

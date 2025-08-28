@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -266,14 +267,14 @@ public class ExpensesService {
 
         Page<ExpenseEntity> despesas = expenseRepository.findByUserId(user.getId(), pageable);
 
-        Page<ExpenseResponseDTO> response = despesas.map(n -> new ExpenseResponseDTO(
+        List<ExpenseResponseDTO> response = despesas.stream().map(n -> new ExpenseResponseDTO(
                 n.getId(),
                 n.getValor(),
                 n.getDescricao(),
                 n.getCategoriasDeGastos()
-        ));
+        )).toList();
 
-        return response;
+        return new PageImpl<>(response, pageable, despesas.getTotalElements());
     }
 
 

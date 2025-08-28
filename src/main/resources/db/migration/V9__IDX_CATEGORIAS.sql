@@ -1,0 +1,1 @@
+CREATE INDEX idx_despesas_categorias ON tb_despesas(categorias)

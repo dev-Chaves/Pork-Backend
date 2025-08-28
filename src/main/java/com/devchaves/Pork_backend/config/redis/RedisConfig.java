@@ -67,7 +67,6 @@ public class RedisConfig {
         cacheConfiguration.put("receitaCache", createCacheConfiguration(objectMapper, ReceitaResponseDTO.class, fastCache));
         cacheConfiguration.put("userCache", createCacheConfiguration(objectMapper, UserInfoResponse.class, longCache));
         cacheConfiguration.put("userDetailsCache", createCacheConfiguration(objectMapper, UserEntity.class, longCache));
-        cacheConfiguration.put("despesa_paginada_cache", createCacheConfiguration(objectMapper, Page.class, fastCache));
 
         RedisCacheWriter cacheWriter = RedisCacheWriter.lockingRedisCacheWriter(redisConnectionFactory);
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig();

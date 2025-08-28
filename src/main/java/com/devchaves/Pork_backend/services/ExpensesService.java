@@ -281,7 +281,7 @@ public class ExpensesService {
 
         UserEntity user = (UserEntity) userDetails;
 
-        List<ExpenseEntity> despesas = expenseRepository.findByCategoria(user.getId(), dto);
+        List<ExpenseEntity> despesas = expenseRepository.findByUserIdAndCategoriasDeGastos(user.getId(), dto);
 
         return despesas.stream()
                 .map(ExpenseEntity::getValor)

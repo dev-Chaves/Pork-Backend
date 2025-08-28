@@ -107,14 +107,11 @@ public class MetasService {
     }
 
     public Page<MetasResponseDTO> consultarMetasPaginadas(
-            int pageNo,
-            int pageSize,
+            Pageable pageable,
             UserDetails userDetails
     ){
 
         UserEntity user = (UserEntity) userDetails;
-
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
 
         Page<MetasEntity> metas = metasRepository.findByUserId(user.getId(), pageable);
 

@@ -8,6 +8,9 @@ import java.util.List;
 import com.devchaves.Pork_backend.DTO.*;
 import com.devchaves.Pork_backend.ENUM.CategoriasDeGastos;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -110,12 +113,11 @@ public class ExpenseController {
 
     @GetMapping("consultar-despesas-paginada")
     public ResponseEntity<Page<ExpenseResponseDTO>> consultarDespesasPaginadas(
-            @RequestParam int pageNo,
-            @RequestParam int pageSize,
+            @PageableDefault(sort = "criadoEm", direction = Sort.Direction.DESC) Pageable pageable,
             @AuthenticationPrincipal UserDetails userDetails
     ){
 
-        return ResponseEntity.ok(expensesService.consultarDespesasPaginadas(pageNo, pageSize, userDetails));
+        return ResponseEntity.ok(expensesService.consultarDespesasPaginadas(pageable, userDetails));
 
     }
 

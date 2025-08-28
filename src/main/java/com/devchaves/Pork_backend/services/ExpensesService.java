@@ -257,22 +257,20 @@ public class ExpensesService {
         );
     }
 
-    public Page<ExpenseResponseDTO> consultarDespesasPaginadas(int pageNo, int pageSize, UserDetails userDetails){
+    public Page<ExpenseResponseDTO> consultarDespesasPaginadas(Pageable pageable, UserDetails userDetails){
 
         UserEntity user = (UserEntity) userDetails;
 
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-
         Page<ExpenseEntity> despesas = expenseRepository.findByUserId(user.getId(), pageable);
 
-        List<ExpenseResponseDTO> response = despesas.stream().map(n -> new ExpenseResponseDTO(
+        Page<ExpenseResponseDTO> response = despesas.map(n -> new ExpenseResponseDTO(
                 n.getId(),
                 n.getValor(),
                 n.getDescricao(),
                 n.getCategoriasDeGastos()
-        )).toList();
+        ));
 
-        return new PageImpl<>(response, pageable, despesas.getTotalElements());
+        return response;
     }
 
 

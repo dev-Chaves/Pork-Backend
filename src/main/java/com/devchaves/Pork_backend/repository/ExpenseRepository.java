@@ -48,5 +48,5 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long> {
 
     Page<ExpenseEntity> findByUserId(Long userId, Pageable pageable);
 
-    List<ExpenseEntity> findByCategoria(Long userId, CategoriasDeGastos categorias);
+    List<ExpenseEntity> findByUserIdAndCategoriasDeGastos(Long userId, CategoriasDeGastos categoriasDeGastos);
 }

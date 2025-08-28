@@ -1,5 +1,6 @@
 package com.devchaves.Pork_backend.repository;
 
+import com.devchaves.Pork_backend.ENUM.CategoriasDeGastos;
 import com.devchaves.Pork_backend.ENUM.CategoriesENUM;
 import com.devchaves.Pork_backend.entity.ExpenseEntity;
 import org.springframework.data.domain.Page;
@@ -45,5 +46,7 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long> {
     @Query(value = "SELECT d FROM ExpenseEntity d WHERE d.criadoEm BETWEEN :dataInicio AND :dataFim AND d.user.id = :userId")
      List<ExpenseEntity> findByDateRangeAndUserId(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim, @Param("userId") Long userId);
 
-    Page<ExpenseEntity> findAllByUser(Long userId, Pageable pageable);
+    Page<ExpenseEntity> findByUserId(Long userId, Pageable pageable);
+
+    List<ExpenseEntity> findByCategoria(Long userId, CategoriasDeGastos categorias);
 }

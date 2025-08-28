@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -274,13 +275,14 @@ public class ExpensesService {
     }
 
 
-    public BigDecimal consultarValorDeGastosPorCategoria(CategoriasDeGastos dto, UserDetails userDetails){
+    public BigDecimal consultarValorDeGastosPorCategoria(CategoriasDeGastos categoriasDeGastos, int mes, UserDetails userDetails){
 
         UserEntity user = (UserEntity) userDetails;
 
-        List<ExpenseEntity> despesas = expenseRepository.findByUserIdAndCategoriasDeGastos(user.getId(), dto);
+        List<ExpenseEntity> despesas = expenseRepository.findByUserIdAndCategoriasDeGastos(user.getId(), categoriasDeGastos);
 
         return despesas.stream()
+                .filter(c -> c.getCriadoEm().getMonth() == Month.of(mes) )
                 .map(ExpenseEntity::getValor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 

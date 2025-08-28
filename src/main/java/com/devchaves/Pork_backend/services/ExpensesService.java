@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -248,7 +251,24 @@ public class ExpensesService {
                         )
                 ).toList()
         );
+    }
 
+    public Page<ExpenseResponseDTO> consultarDespesasPaginadas(int pageNo, int pageSize, UserDetails userDetails){
+
+        UserEntity user = (UserEntity) userDetails;
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+
+        Page<ExpenseEntity> despesas = expenseRepository.findAllByUser(user.getId(), pageable);
+
+        Page<ExpenseResponseDTO> response = despesas.map(n -> new ExpenseResponseDTO(
+                n.getId(),
+                n.getValor(),
+                n.getDescricao(),
+                n.getCategoriasDeGastos()
+        ));
+
+        return response;
     }
 
 

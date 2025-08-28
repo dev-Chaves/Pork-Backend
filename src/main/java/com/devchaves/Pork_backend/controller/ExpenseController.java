@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.devchaves.Pork_backend.DTO.*;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -102,6 +103,17 @@ public class ExpenseController {
         ExpenseListDTO response = expensesService.consultarDespesasPorMesEntradaDeMes(mes, userDetails);
 
         return ResponseEntity.ok(response);
+
+    }
+
+    @GetMapping("consultar-despesas-paginada")
+    public ResponseEntity<Page<ExpenseResponseDTO>> consultarDespesasPaginadas(
+            @RequestParam int pageNo,
+            @RequestParam int pageSize,
+            @AuthenticationPrincipal UserDetails userDetails
+    ){
+
+        return ResponseEntity.ok(expensesService.consultarDespesasPaginadas(pageNo, pageSize, userDetails));
 
     }
 

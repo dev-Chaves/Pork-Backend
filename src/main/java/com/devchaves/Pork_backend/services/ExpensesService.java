@@ -1,6 +1,7 @@
 package com.devchaves.Pork_backend.services;
 
 import com.devchaves.Pork_backend.DTO.*;
+import com.devchaves.Pork_backend.ENUM.CategoriasDeGastos;
 import com.devchaves.Pork_backend.entity.ExpenseEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.ExpenseRepository;
@@ -263,7 +264,7 @@ public class ExpensesService {
 
         Pageable pageable = PageRequest.of(pageNo, pageSize);
 
-        Page<ExpenseEntity> despesas = expenseRepository.findAllByUser(user.getId(), pageable);
+        Page<ExpenseEntity> despesas = expenseRepository.findByUserId(user.getId(), pageable);
 
         Page<ExpenseResponseDTO> response = despesas.map(n -> new ExpenseResponseDTO(
                 n.getId(),
@@ -276,7 +277,17 @@ public class ExpensesService {
     }
 
 
+    public BigDecimal consultarValorDeGastosPorCategoria(CategoriasDeGastos dto, UserDetails userDetails){
 
+        UserEntity user = (UserEntity) userDetails;
+
+        List<ExpenseEntity> despesas = expenseRepository.findByCategoria(user.getId(), dto);
+
+        return despesas.stream()
+                .map(ExpenseEntity::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    }
 
 
 }   

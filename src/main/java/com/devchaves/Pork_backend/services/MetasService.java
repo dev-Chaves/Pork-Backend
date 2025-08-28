@@ -6,6 +6,9 @@ import com.devchaves.Pork_backend.entity.MetasEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.MetasRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -100,6 +103,31 @@ public class MetasService {
                 n.getValor(),
                 n.getData()
         )).toList();
+
+    }
+
+    public Page<MetasResponseDTO> consultarMetasPaginadas(
+            int pageNo,
+            int pageSize,
+            UserDetails userDetails
+    ){
+
+        UserEntity user = (UserEntity) userDetails;
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+
+        Page<MetasEntity> metas = metasRepository.findByUserId(user.getId(), pageable);
+
+        Page<MetasResponseDTO> response = metas.map(
+                m -> new MetasResponseDTO(
+                        m.getId(),
+                        m.getMeta(),
+                        m.getValor(),
+                        m.getData()
+                )
+        );
+
+        return response;
 
     }
 

@@ -4,6 +4,7 @@ import com.devchaves.Pork_backend.DTO.MetasRequestDTO;
 import com.devchaves.Pork_backend.DTO.MetasResponseDTO;
 import com.devchaves.Pork_backend.services.MetasService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,6 +41,17 @@ public class MetasController {
     @GetMapping("consultar-metas")
     public ResponseEntity<List<MetasResponseDTO>> consultarMetas(@AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity.ok(metasService.consultarMetas(userDetails));
+    }
+
+    @GetMapping("consultar-metas-paginadas")
+    public ResponseEntity<Page<MetasResponseDTO>> consultarMetasPaginadas(
+            @RequestParam int pageNo,
+            @RequestParam int pageSize,
+            @AuthenticationPrincipal UserDetails userDetails
+    ){
+
+        return ResponseEntity.ok(metasService.consultarMetasPaginadas(pageNo, pageSize, userDetails));
+
     }
 
 }

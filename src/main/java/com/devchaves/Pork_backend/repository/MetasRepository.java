@@ -2,6 +2,8 @@ package com.devchaves.Pork_backend.repository;
 
 import com.devchaves.Pork_backend.entity.MetasEntity;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +20,5 @@ public interface MetasRepository extends JpaRepository<MetasEntity, Long> {
 @Query(value = "DELETE FROM MetasEntity m WHERE m.id = :metaId AND m.user.id = :userId")
      int deletarMeta(@Param("metaId") Long metaId, @Param("userId") Long userId);
 
+    Page<MetasEntity> findByUserId(Long userId, Pageable pageable);
 }

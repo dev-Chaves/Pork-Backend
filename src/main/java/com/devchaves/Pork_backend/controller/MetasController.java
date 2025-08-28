@@ -5,6 +5,9 @@ import com.devchaves.Pork_backend.DTO.MetasResponseDTO;
 import com.devchaves.Pork_backend.services.MetasService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,12 +48,11 @@ public class MetasController {
 
     @GetMapping("consultar-metas-paginadas")
     public ResponseEntity<Page<MetasResponseDTO>> consultarMetasPaginadas(
-            @RequestParam int pageNo,
-            @RequestParam int pageSize,
+            @PageableDefault(sort = "criadoEm", direction = Sort.Direction.DESC) Pageable pageable,
             @AuthenticationPrincipal UserDetails userDetails
     ){
 
-        return ResponseEntity.ok(metasService.consultarMetasPaginadas(pageNo, pageSize, userDetails));
+        return ResponseEntity.ok(metasService.consultarMetasPaginadas(pageable, userDetails));
 
     }
 

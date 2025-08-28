@@ -87,7 +87,10 @@ public class ExpensesService {
     }
 
     @Transactional
-    @CacheEvict(value = "despesa_cache", key = "#userDetails.username")
+    @Caching( evict = {
+            @CacheEvict(value = "despesa_cache", key = "#userDetails.username"),
+            @CacheEvict(value = "despesa_cache", allEntries = true)
+    })
     public List<ExpenseResponseDTO> cadastrarDespesas(List<ExpenseRequestDTO> dtos, UserDetails userDetails){
 
         UserEntity user = (UserEntity) userDetails;
@@ -253,6 +256,7 @@ public class ExpensesService {
         );
     }
 
+    @Cacheable(value = "despesa_cache", key = "#userDetails.username + #pageNo + #pageSize")
     public Page<ExpenseResponseDTO> consultarDespesasPaginadas(int pageNo, int pageSize, UserDetails userDetails){
 
         UserEntity user = (UserEntity) userDetails;

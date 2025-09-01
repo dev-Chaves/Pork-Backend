@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
 @Service
@@ -51,7 +52,7 @@ public class UserService {
     }
 
     @Transactional
-    public RegisterResponseDTO register (RegisterRequestDTO dto, String url){
+    public CompletableFuture<Void> register (RegisterRequestDTO dto, String url){
         
         if(!isValidEmail(dto.email())){
             throw new IllegalArgumentException("Email com formato inválido");
@@ -75,7 +76,7 @@ public class UserService {
 
         verificationTokenRepository.save(token);
 
-        String urlTeste = "https://pork-finance.vercel.app/verificar-email?=";
+        String urlTeste = "https://financepork.site/verificar-email?token=";
 
         String verificar = urlTeste + token.getToken();
 
@@ -100,9 +101,7 @@ public class UserService {
             emailBody
         );
 
-        mailService.sendEmailToRegister(email);
-
-        return new RegisterResponseDTO(user.getNome(), user.getEmail(), token.getToken(), user.getReceita());
+        return mailService.sendEmailToRegister(email);
     }
 
     public LoginResponseDTO login (LoginRequestDTO dto){

@@ -1,9 +1,13 @@
 package com.devchaves.Pork_backend.services;
 
 import com.devchaves.Pork_backend.DTO.EmailDTO;
+
+import java.util.concurrent.CompletableFuture;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,7 +22,8 @@ public class MailService {
     @Value("${spring.mail.username}")
     private String senderEmail;
 
-    public void sendEmailToRegister(EmailDTO dto){
+    @Async("emailTaskExecutor")
+    public CompletableFuture<Void> sendEmailToRegister(EmailDTO dto){
 
         try{
             var mensagem = new SimpleMailMessage();
@@ -29,8 +34,11 @@ public class MailService {
             mensagem.setText(dto.corpo());
     
             mailSender.send(mensagem);
-        }catch(Exception e){
-            throw new RuntimeException("Falha ao enviar o email!", e);
+            return CompletableFuture.completedFuture(null);
+        }catch (Exception e) {
+            CompletableFuture<Void> cf = new CompletableFuture<>();
+            cf.completeExceptionally(e);
+            return cf;
         }
         
         

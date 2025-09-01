@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 
 
 @RestController
@@ -53,13 +54,22 @@ public class AuthController {
     
 
     @PostMapping("register")
-    public ResponseEntity<RegisterResponseDTO> register(@Valid @RequestBody RegisterRequestDTO dto, HttpServletRequest request) {
+    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequestDTO dto, HttpServletRequest request) {
 
         String baseUrl = getBaseUrl(request) + "/api/auth/verificar-email?param=";
-        
-        RegisterResponseDTO response = userService.register(dto, baseUrl);
 
-        return ResponseEntity.ok(response);
+        CompletableFuture<Void> future = userService.register(dto, baseUrl);
+
+        future.thenRun(() -> {
+            System.out.println("Callback: Email processado com sucesso!");
+        }).exceptionally(ex -> {
+            System.err.println("Callback: Erro ao enviar email - " + ex.getMessage());
+
+            return null;
+        });
+
+        return ResponseEntity.ok("Email sendo enviado");
+
     }
 
     @GetMapping("verificar")

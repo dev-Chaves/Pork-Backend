@@ -86,20 +86,6 @@ public class ExpenseController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("consultar-despesas-por-periodo")
-    public ResponseEntity<ExpenseListDTO> consultarDespesasPorMes(
-            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate dataInicio,
-            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate dataFim,
-            @AuthenticationPrincipal UserDetails userDetails) {
-
-        ExpenseMesRequest dto = new ExpenseMesRequest(dataInicio, dataFim);
-
-        ExpenseListDTO response = expensesService.consultarDespesasPorMes(dto, userDetails);
-
-        return ResponseEntity.ok(response);
-
-    }
-
     @GetMapping("consultar-despesas-por-mes")
     public ResponseEntity<ExpenseListDTO> consultarDespesasPorMesUnitario(
             @RequestParam int mes,

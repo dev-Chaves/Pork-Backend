@@ -16,9 +16,6 @@ import java.util.List;
 
 public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long> {
 
-    @Query(value = "SELECT * FROM tb_despesas WHERE categoria = :categoria", nativeQuery = true)
-    List<ExpenseEntity> findByCategory(String category);
-
     @Query(value = "SELECT * FROM tb_despesas WHERE user_id = :userId", nativeQuery = true)
     List<ExpenseEntity> findByUser(Long userId);
 
@@ -43,7 +40,12 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long> {
             @Param("id")Long id,
             @Param("userId")Long userId);
 
-    @Query(value = "SELECT d FROM ExpenseEntity d WHERE d.criadoEm BETWEEN :dataInicio AND :dataFim AND d.user.id = :userId")
+    @Query(value = """
+            SELECT d FROM ExpenseEntity d
+            WHERE d.user.id = :userId
+            AND d.criadoEm >= :dataInicio
+            AND d.criadoEm < :dataFim
+            """)
      List<ExpenseEntity> findByDateRangeAndUserId(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim, @Param("userId") Long userId);
 
     @Query(value = """

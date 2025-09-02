@@ -20,9 +20,15 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
+    public ResponseEntity<ErrorResponseDTO> handleIllegalArgument(IllegalArgumentException ex) {
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        ErrorResponseDTO response = new ErrorResponseDTO(
+            HttpStatus.BAD_REQUEST.value(),
+            "Parâmetros Inválidos",
+            "Parâmetros inválidos, verifique os parâmetros enviados!"
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 
     }
 
@@ -57,20 +63,39 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<String> handleUsernameNotFound(UsernameNotFoundException ex){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<ErrorResponseDTO> handleUsernameNotFound(UsernameNotFoundException ex){
+
+        ErrorResponseDTO response = new ErrorResponseDTO(
+                HttpStatus.BAD_REQUEST.value(),
+                "Usuário não encontrado",
+                "Usuário não encontrado, verifique os parâmetros"
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGenericException(Exception ex) {
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro interno no servidor.");
+    public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex) {
+        ErrorResponseDTO response = new ErrorResponseDTO(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Erro no processo",
+                "Ocorreu um erro inesperado no processamento da sua solicitação. Tente novamente mais tarde."
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<String> handleNotFound(NoHandlerFoundException e){
+    public ResponseEntity<ErrorResponseDTO> handleNotFound(NoHandlerFoundException e){
+
         String message = "Recurso não encontrado: A rota " + e.getRequestURL() + " não existe.";
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+
+        ErrorResponseDTO response = new ErrorResponseDTO(
+                HttpStatus.BAD_REQUEST.value(),
+                "Rota não encontrada",
+                message
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(AuthenticationException.class)

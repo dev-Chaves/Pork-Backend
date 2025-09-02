@@ -300,13 +300,13 @@ public class ExpensesService {
 
     private PeriodoDTO periodoMensal (int mes){
 
-        LocalDate diaInicial = LocalDate.now().withMonth(mes).withDayOfMonth(1);
+        LocalDate agora = LocalDate.now();
 
-        LocalDate diaFinal = LocalDate.now().withDayOfMonth(diaInicial.lengthOfMonth());
+        LocalDate base = LocalDate.of(agora.getYear(), mes, 1);
 
-        LocalDateTime inicio = diaInicial.atStartOfDay();
+        LocalDateTime inicio = base.atStartOfDay();
 
-        LocalDateTime fim = diaFinal.atTime(23, 59, 59);
+        LocalDateTime fim = base.plusMonths(1).atStartOfDay();
 
         return new PeriodoDTO(inicio, fim);
 

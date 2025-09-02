@@ -46,6 +46,24 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long> {
     @Query(value = "SELECT d FROM ExpenseEntity d WHERE d.criadoEm BETWEEN :dataInicio AND :dataFim AND d.user.id = :userId")
      List<ExpenseEntity> findByDateRangeAndUserId(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim, @Param("userId") Long userId);
 
+    @Query(value = """
+            SELECT d
+            FROM ExpenseEntity d
+            WHERE d.user.id = :userId
+            AND d.criadoEm BETWEEN :dataInicio AND :dataFim
+            AND d.valor = (
+                SELECT MAX(d2.valor)
+                FROM ExpenseEntity d2
+                WHERE d2.user.id = :userId
+                AND d2.criadoEm BETWEEN :dataInicio AND :dataFim
+            )
+            """)
+    List<ExpenseEntity> findDespesasComMaiorValorNoPeriodo(
+            @Param("dataInicio") LocalDateTime inicio,
+            @Param("dataFim") LocalDateTime fim,
+            @Param("userId") Long userId
+    );
+
     Page<ExpenseEntity> findByUserId(Long userId, Pageable pageable);
 
     List<ExpenseEntity> findByUserIdAndCategoriasDeGastos(Long userId, CategoriasDeGastos categoriasDeGastos);

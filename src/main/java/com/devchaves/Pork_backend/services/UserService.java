@@ -37,10 +37,11 @@ public class UserService {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
-    // private static final String url = "http://localhost/api/auth/verificar?param=";
-
     @Value("${url.redefinir-senha}")
     private String redefinirSenhaUrl;
+
+    @Value("${url.verificar-conta}")
+    private String verificarContaUrl;
     
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationTokenRepository verificationTokenRepository, MailService mailService, TokenService tokenService, PasswordTokenRepository passwordTokenRepository){
         this.userRepository = userRepository;
@@ -76,9 +77,9 @@ public class UserService {
 
         verificationTokenRepository.save(token);
 
-        String urlTeste = "https://financepork.site/verificar-email?token=";
+        String param = "?token=";
 
-        String verificar = urlTeste + token.getToken();
+        String verificar = verificarContaUrl + param + token.getToken();
 
         String emailBody = String.format(
             "Olá %s!\n\n" +

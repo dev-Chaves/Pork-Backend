@@ -74,6 +74,7 @@ jwt:
 url:
   link: ${URL_AUTH}
   redefinir-senha: ${REDEFINIR_SENHA_URL}
+  verificar-conta: ${VERIFICAR_CONTA_URL}
 
 server:
   port: 8080

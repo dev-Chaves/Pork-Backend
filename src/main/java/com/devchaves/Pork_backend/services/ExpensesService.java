@@ -27,7 +27,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -263,6 +265,59 @@ public class ExpensesService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     }
+
+    public BigDecimal consultarTotalGastoNoMes(int mes, UserDetails userDetails){
+
+        UserEntity user = (UserEntity) userDetails;
+
+        Map<Integer, LocalDateTime> periodo = periodoMensal(mes);
+
+        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(periodo.get(0), periodo.get(1), user.getId());
+
+        return despesas.stream()
+                .map(ExpenseEntity::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    }
+
+    public List<ExpenseResponseDTO> maiorGastoEmUmMes(int mes, UserDetails userDetails){
+
+        UserEntity user = (UserEntity) userDetails;
+
+        Map<Integer, LocalDateTime> periodo = periodoMensal(mes);
+
+        List<ExpenseEntity> despesas = expenseRepository.findDespesasComMaiorValorNoPeriodo(periodo.get(0), periodo.get(1), user.getId());
+
+        return despesas.stream()
+                .map(d ->
+                        new ExpenseResponseDTO(
+                                d.getId(),
+                                d.getValor(),
+                                d.getDescricao(),
+                                d.getCategoriasDeGastos())
+                        ).toList();
+    }
+
+    private Map<Integer, LocalDateTime> periodoMensal (int mes){
+
+        LocalDate diaInicial = LocalDate.now().withMonth(mes).withDayOfMonth(1);
+
+        LocalDate diaFinal = LocalDate.now().withDayOfMonth(diaInicial.lengthOfMonth());
+
+        LocalDateTime inicio = diaInicial.atStartOfDay();
+
+        LocalDateTime fim = diaFinal.atTime(23, 59, 59);
+
+        Map<Integer, LocalDateTime> resposta = new HashMap<>();
+
+        resposta.put(0, inicio);
+        resposta.put(1, fim);
+
+        return resposta;
+
+    }
+
+
 
 
 }   

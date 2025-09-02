@@ -116,5 +116,20 @@ public class ExpenseController {
         return ResponseEntity.ok(expensesService.consultarValorDeGastosPorCategoria(categoriasDeGastos, mes, userDetails));
     }
 
+    @GetMapping("consultar-despesa-total-por-mes")
+    public ResponseEntity<BigDecimal> consultarTotalGastoNoMes(
+            @RequestParam int mes,
+            @AuthenticationPrincipal UserDetails userDetails
+    ){
+        return ResponseEntity.ok(expensesService.consultarTotalGastoNoMes(mes, userDetails));
+    }
+
+    @GetMapping("consultar-maiores-gastos-no-mes")
+    public ResponseEntity<List<ExpenseResponseDTO>> consultarMaioresGastosNoMes(
+            @RequestParam int mes,
+            @AuthenticationPrincipal UserDetails userDetails
+    ){
+        return ResponseEntity.ok(expensesService.maiorGastoEmUmMes(mes, userDetails));
+    }
 
 }

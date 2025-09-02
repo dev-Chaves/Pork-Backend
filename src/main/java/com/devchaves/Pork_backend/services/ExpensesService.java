@@ -270,9 +270,9 @@ public class ExpensesService {
 
         UserEntity user = (UserEntity) userDetails;
 
-        Map<Integer, LocalDateTime> periodo = periodoMensal(mes);
+        PeriodoDTO periodo = periodoMensal(mes);
 
-        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(periodo.get(0), periodo.get(1), user.getId());
+        List<ExpenseEntity> despesas = expenseRepository.findByDateRangeAndUserId(periodo.inicio(), periodo.fim(), user.getId());
 
         return despesas.stream()
                 .map(ExpenseEntity::getValor)
@@ -284,9 +284,9 @@ public class ExpensesService {
 
         UserEntity user = (UserEntity) userDetails;
 
-        Map<Integer, LocalDateTime> periodo = periodoMensal(mes);
+        PeriodoDTO periodo = periodoMensal(mes);
 
-        List<ExpenseEntity> despesas = expenseRepository.findDespesasComMaiorValorNoPeriodo(periodo.get(0), periodo.get(1), user.getId());
+        List<ExpenseEntity> despesas = expenseRepository.findDespesasComMaiorValorNoPeriodo(periodo.inicio(), periodo.fim(), user.getId());
 
         return despesas.stream()
                 .map(d ->
@@ -298,7 +298,7 @@ public class ExpensesService {
                         ).toList();
     }
 
-    private Map<Integer, LocalDateTime> periodoMensal (int mes){
+    private PeriodoDTO periodoMensal (int mes){
 
         LocalDate diaInicial = LocalDate.now().withMonth(mes).withDayOfMonth(1);
 
@@ -308,16 +308,8 @@ public class ExpensesService {
 
         LocalDateTime fim = diaFinal.atTime(23, 59, 59);
 
-        Map<Integer, LocalDateTime> resposta = new HashMap<>();
-
-        resposta.put(0, inicio);
-        resposta.put(1, fim);
-
-        return resposta;
+        return new PeriodoDTO(inicio, fim);
 
     }
-
-
-
 
 }   

@@ -153,7 +153,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponseDTO> handlerMissingServletRequestParameter(MissingServletRequestParameterException e){
-
+        logger.error("Erro no parâmetro enviado na URL", e);
         String parametro = e.getParameterName();
 
         String message = String.format("O parâmetro obrigatório '%s' não foi informado.", parametro);
@@ -171,6 +171,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DateTimeException.class)
     public ResponseEntity<ErrorResponseDTO> handlerDateTime(DateTimeException e){
+
+        logger.error("Envio de Data inválida", e);
 
         String parametro = e.getLocalizedMessage();
 

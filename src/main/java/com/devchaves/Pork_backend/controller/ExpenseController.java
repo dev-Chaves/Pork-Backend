@@ -109,11 +109,11 @@ public class ExpenseController {
 
     @GetMapping("consultar-despesas-total-por-categoria-mes")
     public ResponseEntity<BigDecimal> consultarDespesasTotalPorCategoria(
-            @RequestParam CategoriasDeGastos categoriasDeGastos,
+            @RequestParam CategoriasDeGastos categoria,
             @RequestParam int mes,
             @AuthenticationPrincipal UserDetails userDetails
             ){
-        return ResponseEntity.ok(expensesService.consultarValorDeGastosPorCategoria(categoriasDeGastos, mes, userDetails));
+        return ResponseEntity.ok(expensesService.consultarValorDeGastosPorCategoria(categoria, mes, userDetails));
     }
 
     @GetMapping("consultar-despesa-total-por-mes")

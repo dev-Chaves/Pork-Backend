@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.nio.file.AccessDeniedException;
+import java.time.DateTimeException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -166,6 +167,20 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 
+    }
+
+    @ExceptionHandler(DateTimeException.class)
+    public ResponseEntity<ErrorResponseDTO> handlerDateTime(DateTimeException e){
+
+        String parametro = e.getLocalizedMessage();
+
+        ErrorResponseDTO response = new ErrorResponseDTO(
+                HttpStatus.BAD_REQUEST.value(),
+                "Data inválida",
+            "Insira uma data válida!"
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 }

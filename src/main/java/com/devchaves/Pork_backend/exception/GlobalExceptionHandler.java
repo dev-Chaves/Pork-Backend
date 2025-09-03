@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -147,6 +148,24 @@ public class GlobalExceptionHandler {
                 "Ocorreu um erro ao salvar os dados, pois eles violam uma regra do banco de dados (por exemplo, um campo obrigatório está faltando ou um valor único está sendo duplicado)."
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponseDTO> handlerMissingServletRequestParameter(MissingServletRequestParameterException e){
+
+        String parametro = e.getParameterName();
+
+        String message = String.format("O parâmetro obrigatório '%s' não foi informado.", parametro);
+
+
+        ErrorResponseDTO response = new ErrorResponseDTO(
+                HttpStatus.BAD_REQUEST.value(),
+                "Falta de Parâmetros",
+                message
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+
     }
 
 }

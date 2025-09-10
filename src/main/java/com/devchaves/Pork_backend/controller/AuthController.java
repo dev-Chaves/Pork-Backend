@@ -1,8 +1,8 @@
 package com.devchaves.Pork_backend.controller;
 
 import com.devchaves.Pork_backend.DTO.*;
+import com.devchaves.Pork_backend.services.AuthService;
 import com.devchaves.Pork_backend.services.TokenService;
-import com.devchaves.Pork_backend.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -19,20 +19,19 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserService userService;
-
     private final TokenService tokenService;
 
-    public AuthController(UserService userService, TokenService tokenService){
-        this.userService = userService;
-        this.tokenService = tokenService;
+    private final AuthService authService;
 
+    public AuthController(TokenService tokenService, AuthService authService){
+        this.tokenService = tokenService;
+        this.authService = authService;
     }
 
     @PostMapping("login")
     public ResponseEntity<LoginResponseDTOV2> login(@Valid @RequestBody LoginRequestDTO dto, HttpServletResponse response) {
 
-        LoginResponseDTO loginResponse = userService.login(dto);
+        LoginResponseDTO loginResponse = authService.login(dto);
 
         LoginResponseDTOV2 loginResponseDTOV2 = new LoginResponseDTOV2(loginResponse.email(), loginResponse.receita());
 
@@ -58,7 +57,7 @@ public class AuthController {
 
         String baseUrl = getBaseUrl(request) + "/api/auth/verificar-email?param=";
 
-        CompletableFuture<Void> future = userService.register(dto, baseUrl);
+        CompletableFuture<Void> future = authService.register(dto, baseUrl);
 
         future.thenRun(() -> {
             System.out.println("Callback: Email processado com sucesso!");
@@ -96,8 +95,8 @@ public class AuthController {
     public ResponseEntity<String> reenviarEmail(@Valid @RequestBody ResendEmail dto, HttpServletRequest request) {
 
         String baseUrl = getBaseUrl(request) + "/api/auth/verificar-email?param=";
-        
-        userService.reenviarVerificacao(dto, baseUrl);
+
+        authService.reenviarVerificacao(dto, baseUrl);
 
         return ResponseEntity.ok("Verificando...");
     }
@@ -105,7 +104,7 @@ public class AuthController {
     @PostMapping("redefinir-email-senha")
     public ResponseEntity<String> reenviarEmailSenha(@Valid @RequestBody ResendEmail dto, HttpServletRequest request){
 
-        userService.enviarEmaiLRedefenirSenha(dto.email());
+        authService.enviarEmaiLRedefenirSenha(dto.email());
 
         return ResponseEntity.ok("Enviado Email!");
     }
@@ -113,7 +112,7 @@ public class AuthController {
     @PostMapping("redefinir-senha")
     public ResponseEntity<String> redefinirSenha(@RequestParam("token") String token, @Valid @RequestBody ChangePasswordRequest dto){
 
-        userService.redefinirSenha(dto, token);
+        authService.redefinirSenha(dto, token);
 
         return ResponseEntity.ok("Senha redefinida com sucesso!");
     }

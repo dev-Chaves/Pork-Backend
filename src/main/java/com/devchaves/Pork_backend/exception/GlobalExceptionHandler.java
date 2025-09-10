@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.nio.file.AccessDeniedException;
@@ -183,6 +184,35 @@ public class GlobalExceptionHandler {
         );
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponseDTO> handlerMethodArgumentType(MethodArgumentTypeMismatchException e){
+
+        logger.error("Erro na conversão de valores, recebeu ");
+
+        String parametro = e.getParameter().getParameterName();
+
+        Object valorInvalido = e.getValue();
+
+        assert e.getRequiredType() != null;
+        String tipoRequerido = e.getRequiredType().getSimpleName();
+
+        String mensagem = String.format(
+                "O parâmetro '%s' recebeu o valor '%s', que é inválido. O tipo esperado é '%s'.",
+                parametro,
+                valorInvalido,
+                tipoRequerido
+        );
+
+        ErrorResponseDTO response = new ErrorResponseDTO(
+                HttpStatus.BAD_REQUEST.value(),
+                "Parâmetro com tipo inválido",
+                mensagem
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+
     }
 
 }

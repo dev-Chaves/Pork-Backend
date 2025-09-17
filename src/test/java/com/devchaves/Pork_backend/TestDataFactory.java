@@ -1,10 +1,9 @@
 package com.devchaves.Pork_backend;
 
-import com.devchaves.Pork_backend.entity.ExpenseEntity;
-import com.devchaves.Pork_backend.entity.UserEntity;
-import com.devchaves.Pork_backend.ENUM.CategoriesENUM;
 import com.devchaves.Pork_backend.ENUM.CategoriasDeGastos;
 import com.devchaves.Pork_backend.ENUM.InvestimentoENUM;
+import com.devchaves.Pork_backend.entity.ExpenseEntity;
+import com.devchaves.Pork_backend.entity.UserEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

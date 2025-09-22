@@ -100,6 +100,18 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
 
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    ports:
+      - "9000:9000"
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+      SERVER_SERVLET_CONTEXTPATH: "/"
+      USERNAME: ${KAFDROP_USER}
+      PASSWORD: ${KAFDROP_PASSWORD}
+
 
 volumes:
   pgdata:

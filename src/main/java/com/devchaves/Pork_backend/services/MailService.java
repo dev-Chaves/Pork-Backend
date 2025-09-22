@@ -25,7 +25,7 @@ public class MailService {
     private String senderEmail;
 
     @Async("emailTaskExecutor")
-    public CompletableFuture<Void> sendEmailToRegister(EmailDTO dto){
+    public CompletableFuture<Void> sendEmail(EmailDTO dto){
         logger.info("Preparando para enviar email para: {}", dto.para());
         try{
             var mensagem = new SimpleMailMessage();

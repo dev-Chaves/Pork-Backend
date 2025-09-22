@@ -7,6 +7,7 @@ import com.devchaves.Pork_backend.entity.VerificationTokenEntity;
 import com.devchaves.Pork_backend.repository.PasswordTokenRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
 import com.devchaves.Pork_backend.repository.VerificationTokenRepository;
+import com.devchaves.Pork_backend.services.kafka.KafkaProducerService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,18 +30,20 @@ public class AuthService {
     private final TokenService tokenService;
     private final VerificationTokenRepository verificationTokenRepository;
     private final PasswordTokenRepository passwordTokenRepository;
+    private final KafkaProducerService kafkaProducerService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, MailService mailService, TokenService tokenService, VerificationTokenRepository verificationTokenRepository, PasswordTokenRepository passwordTokenRepository) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, MailService mailService, TokenService tokenService, VerificationTokenRepository verificationTokenRepository, PasswordTokenRepository passwordTokenRepository, KafkaProducerService kafkaProducerService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
         this.tokenService = tokenService;
         this.verificationTokenRepository = verificationTokenRepository;
         this.passwordTokenRepository = passwordTokenRepository;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     @Value("${url.redefinir-senha}")
@@ -99,8 +102,12 @@ public class AuthService {
                 "✅ Bem-vindo ao Pork - Confirme sua conta",
                 emailBody
         );
+
+        kafkaProducerService.sendEmailEvent(email);
+
         logger.info("Enviando email de verificação para: {}", dto.email());
-        return mailService.sendEmailToRegister(email);
+
+        return CompletableFuture.completedFuture(null);
     }
 
     public LoginResponseDTO login (LoginRequestDTO dto){
@@ -179,7 +186,8 @@ public class AuthService {
                 emailBody
         );
         logger.info("Enviando novo email de verificação para: {}", dto.email());
-        mailService.sendEmailToRegister(email);
+
+        kafkaProducerService.sendEmailEvent(email);
 
     }
 
@@ -212,8 +220,10 @@ public class AuthService {
                 "Pork - Redefinição de Senha",
                 corpoEmail
         );
+
         logger.info("Enviando email de redefinição de senha para: {}", email);
-        mailService.sendEmailToRegister(emailDto);
+
+        kafkaProducerService.sendEmailEvent(emailDto);
     }
 
     @Transactional
@@ -233,10 +243,13 @@ public class AuthService {
         }
 
         user.setSenha(passwordEncoder.encode(dto.password()));
+
         userRepository.save(user);
+
         logger.info("Senha redefinida com sucesso para o usuário: {}", user.getEmail());
 
         passwordTokenRepository.delete(resetToken);
+
         logger.info("Token de redefinição de senha excluído.");
     }
 

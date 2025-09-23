@@ -27,4 +27,15 @@ public class KafkaProducerService {
         }
     }
 
+    public void sendUpdateIncomeEvent(EmailDTO dto){
+        try {
+            logger.info("Enviando evento de atualização de renda para o tópico Kafka: {}", dto.para());
+            kafkaTemplate.send("income-update-topic", dto);
+            logger.info("Evento de atualização de renda enviado para o tópico Kafka: {}", dto.para());
+        }catch (Exception e){
+            logger.info("Erro ao enviar evento de atualização de renda para o tópico Kafka: {}", e.getMessage());
+            throw new RuntimeException("Erro ao enviar mensagem para o Kafka");
+        }
+    }
+
 }

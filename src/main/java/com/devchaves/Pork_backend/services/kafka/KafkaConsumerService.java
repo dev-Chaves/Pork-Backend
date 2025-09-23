@@ -31,4 +31,15 @@ public class KafkaConsumerService {
 
     }
 
+    @KafkaListener(topics = "income-update-topic", groupId = "pork-group" )
+    public void consumeIncomeUpdateEvent(EmailDTO dto){
+        logger.info("Evento de atualização de renda recebido do Kafka: {}", dto.para());
+        try {
+            mailService.sendEmail(dto).join();
+        }catch (Exception e){
+            logger.info("rro ao processar o evento de atualização de renda do Kafka: {}", e.getMessage());
+            throw new RuntimeException("Erro ao processar o evento de atualização de renda do Kafka");
+        }
+    }
+
 }

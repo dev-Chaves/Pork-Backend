@@ -6,6 +6,7 @@ import com.devchaves.Pork_backend.entity.ExpenseEntity;
 import com.devchaves.Pork_backend.entity.UserEntity;
 import com.devchaves.Pork_backend.repository.ExpenseRepository;
 import com.devchaves.Pork_backend.repository.UserRepository;
+import com.devchaves.Pork_backend.services.kafka.KafkaProducerService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +37,12 @@ public class ExpensesService {
 
     private final UserRepository userRepository;
 
-    public ExpensesService(ExpenseRepository expenseRepository, UserRepository userRepository) {
+    private final KafkaProducerService kafkaProducerService;
+
+    public ExpensesService(ExpenseRepository expenseRepository, UserRepository userRepository, KafkaProducerService kafkaProducerService) {
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     public DashboardDTO consultarDespesasInfo(UserDetails userDetails){
@@ -188,6 +192,23 @@ public class ExpensesService {
 
         userRepository.updateReceita(user, dto.receita());
         logger.info("Receita atualizada com sucesso para o usuário: {}", userDetails.getUsername());
+
+        String emailBody = String.format(
+                "Olá %s,\n\n" +
+                        "Notamos que você atualizou sua receita. Ótimas notícias!\n\n" +
+                        "Uma mudança na receita é o momento perfeito para reavaliar suas metas e garantir que seu dinheiro está trabalhando para você da melhor forma possível. Com base no seu perfil %s, um novo plano de investimento pode otimizar seus ganhos.\n\n" +
+                        "Que tal dar uma olhada no que preparamos para você? Clique abaixo para descobrir seu novo potencial de investimento.\n\n" +
+                        "Estamos aqui para te ajudar a prosperar.\n\n" +
+                        "Atenciosamente,\n" +
+                        "Equipe Pork." ,
+                userD.getNome(),
+                userD.getInvestimento().toString()
+        );
+
+        EmailDTO emailDTO = new EmailDTO(userD.getEmail(), "Atualização de Receita - Reavalie seus investimentos!", emailBody);
+
+        kafkaProducerService.sendEmailEvent(emailDTO);
+
         return new ReceitaResponseDTO(dto.receita());
     }
 

@@ -66,20 +66,23 @@ public class AuthService {
         }
 
         VerificationTokenEntity token = new VerificationTokenEntity();
-        UserEntity user = new UserEntity();
 
-        user.setEmail(dto.email());
-        user.setNome(dto.nome());
-        user.setSenha(passwordEncoder.encode(dto.senha()));
+        String passwordEncrypted = passwordEncoder.encode(dto.senha());
+
+        UserEntity user = UserEntity.from(dto, passwordEncrypted);
 
         userRepository.save(user);
+
         logger.info("Usuário salvo no banco de dados com o email: {}", dto.email());
 
         token.setUser(user);
+
         verificationTokenRepository.save(token);
+
         logger.info("Token de verificação gerado para o email: {}", dto.email());
 
         String param = "?token=";
+
         String verificar = verificarContaUrl + param + token.getToken();
 
         String emailBody = String.format(
@@ -242,7 +245,7 @@ public class AuthService {
             throw new IllegalArgumentException("Senhas devem ser iguais");
         }
 
-        user.setSenha(passwordEncoder.encode(dto.password()));
+        user.atualizarSenha(passwordEncoder.encode(dto.password()));
 
         userRepository.save(user);
 

@@ -34,8 +34,13 @@ public class InvestmentService {
     public InvestmentResponseDTO selecionarInvestimento(InvestmentRequestDTO dto, UserDetails userDetails){
         logger.info("Usuário {} selecionou o tipo de investimento: {}", userDetails.getUsername(), dto.tipo());
         UserEntity user = (UserEntity) userDetails;
-        userRepository.updateInvestimento(user.getId(), dto.tipo().toString());
+
+        user.atualizarInvestimento(dto.tipo());
+
+        userRepository.save(user);
+
         logger.info("Tipo de investimento atualizado com sucesso para o usuário: {}", userDetails.getUsername());
+
         return new InvestmentResponseDTO(dto.tipo().toString());
     }
 

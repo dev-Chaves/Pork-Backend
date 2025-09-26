@@ -103,12 +103,7 @@ public class ExpensesService {
 
         List<ExpenseEntity> despesas = new ArrayList<>();
         for(ExpenseRequestDTO dto : dtos){
-            ExpenseEntity despesa = new ExpenseEntity();
-            despesa.setUser(user);
-            despesa.setValor(dto.valor());
-            despesa.setDescricao(dto.descricao());
-            despesa.setCategoriasDeGastos(dto.categoria());
-            despesas.add(despesa);
+            ExpenseEntity expense = ExpenseEntity.from(dto, user);
         }
 
         expenseRepository.saveAll(despesas);
@@ -178,19 +173,18 @@ public class ExpensesService {
             @CacheEvict(value = "userDetailsCache", key = "#userDetails.username")
     })
     public ReceitaResponseDTO atualizarReceita(UserUpdateDTO dto, UserDetails userDetails){
+
         logger.info("Iniciando atualização de receita para o usuário: {}", userDetails.getUsername());
+
         UserEntity userD = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> {
             logger.error("Usuário não encontrado ao tentar atualizar receita: {}", userDetails.getUsername());
             return new UsernameNotFoundException("Usuário não encontrado");
         });
-        Long user = userD.getId();
 
-        if(dto.receita().compareTo(BigDecimal.ZERO) < 0){
-            logger.error("Tentativa de atualizar receita com valor negativo: {}", dto.receita());
-            throw new IllegalArgumentException("A receita não pode ser negativa!");
-        }
+        userD.atualizarReceita(dto.receita());
 
-        userRepository.updateReceita(user, dto.receita());
+        userRepository.save(userD);
+
         logger.info("Receita atualizada com sucesso para o usuário: {}", userDetails.getUsername());
 
         String emailBody = String.format(

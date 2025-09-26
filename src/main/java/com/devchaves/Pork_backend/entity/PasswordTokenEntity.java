@@ -3,6 +3,7 @@ package com.devchaves.Pork_backend.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tb_password_token")
@@ -30,19 +31,26 @@ public class PasswordTokenEntity {
 
     @PrePersist()
     protected void onCreate() {
+        this.token = UUID.randomUUID().toString();
         this.criadoEm = LocalDateTime.now();
         this.expirado = false;
         this.expiraEm = LocalDateTime.now().plusMinutes(10);
     }
 
-    public PasswordTokenEntity() {
+    private PasswordTokenEntity() {
+    }
+
+    public static PasswordTokenEntity from (UserEntity user){
+        PasswordTokenEntity token = new PasswordTokenEntity();
+        token.setUser(user);
+        return token;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -50,7 +58,7 @@ public class PasswordTokenEntity {
         return token;
     }
 
-    public void setToken(String token) {
+    private void setToken(String token) {
         this.token = token;
     }
 
@@ -58,7 +66,7 @@ public class PasswordTokenEntity {
         return user;
     }
 
-    public void setUser(UserEntity user) {
+    private void setUser(UserEntity user) {
         this.user = user;
     }
 
@@ -66,7 +74,7 @@ public class PasswordTokenEntity {
         return criadoEm;
     }
 
-    public void setCriadoEm(LocalDateTime criadoEm) {
+    private void setCriadoEm(LocalDateTime criadoEm) {
         this.criadoEm = criadoEm;
     }
 
@@ -74,7 +82,7 @@ public class PasswordTokenEntity {
         return expiraEm;
     }
 
-    public void setExpiraEm(LocalDateTime expiraEm) {
+    private void setExpiraEm(LocalDateTime expiraEm) {
         this.expiraEm = expiraEm;
     }
 
@@ -82,7 +90,7 @@ public class PasswordTokenEntity {
         return expirado;
     }
 
-    public void setExpirado(Boolean expirado) {
+    private void setExpirado(Boolean expirado) {
         this.expirado = expirado;
     }
 }

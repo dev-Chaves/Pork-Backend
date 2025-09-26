@@ -54,8 +54,10 @@ public class TokenService {
             throw new UsernameNotFoundException("Usuário não encontrado");
         }
 
-        user.setVerificado(true);
+        user.verificarUsuario(true);
+
         userRepository.save(user);
+
         logger.info("Usuário {} verificado com sucesso.", user.getEmail());
 
         verificationTokenRepository.delete(token);

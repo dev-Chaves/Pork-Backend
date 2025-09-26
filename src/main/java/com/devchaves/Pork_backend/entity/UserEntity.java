@@ -1,5 +1,6 @@
 package com.devchaves.Pork_backend.entity;
 
+import com.devchaves.Pork_backend.DTO.RegisterRequestDTO;
 import com.devchaves.Pork_backend.ENUM.InvestimentoENUM;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -62,14 +64,44 @@ public class UserEntity implements UserDetails {
         this.investimento = InvestimentoENUM.MID;
     }
 
-    public UserEntity() {
+    private UserEntity() {
+    }
+
+    public static UserEntity from (RegisterRequestDTO dto, String password){
+        UserEntity user = new UserEntity();
+        user.setNome(dto.nome());
+        user.setEmail(dto.email());
+        user.setSenha(password);
+        user.setVerificado(Boolean.FALSE);
+        user.setInvestimento(InvestimentoENUM.MID);
+        user.setMetas(new ArrayList<>());
+        user.setExpenses(new ArrayList<>());
+        user.setReceita(BigDecimal.ZERO);
+        return user;
+    }
+
+    public void atualizarReceita(BigDecimal valor){
+        if(valor.compareTo(BigDecimal.ZERO) < 0)throw new IllegalArgumentException("Receita não pode ser menor que 0");
+        this.receita = valor;
+    }
+
+    public void atualizarInvestimento(InvestimentoENUM investimento){
+        this.investimento = investimento;
+    }
+
+    public void verificarUsuario(boolean b){
+        this.verificado = b;
+    }
+
+    public void atualizarSenha(String senha){
+        this.senha = senha;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -77,7 +109,7 @@ public class UserEntity implements UserDetails {
         return nome;
     }
 
-    public void setNome(String nome) {
+    private void setNome(String nome) {
         this.nome = nome;
     }
 
@@ -85,7 +117,7 @@ public class UserEntity implements UserDetails {
         return email;
     }
 
-    public void setEmail(String email) {
+    private void setEmail(String email) {
         this.email = email;
     }
 
@@ -93,7 +125,7 @@ public class UserEntity implements UserDetails {
         return senha;
     }
 
-    public void setSenha(String senha) {
+    private void setSenha(String senha) {
         this.senha = senha;
     }
 
@@ -101,7 +133,7 @@ public class UserEntity implements UserDetails {
         return receita;
     }
 
-    public void setReceita(BigDecimal receita) {
+    private void setReceita(BigDecimal receita) {
         this.receita = receita;
     }
 
@@ -109,7 +141,7 @@ public class UserEntity implements UserDetails {
         return verificado;
     }
 
-    public void setVerificado(Boolean verificado) {
+    private void setVerificado(Boolean verificado) {
         this.verificado = verificado;
     }
 
@@ -117,7 +149,7 @@ public class UserEntity implements UserDetails {
         return criadoEm;
     }
 
-    public void setCriadoEm(LocalDateTime criadoEm) {
+    private void setCriadoEm(LocalDateTime criadoEm) {
         this.criadoEm = criadoEm;
     }
 
@@ -125,7 +157,7 @@ public class UserEntity implements UserDetails {
         return expenses;
     }
 
-    public void setExpenses(List<ExpenseEntity> expenses) {
+    private void setExpenses(List<ExpenseEntity> expenses) {
         this.expenses = expenses;
     }
 
@@ -133,7 +165,7 @@ public class UserEntity implements UserDetails {
         return metas;
     }
 
-    public void setMetas(List<MetasEntity> metas) {
+    private void setMetas(List<MetasEntity> metas) {
         this.metas = metas;
     }
 
@@ -141,7 +173,7 @@ public class UserEntity implements UserDetails {
         return investimento;
     }
 
-    public void setInvestimento(InvestimentoENUM investimento) {
+    private void setInvestimento(InvestimentoENUM investimento) {
         this.investimento = investimento;
     }
 
@@ -188,7 +220,5 @@ public class UserEntity implements UserDetails {
     public void setTokens(List<VerificationTokenEntity> tokens) {
         this.tokens = tokens;
     }
-
-    
 
 }

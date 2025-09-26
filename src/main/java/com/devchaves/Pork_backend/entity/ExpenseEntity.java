@@ -1,5 +1,6 @@
 package com.devchaves.Pork_backend.entity;
 
+import com.devchaves.Pork_backend.DTO.ExpenseRequestDTO;
 import com.devchaves.Pork_backend.ENUM.CategoriasDeGastos;
 import com.devchaves.Pork_backend.ENUM.CategoriesENUM;
 import jakarta.persistence.*;
@@ -47,11 +48,40 @@ public class ExpenseEntity {
     public ExpenseEntity() {
     }
 
+    public static ExpenseEntity from(ExpenseRequestDTO dto, UserEntity user){
+
+        if(dto.valor().compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Valor deve ser maior que 0");
+
+        ExpenseEntity expense = new ExpenseEntity();
+
+        expense.setUser(user);
+
+        expense.setValor(dto.valor());
+
+        expense.setCriadoEm(LocalDateTime.now());
+
+        expense.setAtualizadoEm(LocalDateTime.now());
+
+        expense.setCategoriasDeGastos(dto.categoria());
+
+        return expense;
+
+    }
+
+    public void adicionarValor(BigDecimal valor){
+        if(valor.compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Valor deve ser maior que 0");
+        this.valor = valor;
+    }
+
+    public void atualizarDespesa(){
+        this.atualizadoEm = LocalDateTime.now();
+    }
+
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -59,7 +89,7 @@ public class ExpenseEntity {
         return user;
     }
 
-    public void setUser(UserEntity user) {
+    private void setUser(UserEntity user) {
         this.user = user;
     }
 
@@ -67,7 +97,7 @@ public class ExpenseEntity {
         return valor;
     }
 
-    public void setValor(BigDecimal valor) {
+    private void setValor(BigDecimal valor) {
         this.valor = valor;
     }
 
@@ -75,7 +105,7 @@ public class ExpenseEntity {
         return descricao;
     }
 
-    public void setDescricao(String descricao) {
+    private void setDescricao(String descricao) {
         this.descricao = descricao;
     }
 
@@ -83,7 +113,7 @@ public class ExpenseEntity {
         return criadoEm;
     }
 
-    public void setCriadoEm(LocalDateTime criadoEm) {
+    private void setCriadoEm(LocalDateTime criadoEm) {
         this.criadoEm = criadoEm;
     }
 
@@ -91,7 +121,7 @@ public class ExpenseEntity {
         return atualizadoEm;
     }
 
-    public void setAtualizadoEm(LocalDateTime atualizadoEm) {
+    private void setAtualizadoEm(LocalDateTime atualizadoEm) {
         this.atualizadoEm = atualizadoEm;
     }
 
@@ -99,7 +129,7 @@ public class ExpenseEntity {
         return categoria;
     }
 
-    public void setCategoria(CategoriesENUM categoria) {
+    private void setCategoria(CategoriesENUM categoria) {
         this.categoria = categoria;
     }
 
@@ -107,7 +137,7 @@ public class ExpenseEntity {
         return categoriasDeGastos;
     }
 
-    public void setCategoriasDeGastos(CategoriasDeGastos categoriasDeGastos) {
+    private void setCategoriasDeGastos(CategoriasDeGastos categoriasDeGastos) {
         this.categoriasDeGastos = categoriasDeGastos;
     }
 }

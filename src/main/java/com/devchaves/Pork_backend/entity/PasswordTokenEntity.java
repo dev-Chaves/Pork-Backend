@@ -37,7 +37,7 @@ public class PasswordTokenEntity {
         this.expiraEm = LocalDateTime.now().plusMinutes(10);
     }
 
-    private PasswordTokenEntity() {
+    protected PasswordTokenEntity() {
     }
 
     public static PasswordTokenEntity from (UserEntity user){

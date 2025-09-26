@@ -27,7 +27,7 @@ public class MetasEntity {
     @Column(nullable = false)
     private LocalDate data;
 
-    private MetasEntity() {
+    protected MetasEntity() {
     }
 
     public static MetasEntity from (MetasRequestDTO dto, UserEntity user){

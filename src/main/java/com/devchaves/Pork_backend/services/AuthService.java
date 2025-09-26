@@ -30,12 +30,13 @@ public class AuthService {
     private final VerificationTokenRepository verificationTokenRepository;
     private final PasswordTokenRepository passwordTokenRepository;
     private final KafkaProducerService kafkaProducerService;
+    private final UserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, MailService mailService, TokenService tokenService, VerificationTokenRepository verificationTokenRepository, PasswordTokenRepository passwordTokenRepository, KafkaProducerService kafkaProducerService) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, MailService mailService, TokenService tokenService, VerificationTokenRepository verificationTokenRepository, PasswordTokenRepository passwordTokenRepository, KafkaProducerService kafkaProducerService, UserService userService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
@@ -43,6 +44,7 @@ public class AuthService {
         this.verificationTokenRepository = verificationTokenRepository;
         this.passwordTokenRepository = passwordTokenRepository;
         this.kafkaProducerService = kafkaProducerService;
+        this.userService = userService;
     }
 
     @Value("${url.redefinir-senha}")
@@ -140,7 +142,11 @@ public class AuthService {
         }
 
         String token = tokenService.generateToken(user);
+
+        userService.consultarInfo(user);
+
         logger.info("Login bem-sucedido e token gerado para o email: {}", dto.email());
+
         return new LoginResponseDTO(token, user.getEmail(), user.getNome(), user.getReceita());
 
     }

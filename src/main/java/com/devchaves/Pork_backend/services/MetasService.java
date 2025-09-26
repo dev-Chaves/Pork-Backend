@@ -40,12 +40,7 @@ public class MetasService {
 
         List<MetasEntity> metas = new ArrayList<>();
         for(MetasRequestDTO dto : dtos){
-            MetasEntity meta = new MetasEntity();
-            meta.setUser(user);
-            meta.setMeta(dto.meta());
-            meta.setValor(dto.valor());
-            meta.setData(dto.data());
-            metas.add(meta);
+            MetasEntity meta = MetasEntity.from(dto, user);
         }
 
         metasRepository.saveAll(metas);
@@ -68,10 +63,11 @@ public class MetasService {
             throw new IllegalArgumentException("Metas não podem conter valores vazios");
         }
 
-        meta.setMeta(dto.meta());
-        meta.setValor(dto.valor());
-        meta.setData(dto.data());
-        meta.setUser(user);
+        meta.alterarNomeDaMeta(dto.meta());
+
+        meta.alterarValorDaMeta(dto.valor());
+
+        meta.alterarData(dto.data());
 
         metasRepository.save(meta);
         logger.info("Meta com ID {} alterada com sucesso para o usuário: {}", id, userDetails.getUsername());

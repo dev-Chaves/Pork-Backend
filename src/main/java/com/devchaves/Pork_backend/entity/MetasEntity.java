@@ -1,5 +1,6 @@
 package com.devchaves.Pork_backend.entity;
 
+import com.devchaves.Pork_backend.DTO.MetasRequestDTO;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -26,14 +27,39 @@ public class MetasEntity {
     @Column(nullable = false)
     private LocalDate data;
 
-    public MetasEntity() {
+    private MetasEntity() {
+    }
+
+    public static MetasEntity from (MetasRequestDTO dto, UserEntity user){
+        MetasEntity meta = new MetasEntity();
+        meta.setUser(user);
+        meta.setMeta(dto.meta());
+        meta.setData(dto.data());
+        meta.setValor(dto.valor());
+        return meta;
+    }
+
+    public void alterarData (LocalDate date){
+        this.data = date;
+    }
+
+    public void alterarNomeDaMeta(String nome){
+        this.meta = nome;
+    }
+
+    public void alterarValorDaMeta(BigDecimal valor){
+
+        if(valor.compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Valor deve ser maior que 0");
+
+        this.valor = valor;
+
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -41,7 +67,7 @@ public class MetasEntity {
         return meta;
     }
 
-    public void setMeta(String meta) {
+    private void setMeta(String meta) {
         this.meta = meta;
     }
 
@@ -49,7 +75,7 @@ public class MetasEntity {
         return valor;
     }
 
-    public void setValor(BigDecimal valor) {
+    private void setValor(BigDecimal valor) {
         this.valor = valor;
     }
 
@@ -57,7 +83,7 @@ public class MetasEntity {
         return user;
     }
 
-    public void setUser(UserEntity user) {
+    private void setUser(UserEntity user) {
         this.user = user;
     }
 
@@ -65,7 +91,7 @@ public class MetasEntity {
         return data;
     }
 
-    public void setData(LocalDate data) {
+    private void setData(LocalDate data) {
         this.data = data;
     }
 }

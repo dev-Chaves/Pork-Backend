@@ -93,6 +93,11 @@ public class UserEntity implements UserDetails {
         this.verificado = b;
     }
 
+    public void confirmarVerificao(){
+        if(this.verificado) throw new IllegalStateException("Usuário não verificado");
+        this.verificado = true;
+    }
+
     public void atualizarSenha(String senha){
         this.senha = senha;
     }

@@ -64,7 +64,7 @@ public class UserEntity implements UserDetails {
         this.investimento = InvestimentoENUM.MID;
     }
 
-    public UserEntity() {
+    private UserEntity() {
     }
 
     public static UserEntity from (RegisterRequestDTO dto, String password){

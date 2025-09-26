@@ -201,10 +201,10 @@ public class AuthService {
             return new UsernameNotFoundException("Usuário não encontrado");
         });
 
-        PasswordTokenEntity token = new PasswordTokenEntity();
-        token.setToken(UUID.randomUUID().toString());
-        token.setUser(user);
+        PasswordTokenEntity token = PasswordTokenEntity.from(user);
+
         passwordTokenRepository.save(token);
+
         logger.info("Token de redefinição de senha gerado para: {}", email);
 
         String url = redefinirSenhaUrl + "?token=" + token.getToken();

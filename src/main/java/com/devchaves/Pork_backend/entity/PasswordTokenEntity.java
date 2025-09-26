@@ -31,6 +31,7 @@ public class PasswordTokenEntity {
 
     @PrePersist()
     protected void onCreate() {
+        this.token = UUID.randomUUID().toString();
         this.criadoEm = LocalDateTime.now();
         this.expirado = false;
         this.expiraEm = LocalDateTime.now().plusMinutes(10);
@@ -42,8 +43,6 @@ public class PasswordTokenEntity {
     public static PasswordTokenEntity from (UserEntity user){
         PasswordTokenEntity token = new PasswordTokenEntity();
         token.setUser(user);
-        token.setToken(UUID.randomUUID().toString());
-
         return token;
     }
 

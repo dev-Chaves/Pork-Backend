@@ -38,14 +38,24 @@ public class VerificationTokenEntity {
         this.expirado = false;
     }
 
-    public VerificationTokenEntity() {
+    private VerificationTokenEntity() {
+    }
+
+    public static VerificationTokenEntity from (UserEntity user){
+        VerificationTokenEntity verificationToken = new VerificationTokenEntity();
+        verificationToken.setUser(user);
+        return verificationToken;
+    }
+
+    public void alterarUsuario(UserEntity user){
+        this.user = user;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -53,7 +63,7 @@ public class VerificationTokenEntity {
         return token;
     }
 
-    public void setToken(String token) {
+    private void setToken(String token) {
         this.token = token;
     }
 
@@ -61,7 +71,7 @@ public class VerificationTokenEntity {
         return user;
     }
 
-    public void setUser(UserEntity user) {
+    private void setUser(UserEntity user) {
         this.user = user;
     }
 
@@ -69,7 +79,7 @@ public class VerificationTokenEntity {
         return expira_em;
     }
 
-    public void setExpira_em(LocalDateTime expira_em) {
+    private void setExpira_em(LocalDateTime expira_em) {
         this.expira_em = expira_em;
     }
 
@@ -77,7 +87,7 @@ public class VerificationTokenEntity {
         return criado_em;
     }
 
-    public void setCriado_em(LocalDateTime criado_em) {
+    private void setCriado_em(LocalDateTime criado_em) {
         this.criado_em = criado_em;
     }
 

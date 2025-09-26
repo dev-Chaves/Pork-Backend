@@ -17,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
@@ -65,17 +64,17 @@ public class AuthService {
             throw new IllegalArgumentException("Email já está em uso");
         }
 
-        VerificationTokenEntity token = new VerificationTokenEntity();
-
         String passwordEncrypted = passwordEncoder.encode(dto.senha());
 
         UserEntity user = UserEntity.from(dto, passwordEncrypted);
+
+        VerificationTokenEntity token = VerificationTokenEntity.from(user);
 
         userRepository.save(user);
 
         logger.info("Usuário salvo no banco de dados com o email: {}", dto.email());
 
-        token.setUser(user);
+        token.alterarUsuario(user);
 
         verificationTokenRepository.save(token);
 
@@ -158,9 +157,12 @@ public class AuthService {
             throw new IllegalStateException("Usuário já verificado.");
         }
 
-        VerificationTokenEntity token = new VerificationTokenEntity();
-        token.setUser(user);
+        VerificationTokenEntity token = VerificationTokenEntity.from(user);
+
+        token.alterarUsuario(user);
+
         verificationTokenRepository.save(token);
+
         logger.info("Novo token de verificação gerado para: {}", dto.email());
 
         String urlTeste = "https://financepork.site/verificar-email?token=";

@@ -45,7 +45,7 @@ public class ExpenseEntity {
         this.atualizadoEm = LocalDateTime.now();
     }
 
-    public ExpenseEntity() {
+    protected ExpenseEntity() {
     }
 
     public static ExpenseEntity from(ExpenseRequestDTO dto, UserEntity user){

@@ -38,7 +38,7 @@ public class VerificationTokenEntity {
         this.expirado = false;
     }
 
-    private VerificationTokenEntity() {
+    protected VerificationTokenEntity() {
     }
 
     public static VerificationTokenEntity from (UserEntity user){

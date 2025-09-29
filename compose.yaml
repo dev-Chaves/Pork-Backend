@@ -38,6 +38,7 @@ services:
       REDEFINIR_SENHA_URL: ${REDEFINIR_SENHA_URL}
       VERIFICAR_CONTA_URL: ${VERIFICAR_CONTA_URL}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      AGENT_KEY: ${AGENT_KEY}
     restart: on-failure
 
   api2:
@@ -58,6 +59,7 @@ services:
       REDEFINIR_SENHA_URL: ${REDEFINIR_SENHA_URL}
       VERIFICAR_CONTA_URL: ${VERIFICAR_CONTA_URL}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      AGENT_KEY: ${AGENT_KEY}
     restart: on-failure
 
   db:

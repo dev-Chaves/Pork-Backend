@@ -131,10 +131,9 @@ public class AuthService {
             return new UsernameNotFoundException("Email inválido");
         });
 
-        if (!user.getVerificado()) {
-            logger.warn("Tentativa de login de usuário não verificado: {}", dto.email());
-            throw new IllegalArgumentException("Usuário não verificado, por favor verifique seu usuário");
-        }
+        logger.warn("Tentativa de login de usuário não verificado: {}", dto.email());
+
+        user.confirmarVerificao();
 
         if(!passwordEncoder.matches(dto.senha(), user.getSenha())){
             logger.warn("Tentativa de login com senha inválida para o email: {}", dto.email());

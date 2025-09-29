@@ -22,9 +22,12 @@ public class SecurityConfig {
 
     private final TokenService tokenService;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService, TokenService tokenService) {
+    private final ApiKeyAuthFilter apiKeyAuthFilter;
+
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, TokenService tokenService, ApiKeyAuthFilter apiKeyAuthFilter) {
         this.customUserDetailsService = customUserDetailsService;
         this.tokenService = tokenService;
+        this.apiKeyAuthFilter = apiKeyAuthFilter;
     }
 
     @Bean
@@ -43,13 +46,12 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
-                                "/webjars/**",
-                                "/actuator/**"
+                                "/webjars/**"
                         ).permitAll()
-
+                        .requestMatchers("/actuator/**").hasRole("AGENT")
                         .anyRequest().authenticated()
                 )
-
+                .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(
                         new JwtAuthenticatorFilter(tokenService, customUserDetailsService),
                         UsernamePasswordAuthenticationFilter.class

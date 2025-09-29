@@ -71,7 +71,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: 'health'
+        include: 'health, metrics, info, loggers, httptrace'
     endpoint:
       health:
         show-details: always
@@ -96,3 +96,7 @@ logging:
     org.springframework.cache: DEBUG
     org.springframework.data.redis: DEBUG
     com.devchaves.Pork_backend: DEBUG
+
+pork:
+  monitoring:
+    api-key: ${AGENT_KEY}

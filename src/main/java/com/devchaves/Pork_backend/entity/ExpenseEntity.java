@@ -58,6 +58,8 @@ public class ExpenseEntity {
 
         expense.setValor(dto.valor());
 
+        expense.setDescricao(dto.descricao());
+
         expense.setCriadoEm(LocalDateTime.now());
 
         expense.setAtualizadoEm(LocalDateTime.now());

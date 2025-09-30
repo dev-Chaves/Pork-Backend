@@ -104,6 +104,7 @@ public class ExpensesService {
         List<ExpenseEntity> despesas = new ArrayList<>();
         for(ExpenseRequestDTO dto : dtos){
             ExpenseEntity expense = ExpenseEntity.from(dto, user);
+            despesas.add(expense);
         }
 
         expenseRepository.saveAll(despesas);

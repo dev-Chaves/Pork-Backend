@@ -1,10 +1,15 @@
 package com.devchaves.Pork_backend.services.kafka;
 
 import com.devchaves.Pork_backend.DTO.EmailDTO;
+import com.devchaves.Pork_backend.DTO.ExpenseRequestDTO;
+import com.devchaves.Pork_backend.services.ExpensesService;
 import com.devchaves.Pork_backend.services.MailService;
 import org.slf4j.Logger;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class KafkaConsumerService {
@@ -13,8 +18,11 @@ public class KafkaConsumerService {
 
     private final MailService mailService;
 
-    public KafkaConsumerService(MailService mailService) {
+    private final ExpensesService expensesService;
+
+    public KafkaConsumerService(MailService mailService, ExpensesService expensesService) {
         this.mailService = mailService;
+        this.expensesService = expensesService;
     }
 
     @KafkaListener(topics = "email-topic", groupId = "pork-group" )
@@ -37,9 +45,17 @@ public class KafkaConsumerService {
         try {
             mailService.sendEmail(dto).join();
         }catch (Exception e){
-            logger.info("rro ao processar o evento de atualização de renda do Kafka: {}", e.getMessage());
+            logger.info("Erro ao processar o evento de atualização de renda do Kafka: {}", e.getMessage());
             throw new RuntimeException("Erro ao processar o evento de atualização de renda do Kafka");
         }
+    }
+
+    @KafkaListener(topics = "despesas-topic", groupId = "pork-group")
+    public void consumerDespesasEvent(List<ExpenseRequestDTO> dto){
+
+        logger.info("Evento para cadastro de despesas recebido do Kafka");
+
+
     }
 
 }

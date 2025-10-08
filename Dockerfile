@@ -11,6 +11,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
+EXPOSE 9090
 
 ENTRYPOINT ["java", \
             "-Dcom.sun.management.jmxremote", \
@@ -18,5 +19,5 @@ ENTRYPOINT ["java", \
             "-Dcom.sun.management.jmxremote.rmi.port=9090", \
             "-Dcom.sun.management.jmxremote.authenticate=false", \
             "-Dcom.sun.management.jmxremote.ssl=false", \
-            "-Djava.rmi.server.hostname=62.171.135.58", \
+            "-Djava.rmi.server.hostname=api.financepork.site", \
             "-jar", "app.jar"]

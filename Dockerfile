@@ -12,4 +12,11 @@ COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", \
+            "-Dcom.sun.management.jmxremote", \
+            "-Dcom.sun.management.jmxremote.port=9090", \
+            "-Dcom.sun.management.jmxremote.rmi.port=9090", \
+            "-Dcom.sun.management.jmxremote.authenticate=false", \
+            "-Dcom.sun.management.jmxremote.ssl=false", \
+            "-Djava.rmi.server.hostname=62.171.135.58", \
+            "-jar", "app.jar"]

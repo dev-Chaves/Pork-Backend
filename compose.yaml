@@ -88,6 +88,8 @@ services:
     image: 'confluentinc/cp-kafka:latest'
     ports:
       - "9092:9092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_PROCESS_ROLES: 'broker,controller'
@@ -117,3 +119,4 @@ services:
 
 volumes:
   pgdata:
+  kafka_data:

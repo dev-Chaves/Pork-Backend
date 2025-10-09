@@ -23,6 +23,8 @@ services:
   api1:
     image: financepork/pork:latest
     build: .
+    ports:
+      - "9090:9090"
     depends_on:
       db:
         condition: service_healthy
@@ -44,6 +46,8 @@ services:
   api2:
     image: financepork/pork:latest
     build: .
+    ports:
+      - "9091:9090"
     depends_on:
       db:
         condition: service_healthy
